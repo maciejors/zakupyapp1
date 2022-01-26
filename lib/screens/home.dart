@@ -4,10 +4,11 @@ import 'dart:collection';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:zakupyapk/widgets/item_options_screen.dart';
+import 'package:zakupyapk/utils/storage_manager.dart';
 import 'package:zakupyapk/widgets/main_drawer.dart';
 import 'package:zakupyapk/widgets/product_editor_dialog.dart';
 import 'package:zakupyapk/widgets/shopping_list_item.dart';
+import 'package:zakupyapk/widgets/show_help.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -17,12 +18,10 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final GlobalKey<AnimatedListState> animatedListKey =
-      GlobalKey<AnimatedListState>();
   late StreamSubscription dataStream;
   final Map<String, ShoppingListItem> shoppingList = LinkedHashMap();
   bool isDataReady = false;
-  final db = FirebaseDatabase.instance.reference(); //TODO: Auth???
+  final db = FirebaseDatabase.instance.reference(); //TODO: AppCheck
 
   /// Name of the shop serving as a filter.<br>
   /// Wildcard values:
@@ -51,6 +50,7 @@ class _HomeState extends State<Home> {
               whoAdded: whoAdded,
               editFunc: () => editFunc(context,
                   productId: id,
+                  whoAdded: whoAdded,
                   initialProductName: productName,
                   shopName: shopName),
               deleteFunc: () =>
@@ -64,17 +64,20 @@ class _HomeState extends State<Home> {
 
   void editFunc(BuildContext context,
       {required String productId,
+      required String whoAdded,
       required String initialProductName,
       required String shopName}) {
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => ProductEditorDialog(
-              editingProduct: true,
-              productId: productId,
-              initialProductName: initialProductName,
-              initialShopName: shopName,
-            ));
+    if (SM.getUserName() == whoAdded) {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => ProductEditorDialog(
+                editingProduct: true,
+                productId: productId,
+                initialProductName: initialProductName,
+                initialShopName: shopName,
+              ));
+    }
   }
 
   void deleteFunc(BuildContext context,
@@ -95,7 +98,8 @@ class _HomeState extends State<Home> {
             TextButton(
               child: Text('Tak'),
               onPressed: () {
-                db.child('list').child(productId.toString()).remove();
+                db.child('list').child(productId).remove();
+                shoppingList.remove(productId);
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text('Usunięto wybrany produkt'),
@@ -108,25 +112,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  /// Wraps [item] with Hero and InkWell widgets.
-  ///
-  /// Returned Hero has a tag specified by the `heroTag` field in [item]
-  Hero wrapShoppingListItem(ShoppingListItem item) {
-    return Hero(
-      tag: item.heroTag,
-      child: Material(
-        child: InkWell(
-          child: item,
-          onTap: () => showItemOptionsScreen(context, item),
-        ),
-      ),
-    );
-  }
-
-  /// Returns a list of items to put inside the main ListView.
-  ///
-  /// It filters values from `shoppingList` and wraps them using
-  /// [wrapShoppingListItem] function.
+  /// Returns a filtered list of items to put inside the main ListView.
   List<Widget> getItemsToDisplay() {
     Iterable<ShoppingListItem> itemsToDisplay = shoppingList.values;
     if (filteredShop != '') {
@@ -138,15 +124,8 @@ class _HomeState extends State<Home> {
         return item.shop == filteredShop;
       });
     }
-    return itemsToDisplay.map(wrapShoppingListItem).toList().reversed.toList();
-  }
-
-  void showItemOptionsScreen(BuildContext context, ShoppingListItem item) {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (ctx) => ItemOptionsScreen(
-        shoppingListItem: item,
-      ),
-    ));
+    // reversed so that they appear in a chronological order
+    return itemsToDisplay.toList().reversed.toList();
   }
 
   @override
@@ -171,6 +150,10 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: Text('Lista Zakupów'),
         actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.help),
+            onPressed: () => showHelpDialog(context),
+          ),
           PopupMenuButton(
             icon: Icon(Icons.filter_alt),
             itemBuilder: (BuildContext context) =>

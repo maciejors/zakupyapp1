@@ -74,7 +74,7 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
       shopSelection = widget.initialShopName!;
     }
     else {
-      shopSelection = ShoppingListItem.allAvailableShops[0];
+      shopSelection = '';
     }
     return StatefulBuilder(
       builder: (BuildContext context, void Function(void Function()) setState) {
