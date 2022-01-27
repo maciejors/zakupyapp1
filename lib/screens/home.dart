@@ -42,12 +42,19 @@ class _HomeState extends State<Home> {
           String shopName = value['shop'];
           String dateToDisplay = value['dateAddedToDisplay'];
           String whoAdded = value['whoAdded'];
+          DateTime? deadline;
+          if (value['deadline'] != null) {
+            deadline = DateTime.parse(value['deadline']);
+          }
+          bool? showHourInDeadline = value['showHourInDeadline'];
           var newProduct = ShoppingListItem(
               id: id,
               name: productName,
               shop: shopName,
               dateAddedToDisplay: dateToDisplay,
               whoAdded: whoAdded,
+              deadline: deadline,
+              showHourInDeadline: showHourInDeadline,
               editFunc: () => editFunc(context,
                   productId: id,
                   whoAdded: whoAdded,
