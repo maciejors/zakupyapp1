@@ -1,6 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:zakupyapk/utils/date_to_string.dart';
+import 'package:zakupyapk/utils/date_functions.dart';
 import 'package:zakupyapk/utils/storage_manager.dart';
 import 'package:zakupyapk/widgets/shopping_list_item.dart';
 import 'package:zakupyapk/widgets/text_with_icon.dart';
