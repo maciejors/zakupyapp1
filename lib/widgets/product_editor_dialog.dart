@@ -27,9 +27,13 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
   String productName = '';
   String shopNameInput = '';
   String shopSelection = '';
+  bool includeDeadline = false;
+  bool showHourInDeadline = false;
+  DateTime selectedDay = DateTime.now();
+  TimeOfDay selectedTime = TimeOfDay.now();
   final db = FirebaseDatabase.instance.reference();
 
-  String generateProductId() {
+  String _generateProductId() {
     DateTime now = DateTime.now();
     return '${now.year}'
         '-${now.month.toString().padLeft(2, '0')}'
@@ -40,7 +44,7 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
         '-${now.millisecond.toString().padLeft(3, '0')}';
   }
 
-  void confirmEditProduct() {
+  void _confirmEditProduct() {
     db.child('list').child(widget.productId!).child('name').set(productName);
     db
         .child('list')
@@ -53,18 +57,45 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
     ));
   }
 
-  void addProduct() {
+  void _addProduct() {
     Map<String, String> productData = {
       'name': productName,
       'shop': shopSelection == 'Inny:' ? shopNameInput : shopSelection,
       'dateAddedToDisplay': dateToString(DateTime.now()),
       'whoAdded': SM.getUserName(),
     };
-    db.child('list').child(generateProductId()).set(productData);
+    db.child('list').child(_generateProductId()).set(productData);
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text('Dodano produkt do listy'),
     ));
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    // https://stackoverflow.com/questions/52727535/what-is-the-correct-way-to-add-date-picker-in-flutter-app
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: selectedDay,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100, 12, 31),
+    );
+    if (pickedDate != null && pickedDate != selectedDay) {
+      setState(() {
+        selectedDay = pickedDate;
+      });
+    }
+  }
+
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if (pickedTime != null && pickedTime != selectedTime) {
+      setState(() {
+        selectedTime = pickedTime;
+      });
+    }
   }
 
   @override
@@ -72,8 +103,7 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
     if (widget.editingProduct) {
       productName = widget.initialProductName!;
       shopSelection = widget.initialShopName!;
-    }
-    else {
+    } else {
       shopSelection = '';
     }
     return StatefulBuilder(
@@ -158,7 +188,7 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
             TextButton(
               child: Text(widget.editingProduct ? 'Zapisz' : 'Dodaj'),
               onPressed:
-                  widget.editingProduct ? confirmEditProduct : addProduct,
+                  widget.editingProduct ? _confirmEditProduct : _addProduct,
             ),
           ],
         );
