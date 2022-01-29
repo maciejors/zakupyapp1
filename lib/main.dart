@@ -8,8 +8,8 @@ Future<void> main() async {
   await SM.setupStorage();
   runApp(MaterialApp(
     routes: {
-      '/': (context) => Home(),
-      '/settings': (context) => Settings(),
+      '/': (context) => HomeScreen(),
+      '/settings': (context) => SettingsScreen(),
     },
     theme: ThemeData(
       primarySwatch: Colors.orange,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// DD/MM/YYYY, godz. HH:mm
-String dateTimeToString(DateTime dateTime) {
+String dateTimeToPolishString(DateTime dateTime) {
   return '${dateTime.day.toString().padLeft(2, '0')}/'
       '${dateTime.month.toString().padLeft(2, '0')}/'
       '${dateTime.year}, godz. ${dateTime.hour}:'
