@@ -1,10 +1,10 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:zakupyapk/core/deadline.dart';
+import 'package:zakupyapk/core/product.dart';
 import 'package:zakupyapk/utils/database_manager.dart';
 import 'package:zakupyapk/utils/date_time_functions.dart';
 import 'package:zakupyapk/utils/storage_manager.dart';
 import 'package:zakupyapk/widgets/labeled_checkbox.dart';
-import 'package:zakupyapk/widgets/shopping_list_item.dart';
 import 'package:zakupyapk/widgets/text_with_icon.dart';
 
 class ProductEditorDialog extends StatefulWidget {
@@ -12,10 +12,10 @@ class ProductEditorDialog extends StatefulWidget {
   final bool editingProduct;
 
   /// Edited product. `null` if [editingProduct] is `false`
-  final ShoppingListItem? shoppingListItem;
+  final Product? product;
 
   const ProductEditorDialog(
-      {Key? key, required this.editingProduct, this.shoppingListItem})
+      {Key? key, required this.editingProduct, this.product})
       : super(key: key);
 
   @override
@@ -27,29 +27,18 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
   String _shopNameInput = '';
   String _shopSelection = '';
   bool _includeDeadline = false;
-  bool _showHourInDeadline = false;
+  bool _includeTimeInDeadline = false;
   DateTime _selectedDay = DateTime.now();
   TimeOfDay _selectedTime = TimeOfDay.now();
   final DatabaseManager dbManager = DatabaseManager.instance;
 
-  String _generateProductId() {
-    DateTime now = DateTime.now();
-    return '${now.year}'
-        '-${now.month.toString().padLeft(2, '0')}'
-        '-${now.day.toString().padLeft(2, '0')}'
-        '-${now.hour.toString().padLeft(2, '0')}'
-        '-${now.minute.toString().padLeft(2, '0')}'
-        '-${now.second.toString().padLeft(2, '0')}'
-        '-${now.millisecond.toString().padLeft(3, '0')}';
-  }
-
   void _confirmEditProduct() {
     var productData = formProductData();
     // adjusting date of creation
-    productData['dateAddedToDisplay'] =
-        widget.shoppingListItem!.dateAddedToDisplay;
+    productData['dateAdded'] =
+        widget.product!.dateAdded.toString();
     dbManager.storeProductFromData(
-        widget.shoppingListItem!.id, productData);
+        widget.product!.id, productData);
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text('Pomyślnie zedytowano produkt'),
@@ -57,32 +46,30 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
   }
 
   void _addProduct() {
-    dbManager.storeProductFromData(_generateProductId(), formProductData());
+    dbManager.storeProductFromData(Product.generateProductId(), formProductData());
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text('Dodano produkt do listy'),
     ));
   }
 
-  Map<String, dynamic> formProductData() {
-    Map<String, dynamic> productData = {
+  Map<String, String> formProductData() {
+    var productData = {
       'name': _productName,
       'shop':
           _shopSelection == 'requestInput' ? _shopNameInput : _shopSelection,
-      'dateAddedToDisplay': dateTimeToString(DateTime.now()),
+      'dateAdded': DateTime.now().toString(),
       'whoAdded': SM.getUserName(),
     };
     if (_includeDeadline) {
-      int hour = 0;
-      int minute = 0;
-      if (_showHourInDeadline) {
-        hour = _selectedTime.hour;
-        minute = _selectedTime.minute;
+      Deadline deadline;
+      if (_includeTimeInDeadline) {
+        deadline = Deadline.fromDateAndTime(_selectedDay, _selectedTime);
       }
-      DateTime deadline = DateTime(_selectedDay.year, _selectedDay.month,
-          _selectedDay.day, hour, minute);
+      else {
+        deadline = Deadline.ignoringTime(_selectedDay);
+      }
       productData['deadline'] = deadline.toString();
-      productData['showHourInDeadline'] = _showHourInDeadline;
     }
     return productData;
   }
@@ -118,11 +105,11 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
   void initState() {
     super.initState();
     if (widget.editingProduct) {
-      _productName = widget.shoppingListItem!.name;
-      _shopSelection = widget.shoppingListItem!.shop;
-      _includeDeadline = widget.shoppingListItem!.deadline != null;
+      _productName = widget.product!.name;
+      _shopSelection = widget.product!.shop ?? '';
+      _includeDeadline = widget.product!.deadline != null;
       if (_includeDeadline) {
-        _showHourInDeadline = widget.shoppingListItem!.showHourInDeadline!;
+        _includeTimeInDeadline = !widget.product!.deadline!.isIgnoringTime;
       }
     } else {
       _shopSelection = '';
@@ -175,7 +162,7 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
               // Shop selection
               DropdownButton(
                 value: _shopSelection,
-                items: ShoppingListItem.allAvailableShops
+                items: Product.allAvailableShops
                     .map((e) => DropdownMenuItem(
                           child: Text(e),
                           value: e,
@@ -231,7 +218,7 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
                   setState(() {
                     _includeDeadline = newValue!;
                     if (!_includeDeadline) {
-                      _showHourInDeadline = false;
+                      _includeTimeInDeadline = false;
                     }
                   });
                 },
@@ -259,11 +246,11 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
                 visible: _includeDeadline,
                 child: LabeledCheckbox(
                   label: Text('Ustal godzinę'),
-                  value: _showHourInDeadline,
+                  value: _includeTimeInDeadline,
                   checkboxFirst: false,
                   onChanged: (newValue) {
                     setState(() {
-                      _showHourInDeadline = newValue!;
+                      _includeTimeInDeadline = newValue!;
                     });
                   },
                 ),
@@ -271,7 +258,7 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
 
               // select time
               Visibility(
-                visible: _includeDeadline && _showHourInDeadline,
+                visible: _includeDeadline && _includeTimeInDeadline,
                 child: TextButton(
                   child: Text(timeToString(_selectedTime)),
                   style: TextButton.styleFrom(
