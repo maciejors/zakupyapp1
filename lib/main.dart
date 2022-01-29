@@ -9,7 +9,7 @@ Future<void> main() async {
   runApp(MaterialApp(
     routes: {
       '/': (context) => Home(),
-      '/settings': (context) => Settings(),
+      '/settings': (context) => SettingsScreen(),
     },
     theme: ThemeData(
       primarySwatch: Colors.orange,
