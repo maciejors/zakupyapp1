@@ -25,7 +25,7 @@ class ProductCard extends StatelessWidget {
   /// Forms a nice looking text with icon informing about the
   /// product's deadline.
   ///
-  /// It assumes that [deadline] and [showHourInDeadline] are not `null`.
+  /// Returns an empty container if [product.deadline] is `null`.
   Widget _formDeadlineDescription(double fontSize) {
     if (product.deadline == null) {
       return Container();

@@ -32,6 +32,10 @@ class Deadline {
   }
 
   /// Returns deadline's urgency (in relation to `DateTime.now()`).
+  ///
+  /// [Urgency.too_late] - deadline has passed,
+  /// [Urgency.urgent] - deadline is today or tomorrow,
+  /// [Urgency.not_urgent] - otherwise
   Urgency getUrgency() {
     DateTime nowExact = DateTime.now();
     DateTime today = DateTime(
