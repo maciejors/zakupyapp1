@@ -46,13 +46,7 @@ class _HomeState extends State<Home> {
           if (value['deadline'] != null) {
             deadline = DateTime.parse(value['deadline']);
           }
-          bool? showHourInDeadline;
-          try {
-            showHourInDeadline = value['showHourInDeadline'];
-          }
-          on TypeError {
-            showHourInDeadline = value['showHourInDeadline'] == 'true';
-          }
+          bool? showHourInDeadline = value['showHourInDeadline'];
           var newProduct = ShoppingListItem(
               id: id,
               name: productName,
