@@ -4,22 +4,24 @@ import 'dart:collection';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:zakupyapk/core/deadline.dart';
+import 'package:zakupyapk/core/product.dart';
 import 'package:zakupyapk/utils/storage_manager.dart';
 import 'package:zakupyapk/widgets/main_drawer.dart';
 import 'package:zakupyapk/widgets/product_editor_dialog.dart';
-import 'package:zakupyapk/widgets/shopping_list_item.dart';
+import 'package:zakupyapk/widgets/product_card.dart';
 import 'package:zakupyapk/widgets/show_help.dart';
 
-class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  _HomeState createState() => _HomeState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeScreenState extends State<HomeScreen> {
   late StreamSubscription dataStream;
-  final Map<String, ShoppingListItem> shoppingList = LinkedHashMap();
+  final Map<String, Product> shoppingList = LinkedHashMap();
   bool isDataReady = false;
   final db = FirebaseDatabase.instance.reference(); //TODO: AppCheck
 
@@ -39,24 +41,20 @@ class _HomeState extends State<Home> {
         data.forEach((key, value) {
           String id = key as String;
           String productName = (value as Map)['name'];
-          String shopName = value['shop'];
-          String dateToDisplay = value['dateAddedToDisplay'];
           String whoAdded = value['whoAdded'];
-          DateTime? deadline;
+          DateTime dateAdded = DateTime.parse(value['dateAdded']);
+          String? shopName = value['shop'];
+          Deadline? deadline;
           if (value['deadline'] != null) {
-            deadline = DateTime.parse(value['deadline']);
+            deadline = Deadline.parse(value['deadline']);
           }
-          bool? showHourInDeadline = value['showHourInDeadline'];
-          var newProduct = ShoppingListItem(
+          var newProduct = Product(
               id: id,
               name: productName,
               shop: shopName,
-              dateAddedToDisplay: dateToDisplay,
+              dateAdded: dateAdded,
               whoAdded: whoAdded,
-              deadline: deadline,
-              showHourInDeadline: showHourInDeadline,
-              editFunc: () => editFunc(context, productId: id),
-              deleteFunc: () => deleteFunc(context, productId: id));
+              deadline: deadline);
           shoppingList[id] = newProduct;
         });
         isDataReady = true;
@@ -65,20 +63,20 @@ class _HomeState extends State<Home> {
   }
 
   void editFunc(BuildContext context, {required String productId}) {
-    ShoppingListItem item = shoppingList[productId]!;
+    Product item = shoppingList[productId]!;
     if (SM.getUserName() == item.whoAdded) {
       showDialog(
           context: context,
           barrierDismissible: false,
           builder: (context) => ProductEditorDialog(
                 editingProduct: true,
-                shoppingListItem: item,
+                product: item,
               ));
     }
   }
 
   void deleteFunc(BuildContext context, {required String productId}) {
-    ShoppingListItem item = shoppingList[productId]!;
+    Product item = shoppingList[productId]!;
     showDialog(
       context: context,
       builder: (context) {
@@ -111,18 +109,27 @@ class _HomeState extends State<Home> {
 
   /// Returns a filtered list of items to put inside the main ListView.
   List<Widget> getItemsToDisplay() {
-    Iterable<ShoppingListItem> itemsToDisplay = shoppingList.values;
+    Iterable<Product> products = shoppingList.values;
     if (filteredShop != '') {
       // there is a filter applied
-      itemsToDisplay = itemsToDisplay.where((item) {
+      products = products.where((item) {
         if (filteredShop == '~') {
-          return item.shop == '';
+          return item.shop == null;
         }
         return item.shop == filteredShop;
       });
     }
+    // create actual widgets from products
+    Iterable<ProductCard> itemsToDisplay = products.map(wrapProductWithCard);
     // reversed so that they appear in a chronological order
     return itemsToDisplay.toList().reversed.toList();
+  }
+
+  ProductCard wrapProductWithCard(Product product) {
+    return ProductCard(
+        product: product,
+        editFunc: () => editFunc(context, productId: product.id),
+        deleteFunc: () => deleteFunc(context, productId: product.id));
   }
 
   @override
@@ -153,25 +160,24 @@ class _HomeState extends State<Home> {
           ),
           PopupMenuButton(
             icon: Icon(Icons.filter_alt),
-            itemBuilder: (BuildContext context) =>
-                ShoppingListItem.allAvailableShops
-                    .map((e) => PopupMenuItem(
-                          child: Text(e),
-                          value: e,
-                        ))
-                    .toList()
-                      ..insert(
-                          0,
-                          PopupMenuItem(
-                            child: Text('Wszystkie'),
-                            value: '',
-                          ))
-                      ..insert(
-                          1,
-                          PopupMenuItem(
-                            child: Text('Nieokreślone'),
-                            value: '~',
-                          )),
+            itemBuilder: (BuildContext context) => Product.allAvailableShops
+                .map((e) => PopupMenuItem(
+                      child: Text(e),
+                      value: e,
+                    ))
+                .toList()
+                  ..insert(
+                      0,
+                      PopupMenuItem(
+                        child: Text('Wszystkie'),
+                        value: '',
+                      ))
+                  ..insert(
+                      1,
+                      PopupMenuItem(
+                        child: Text('Nieokreślone'),
+                        value: '~',
+                      )),
             onSelected: (newValue) {
               setState(() {
                 filteredShop = newValue as String;

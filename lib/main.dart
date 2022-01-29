@@ -8,7 +8,7 @@ Future<void> main() async {
   await SM.setupStorage();
   runApp(MaterialApp(
     routes: {
-      '/': (context) => Home(),
+      '/': (context) => HomeScreen(),
       '/settings': (context) => SettingsScreen(),
     },
     theme: ThemeData(
