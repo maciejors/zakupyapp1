@@ -35,10 +35,8 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
   void _confirmEditProduct() {
     var productData = formProductDataFromInput();
     // adjusting date of creation
-    productData['dateAdded'] =
-        widget.product!.dateAdded.toString();
-    dbManager.storeProductFromData(
-        widget.product!.id, productData);
+    productData['dateAdded'] = widget.product!.dateAdded.toString();
+    dbManager.storeProductFromData(widget.product!.id, productData);
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text('Pomyślnie zedytowano produkt'),
@@ -46,7 +44,8 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
   }
 
   void _addProduct() {
-    dbManager.storeProductFromData(Product.generateProductId(), formProductDataFromInput());
+    dbManager.storeProductFromData(
+        Product.generateProductId(), formProductDataFromInput());
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text('Dodano produkt do listy'),
@@ -56,17 +55,18 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
   Map<String, String> formProductDataFromInput() {
     var productData = {
       'name': _productName,
-      'shop':
-          _shopSelection == 'requestInput' ? _shopNameInput : _shopSelection,
       'dateAdded': DateTime.now().toString(),
       'whoAdded': SM.getUserName(),
     };
+    if (_shopSelection != '') {
+      productData['shop'] =
+          _shopSelection == 'requestInput' ? _shopNameInput : _shopSelection;
+    }
     if (_includeDeadline) {
       Deadline deadline;
       if (_includeTimeInDeadline) {
         deadline = Deadline.fromDateAndTime(_selectedDay, _selectedTime);
-      }
-      else {
+      } else {
         deadline = Deadline.ignoringTime(_selectedDay);
       }
       productData['deadline'] = deadline.toString();

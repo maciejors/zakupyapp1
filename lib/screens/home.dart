@@ -34,11 +34,14 @@ class _HomeScreenState extends State<HomeScreen> {
   void activateListeners() {
     dataStream = db.child('list').onValue.listen((event) {
       setState(() {
+        isDataReady = true;
         if (event.snapshot.value == null) {
+          isDataReady = true;
           return;
         }
         var data = event.snapshot.value as Map<Object?, Object?>;
         data.forEach((key, value) {
+          // TODO: move that to DatabaseManager
           String id = key as String;
           String productName = (value as Map)['name'];
           String whoAdded = value['whoAdded'];
@@ -57,7 +60,6 @@ class _HomeScreenState extends State<HomeScreen> {
               deadline: deadline);
           shoppingList[id] = newProduct;
         });
-        isDataReady = true;
       });
     });
   }
