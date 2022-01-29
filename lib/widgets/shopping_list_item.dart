@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:zakupyapk/utils/storage_manager.dart';
+import 'package:zakupyapk/utils/urgency.dart';
 import 'package:zakupyapk/widgets/text_with_icon.dart';
 
 class ShoppingListItem extends StatelessWidget {
@@ -42,11 +44,41 @@ class ShoppingListItem extends StatelessWidget {
       : heroTag = "shoppingListItem$id",
         super(key: key);
 
+  /// Returns an urgency based on product's deadline.
+  Urgency? getUrgency() {
+    if (deadline == null) {
+      return null;
+    }
+    DateTime nowExact = DateTime.now();
+    DateTime today = DateTime(
+        nowExact.year, nowExact.month, nowExact.day); // now but ignoring hour
+    DateTime deadlineDay = DateTime(deadline!.year, deadline!.month,
+        deadline!.day); // deadline but ignoring hour
+    int dayDiff = deadlineDay.difference(today).inDays;
+    Urgency result = Urgency.not_urgent;
+    if (nowExact.isAfter(deadline!)) {
+      if (today.isAtSameMomentAs(deadlineDay) && !showHourInDeadline!) {
+        result = Urgency.urgent;
+      }
+      else {
+        result = Urgency.too_late;
+      }
+    }
+    else if (dayDiff <= 1) {
+      result = Urgency.urgent;
+    }
+    return result;
+  }
+
   /// Forms a nice looking text with icon informing about the
   /// product's deadline.
   ///
   /// It assumes that [deadline] and [showHourInDeadline] are not `null`.
   Widget _formDeadlineDescription(double fontSize) {
+    if (deadline == null) {
+      return Container();
+    }
+    print(this.id);
     DateTime nowExact = DateTime.now();
     DateTime today = DateTime(
         nowExact.year, nowExact.month, nowExact.day); // now but ignoring hour
@@ -57,11 +89,18 @@ class ShoppingListItem extends StatelessWidget {
     // red if date is close (today or tomorrow)
     // grey if it's too late
     // otherwise black
-    Color color = Colors.black;
-    if (nowExact.isAfter(deadline!)) {
-      color = Colors.grey;
-    } else if (dayDiff <= 1) {
-      color = Colors.red;
+    Color color;
+    Urgency urgency = getUrgency()!;
+    switch (urgency) {
+      case Urgency.too_late:
+        color = Colors.grey;
+        break;
+      case Urgency.urgent:
+        color = Colors.red;
+        break;
+      case Urgency.not_urgent:
+        color = Colors.black;
+        break;
     }
     // setting a string description
     String description = '';
@@ -84,11 +123,14 @@ class ShoppingListItem extends StatelessWidget {
           break;
       }
       if (showHourInDeadline!) {
-        description += ' o ${deadline!.hour}:${deadline!.minute}';
+        description += ' o ${deadline!.hour}:'
+            '${deadline!.minute.toString().padLeft(2, '0')}';
       }
-    } else if (dayDiff < 0) {
+    }
+    else if (dayDiff < 0) {
       description = '$dayDiff dni temu';
-    } else if (dayDiff > 0) {
+    }
+    else if (dayDiff > 0) {
       description = 'za $dayDiff dni';
     }
     description = 'Potrzebne na: $description';
@@ -97,15 +139,17 @@ class ShoppingListItem extends StatelessWidget {
       iconData: Icons.access_time,
       color: color,
       size: fontSize,
+      fontStyle: FontStyle.italic,
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    // adding custom shops
     if (!allAvailableShops.contains(shop) &&
         shop != '' &&
+        // true for settings screen
         shop != 'Przykładowy') {
-      // last one is true for settings screen
       allAvailableShops.add(shop);
     }
     double mainFontSize = this.mainFontSize ?? SM.getMainFontSize();
@@ -138,9 +182,13 @@ class ShoppingListItem extends StatelessWidget {
               ),
               Visibility(
                 visible: deadline != null,
+                child: SizedBox(height: mainFontSize * 0.1),
+              ),
+              Visibility(
+                visible: deadline != null,
                 child: _formDeadlineDescription(mainFontSize),
               ),
-              SizedBox(height: mainFontSize * 0.66),
+              SizedBox(height: mainFontSize * 0.33),
               RichText(
                 text: TextSpan(
                   style: TextStyle(fontSize: mainFontSize, color: Colors.black),
