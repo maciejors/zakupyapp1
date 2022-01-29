@@ -1,5 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:zakupyapk/widgets/shopping_list_item.dart';
+import 'package:zakupyapk/core/product.dart';
 
 class DatabaseManager {
   static DatabaseManager _instance =
@@ -14,11 +14,11 @@ class DatabaseManager {
 
   DatabaseManager._new(this._db);
 
-  void storeProductFromClass(ShoppingListItem product) {
+  void storeProductFromClass(Product product) {
     storeProductFromData(product.id, product.toMap());
   }
 
-  void storeProductFromData(String productId, Map<String, dynamic> productData) {
+  void storeProductFromData(String productId, Map<String, String> productData) {
     _db.child('list').child(productId).set(productData);
   }
 }
