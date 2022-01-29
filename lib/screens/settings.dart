@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zakupyapk/utils/date_to_string.dart';
+import 'package:zakupyapk/utils/date_time_functions.dart';
 import 'package:zakupyapk/utils/storage_manager.dart';
 import 'package:zakupyapk/widgets/main_drawer.dart';
 import 'package:zakupyapk/widgets/shopping_list_item.dart';
@@ -77,7 +77,7 @@ class _SettingsState extends State<Settings> {
             id: '',
             name: 'Przykładowa nazwa produktu',
             shop: 'Przykładowy',
-            dateAddedToDisplay: dateToString(DateTime.now()),
+            dateAddedToDisplay: dateTimeToString(DateTime.now()),
             whoAdded: username,
             editFunc: () {},
             deleteFunc: () {},

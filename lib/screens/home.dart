@@ -42,19 +42,21 @@ class _HomeState extends State<Home> {
           String shopName = value['shop'];
           String dateToDisplay = value['dateAddedToDisplay'];
           String whoAdded = value['whoAdded'];
+          DateTime? deadline;
+          if (value['deadline'] != null) {
+            deadline = DateTime.parse(value['deadline']);
+          }
+          bool? showHourInDeadline = value['showHourInDeadline'];
           var newProduct = ShoppingListItem(
               id: id,
               name: productName,
               shop: shopName,
               dateAddedToDisplay: dateToDisplay,
               whoAdded: whoAdded,
-              editFunc: () => editFunc(context,
-                  productId: id,
-                  whoAdded: whoAdded,
-                  initialProductName: productName,
-                  shopName: shopName),
-              deleteFunc: () =>
-                  deleteFunc(context, productId: id, productName: productName));
+              deadline: deadline,
+              showHourInDeadline: showHourInDeadline,
+              editFunc: () => editFunc(context, productId: id),
+              deleteFunc: () => deleteFunc(context, productId: id));
           shoppingList[id] = newProduct;
         });
         isDataReady = true;
@@ -62,32 +64,27 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void editFunc(BuildContext context,
-      {required String productId,
-      required String whoAdded,
-      required String initialProductName,
-      required String shopName}) {
-    if (SM.getUserName() == whoAdded) {
+  void editFunc(BuildContext context, {required String productId}) {
+    ShoppingListItem item = shoppingList[productId]!;
+    if (SM.getUserName() == item.whoAdded) {
       showDialog(
           context: context,
           barrierDismissible: false,
           builder: (context) => ProductEditorDialog(
                 editingProduct: true,
-                productId: productId,
-                initialProductName: initialProductName,
-                initialShopName: shopName,
+                shoppingListItem: item,
               ));
     }
   }
 
-  void deleteFunc(BuildContext context,
-      {required String productId, required String productName}) {
+  void deleteFunc(BuildContext context, {required String productId}) {
+    ShoppingListItem item = shoppingList[productId]!;
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: Text('Usuń produkt'),
-          content: Text('Czy na pewno chcesz usunąć: $productName?'),
+          content: Text('Czy na pewno chcesz usunąć: ${item.name}?'),
           actions: <Widget>[
             TextButton(
               child: Text('Anuluj'),
