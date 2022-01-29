@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:zakupyapk/utils/date_time_functions.dart';
+import 'package:zakupyapk/core/product.dart';
 import 'package:zakupyapk/utils/storage_manager.dart';
 import 'package:zakupyapk/widgets/main_drawer.dart';
-import 'package:zakupyapk/widgets/shopping_list_item.dart';
+import 'package:zakupyapk/widgets/product_card.dart';
 import 'package:zakupyapk/widgets/text_with_icon.dart';
 
 class Settings extends StatefulWidget {
@@ -73,12 +73,14 @@ class _SettingsState extends State<Settings> {
             color: Colors.orange,
             size: SM.getMainFontSize() * 1.5,
           ),
-          ShoppingListItem(
-            id: '',
-            name: 'Przykładowa nazwa produktu',
-            shop: 'Przykładowy',
-            dateAddedToDisplay: dateTimeToString(DateTime.now()),
-            whoAdded: username,
+          ProductCard(
+            product: Product(
+              id: '',
+              name: 'Przykładowa nazwa produktu',
+              shop: 'Przykładowy',
+              dateAdded: DateTime.now(),
+              whoAdded: username,
+            ),
             editFunc: () {},
             deleteFunc: () {},
             mainFontSize: mainFontSize,
