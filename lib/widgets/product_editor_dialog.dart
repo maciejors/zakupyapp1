@@ -33,7 +33,7 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
   final DatabaseManager dbManager = DatabaseManager.instance;
 
   void _confirmEditProduct() {
-    var productData = formProductData();
+    var productData = formProductDataFromInput();
     // adjusting date of creation
     productData['dateAdded'] =
         widget.product!.dateAdded.toString();
@@ -46,14 +46,14 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
   }
 
   void _addProduct() {
-    dbManager.storeProductFromData(Product.generateProductId(), formProductData());
+    dbManager.storeProductFromData(Product.generateProductId(), formProductDataFromInput());
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text('Dodano produkt do listy'),
     ));
   }
 
-  Map<String, String> formProductData() {
+  Map<String, String> formProductDataFromInput() {
     var productData = {
       'name': _productName,
       'shop':
