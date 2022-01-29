@@ -3,23 +3,23 @@ import 'package:zakupyapk/utils/urgency.dart';
 
 /// A handy way to manage product's deadline
 class Deadline {
-  final DateTime _deadline;
-  final bool _ignoringTime;
+  final DateTime deadline;
+  final bool isIgnoringTime;
 
-  Deadline._new(this._deadline, this._ignoringTime);
+  Deadline._new(this.deadline, this.isIgnoringTime);
 
   Deadline.fromDateTime(DateTime dateTime)
-      : _deadline = dateTime,
-        _ignoringTime = false;
+      : deadline = dateTime,
+        isIgnoringTime = false;
 
   Deadline.fromDateAndTime(DateTime date, TimeOfDay time)
-      : _deadline =
+      : deadline =
             DateTime(date.year, date.month, date.day, time.hour, time.minute),
-        _ignoringTime = false;
+        isIgnoringTime = false;
 
   Deadline.ignoringTime(DateTime date)
-      : _deadline = date,
-        _ignoringTime = true;
+      : deadline = date,
+        isIgnoringTime = true;
 
   /// Parses a Deadline object from a String.
   ///
@@ -36,12 +36,12 @@ class Deadline {
     DateTime nowExact = DateTime.now();
     DateTime today = DateTime(
         nowExact.year, nowExact.month, nowExact.day); // now but ignoring hour
-    DateTime deadlineDay = DateTime(_deadline.year, _deadline.month,
-        _deadline.day); // deadline but ignoring hour
+    DateTime deadlineDay = DateTime(deadline.year, deadline.month,
+        deadline.day); // deadline but ignoring hour
     int dayDiff = deadlineDay.difference(today).inDays;
     Urgency result = Urgency.not_urgent;
-    if (nowExact.isAfter(_deadline)) {
-      if (today.isAtSameMomentAs(deadlineDay) && _ignoringTime) {
+    if (nowExact.isAfter(deadline)) {
+      if (today.isAtSameMomentAs(deadlineDay) && isIgnoringTime) {
         result = Urgency.urgent;
       }
       else {
@@ -65,8 +65,8 @@ class Deadline {
     DateTime nowExact = DateTime.now();
     DateTime today = DateTime(
         nowExact.year, nowExact.month, nowExact.day); // now but ignoring hour
-    DateTime deadlineDay = DateTime(_deadline.year, _deadline.month,
-        _deadline.day); // deadline but ignoring hour
+    DateTime deadlineDay = DateTime(deadline.year, deadline.month,
+        deadline.day); // deadline but ignoring hour
     int dayDiff = deadlineDay.difference(today).inDays;
     String description = '';
     if (dayDiff.abs() <= 2) {
@@ -87,9 +87,9 @@ class Deadline {
           description = 'pojutrze';
           break;
       }
-      if (!_ignoringTime) {
-        description += ' o ${_deadline.hour}:'
-            '${_deadline.minute.toString().padLeft(2, '0')}';
+      if (!isIgnoringTime) {
+        description += ' o ${deadline.hour}:'
+            '${deadline.minute.toString().padLeft(2, '0')}';
       }
     } else if (dayDiff < 0) {
       description = '$dayDiff dni temu';
@@ -101,6 +101,6 @@ class Deadline {
 
   @override
   String toString() {
-    return '$_deadline|$_ignoringTime';
+    return '$deadline|$isIgnoringTime';
   }
 }
