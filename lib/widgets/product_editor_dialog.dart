@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:zakupyapk/utils/date_functions.dart';
+import 'package:zakupyapk/utils/database_manager.dart';
+import 'package:zakupyapk/utils/date_time_functions.dart';
 import 'package:zakupyapk/utils/storage_manager.dart';
 import 'package:zakupyapk/widgets/labeled_checkbox.dart';
 import 'package:zakupyapk/widgets/shopping_list_item.dart';
@@ -29,7 +30,7 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
   bool _showHourInDeadline = false;
   DateTime _selectedDay = DateTime.now();
   TimeOfDay _selectedTime = TimeOfDay.now();
-  final _db = FirebaseDatabase.instance.reference();
+  final DatabaseManager dbManager = DatabaseManager.instance;
 
   String _generateProductId() {
     DateTime now = DateTime.now();
@@ -42,50 +43,13 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
         '-${now.millisecond.toString().padLeft(3, '0')}';
   }
 
-  /// DD/MM/YYYY
-  String dateToString(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}/'
-        '${date.month.toString().padLeft(2, '0')}/'
-        '${date.year}';
-  }
-
   void _confirmEditProduct() {
-    String productId = widget.shoppingListItem!.id;
-    _db.child('list').child(productId).child('name').set(_productName);
-    _db.child('list').child(productId).child('shop').set(
-        _shopSelection == 'requestInput' ? _shopNameInput : _shopSelection);
-    if (_includeDeadline) {
-      int hour = 0;
-      int minute = 0;
-      if (_showHourInDeadline) {
-        hour = _selectedTime.hour;
-        minute = _selectedTime.minute;
-      }
-      DateTime deadline = DateTime(_selectedDay.year, _selectedDay.month,
-          _selectedDay.day, hour, minute);
-      _db
-          .child('list')
-          .child(productId)
-          .child('deadline')
-          .set(deadline.toString());
-      _db
-          .child('list')
-          .child(productId)
-          .child('showHourInDeadline')
-          .set(_showHourInDeadline);
-    }
-    else {
-      _db
-          .child('list')
-          .child(productId)
-          .child('deadline')
-          .set(null);
-      _db
-          .child('list')
-          .child(productId)
-          .child('showHourInDeadline')
-          .set(null);
-    }
+    var productData = formProductData();
+    // adjusting date of creation
+    productData['dateAddedToDisplay'] =
+        widget.shoppingListItem!.dateAddedToDisplay;
+    dbManager.storeProductFromData(
+        widget.shoppingListItem!.id, productData);
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text('Pomyślnie zedytowano produkt'),
@@ -93,11 +57,19 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
   }
 
   void _addProduct() {
-    Map<String, String> productData = {
+    dbManager.storeProductFromData(_generateProductId(), formProductData());
+    Navigator.of(context).pop();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Dodano produkt do listy'),
+    ));
+  }
+
+  Map<String, dynamic> formProductData() {
+    Map<String, dynamic> productData = {
       'name': _productName,
       'shop':
           _shopSelection == 'requestInput' ? _shopNameInput : _shopSelection,
-      'dateAddedToDisplay': dateToString(DateTime.now()),
+      'dateAddedToDisplay': dateTimeToString(DateTime.now()),
       'whoAdded': SM.getUserName(),
     };
     if (_includeDeadline) {
@@ -110,13 +82,9 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
       DateTime deadline = DateTime(_selectedDay.year, _selectedDay.month,
           _selectedDay.day, hour, minute);
       productData['deadline'] = deadline.toString();
-      productData['showHourInDeadline'] = _showHourInDeadline.toString();
+      productData['showHourInDeadline'] = _showHourInDeadline;
     }
-    _db.child('list').child(_generateProductId()).set(productData);
-    Navigator.of(context).pop();
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('Dodano produkt do listy'),
-    ));
+    return productData;
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -193,9 +161,9 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
                   _productName = input;
                 },
               ),
-              SizedBox(height: SM.getMainFontSize()),
 
               // Shop selection title
+              SizedBox(height: SM.getMainFontSize()),
               SimpleTextWithIcon(
                 text: 'Sklep',
                 iconData: Icons.shopping_cart,
@@ -242,6 +210,16 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
                     _shopNameInput = input;
                   },
                 ),
+              ),
+
+              // Deadline title
+              SizedBox(height: SM.getMainFontSize() * 0.5),
+              SimpleTextWithIcon(
+                text: 'Potrzebne na',
+                iconData: Icons.access_time_outlined,
+                color: Colors.orange,
+                size: SM.getMainFontSize() * 1.5,
+                fontWeight: FontWeight.bold,
               ),
 
               // Include deadline?
@@ -295,7 +273,7 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
               Visibility(
                 visible: _includeDeadline && _showHourInDeadline,
                 child: TextButton(
-                  child: Text(_selectedTime.toString()),
+                  child: Text(timeToString(_selectedTime)),
                   style: TextButton.styleFrom(
                     primary: Colors.black,
                     backgroundColor: Colors.orange,

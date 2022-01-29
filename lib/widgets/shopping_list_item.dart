@@ -78,7 +78,6 @@ class ShoppingListItem extends StatelessWidget {
     if (deadline == null) {
       return Container();
     }
-    print(this.id);
     DateTime nowExact = DateTime.now();
     DateTime today = DateTime(
         nowExact.year, nowExact.month, nowExact.day); // now but ignoring hour
@@ -141,6 +140,21 @@ class ShoppingListItem extends StatelessWidget {
       size: fontSize,
       fontStyle: FontStyle.italic,
     );
+  }
+
+  /// Map does not contain ID of the product
+  Map<String, dynamic> toMap() {
+    Map<String, dynamic> result = {
+      'name': name,
+      'dateAddedToDisplay': dateAddedToDisplay,
+      'shop': shop,
+      'whoAdded': whoAdded,
+    };
+    if (deadline != null) {
+      result['deadline'] = deadline.toString();
+      result['showHourInDeadline'] = showHourInDeadline!;
+    }
+    return result;
   }
 
   @override
