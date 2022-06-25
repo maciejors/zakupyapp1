@@ -17,23 +17,31 @@ class MainDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          DrawerHeader(
+          DrawerHeader(  // logo at the top
             child: Image.asset('assets/images/logo.png'),
             decoration: BoxDecoration(color: Colors.orange),
           ),
-          ListTile(
+
+          ListTile(  // shopping list
             leading: Icon(Icons.shopping_cart),
             title: Text('Lista zakupów'),
             onTap: () {
               switchScreen(context, '/');
             },
           ),
-          ListTile(
+
+          ListTile(  // settings
             leading: Icon(Icons.settings),
             title: Text('Ustawienia'),
             onTap: () {
               switchScreen(context, '/settings');
             },
+          ),
+
+          ListTile(  // check for updates
+            leading: Icon(Icons.download),
+            title: Text('Sprawdź dostępność aktualizacji'),
+            onTap: () {},
           ),
         ],
       ),

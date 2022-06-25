@@ -8,10 +8,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.2
-  firebase_core: ^1.4.0
-  firebase_database: ^7.1.2
-  shared_preferences: ^2.0.6
+  cupertino_icons: 1.0.2
+  firebase_core: ^1.18.0
+  firebase_database: ^9.0.16
+  shared_preferences: 2.0.6
+  package_info_plus: 1.4.2
 
 dev_dependencies:
   flutter_test:
