@@ -3,9 +3,9 @@ import 'package:zakupyapk/core/product.dart';
 
 class DatabaseManager {
   static DatabaseManager _instance =
-      DatabaseManager._new(FirebaseDatabase.instance.reference());
+      DatabaseManager._new(FirebaseDatabase.instance.ref());
   static DatabaseManager _testInstance =
-      DatabaseManager._new(FirebaseDatabase.instance.reference().child('test'));
+      DatabaseManager._new(FirebaseDatabase.instance.ref().child('test'));
 
   static DatabaseManager get instance => _instance;
   static DatabaseManager get testInstance => _testInstance;
