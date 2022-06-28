@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:zakupyapk/core/product.dart';
 import 'package:zakupyapk/utils/date_time_functions.dart';
 import 'package:zakupyapk/utils/storage_manager.dart';
-import 'package:zakupyapk/utils/urgency.dart';
+import 'package:zakupyapk/core/urgency.dart';
 import 'package:zakupyapk/widgets/text_with_icon.dart';
 
 class ProductCard extends StatelessWidget {
