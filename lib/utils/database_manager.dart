@@ -1,24 +1,37 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:zakupyapk/core/product.dart';
+import 'package:zakupyapk/utils/app_info.dart';
 
+/// A singleton responsible for interactions with the database
 class DatabaseManager {
   static DatabaseManager _instance =
       DatabaseManager._new(FirebaseDatabase.instance.ref());
-  static DatabaseManager _testInstance =
-      DatabaseManager._new(FirebaseDatabase.instance.ref().child('test'));
-
   static DatabaseManager get instance => _instance;
-  static DatabaseManager get testInstance => _testInstance;
 
   DatabaseReference _db;
 
+  // a private constructor
   DatabaseManager._new(this._db);
 
+  /// Stores a single product.
+  /// Takes a product class object as an argument
   void storeProductFromClass(Product product) {
     storeProductFromData(product.id, product.toMap());
   }
 
+  /// Stores a single product.
+  /// Takes a product data map as an argument
   void storeProductFromData(String productId, Map<String, String> productData) {
     _db.child('list').child(productId).set(productData);
+  }
+
+  /// Checks whether a new version of the app is avaiable in the database
+  Future<bool> isUpdateAvailable() async {
+    String currVersion = AppInfo.getVersion();
+
+    DataSnapshot snapshot = await _db.child('version').get();
+    String newestVersion = snapshot.value! as String;
+
+    return newestVersion != currVersion;
   }
 }
