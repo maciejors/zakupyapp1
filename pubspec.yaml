@@ -1,6 +1,6 @@
 name: zakupyapk
 description: Lista zakupowa
-version: 1.2.0
+version: 1.3.0  # updated 28/06/2022
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
