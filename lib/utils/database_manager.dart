@@ -1,17 +1,19 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:zakupyapk/core/product.dart';
 import 'package:zakupyapk/utils/app_info.dart';
 
 /// A singleton responsible for interactions with the database
 class DatabaseManager {
   static DatabaseManager _instance =
-      DatabaseManager._new(FirebaseDatabase.instance.ref());
+      DatabaseManager._();
   static DatabaseManager get instance => _instance;
 
-  DatabaseReference _db;
+  final _db = FirebaseDatabase.instance.ref();
+  final _storage = FirebaseStorage.instance;
 
   // a private constructor
-  DatabaseManager._new(this._db);
+  DatabaseManager._();
 
   /// Stores a single product.
   /// Takes a product class object as an argument
