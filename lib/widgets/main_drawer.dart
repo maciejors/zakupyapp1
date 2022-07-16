@@ -14,37 +14,31 @@ class MainDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          DrawerHeader(  // logo at the top
-            child: Image.asset('assets/images/logo.png'),
-            decoration: BoxDecoration(color: Colors.orange),
-          ),
-
-          ListTile(  // shopping list
-            leading: Icon(Icons.shopping_cart),
-            title: Text('Lista zakupów'),
-            onTap: () {
-              switchScreen(context, '/');
-            },
-          ),
-
-          ListTile(  // settings
-            leading: Icon(Icons.settings),
-            title: Text('Ustawienia'),
-            onTap: () {
-              switchScreen(context, '/settings');
-            },
-          ),
-
-          ListTile(  // check for updates
-            leading: Icon(Icons.download),
-            title: Text('Sprawdź dostępność aktualizacji'),
-            onTap: () {},
-          ),
-        ],
-      ),
-    );
+        child: ListView(
+      padding: EdgeInsets.zero,
+      children: [
+        DrawerHeader(
+          // logo at the top
+          child: Image.asset('assets/images/logo.png'),
+          decoration: BoxDecoration(color: Colors.orange),
+        ),
+        ListTile(
+          // shopping list
+          leading: Icon(Icons.shopping_cart),
+          title: Text('Lista zakupów'),
+          onTap: () {
+            switchScreen(context, '/');
+          },
+        ),
+        ListTile(
+          // settings
+          leading: Icon(Icons.settings),
+          title: Text('Ustawienia'),
+          onTap: () {
+            switchScreen(context, '/settings');
+          },
+        ),
+      ],
+    ));
   }
 }
