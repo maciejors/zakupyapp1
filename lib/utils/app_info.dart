@@ -1,5 +1,7 @@
 import 'package:package_info_plus/package_info_plus.dart';
 
+/// A wrapper for the package\_info\_plus library.
+/// Invoke the [AppInfo.initialise()] method before using
 class AppInfo {
 
   static PackageInfo _packageInfo = PackageInfo(

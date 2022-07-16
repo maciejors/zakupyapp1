@@ -138,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     Firebase.initializeApp();
-    FirebaseDatabase.instance.setPersistenceEnabled(true);
+    FirebaseDatabase.instance.setPersistenceEnabled(false);
     activateListeners();
   }
 
