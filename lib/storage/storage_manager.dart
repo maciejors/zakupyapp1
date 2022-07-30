@@ -8,16 +8,24 @@ class SM {
     _storage = await SharedPreferences.getInstance();
   }
 
+  static String? getShoppingListId() {
+    return _storage.getString('shoppingListId');
+  }
+
+  static void setShoppingListId(String shoppingListId) {
+    _storage.setString('shoppingListId', shoppingListId);
+  }
+
   static double getMainFontSize() {
     return _storage.getDouble('mainFontSize') ?? 14.0;
   }
 
-  static String getUserName() {
-    return _storage.getString('username') ?? 'Użytkownik bez nazwy';
-  }
-
   static void setMainFontSize(double mainFontSize) {
     _storage.setDouble('mainFontSize', mainFontSize);
+  }
+
+  static String getUserName() {
+    return _storage.getString('username') ?? 'Użytkownik bez nazwy';
   }
 
   static void setUserName(String username) {

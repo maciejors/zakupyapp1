@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:zakupyapk/core/product.dart';
-import 'package:zakupyapk/utils/storage_manager.dart';
+import 'package:zakupyapk/storage/storage_manager.dart';
 import 'package:zakupyapk/widgets/main_drawer.dart';
 import 'package:zakupyapk/widgets/product_card.dart';
 import 'package:zakupyapk/widgets/text_with_icon.dart';
 
-import '../utils/database_manager.dart';
+import '../storage/database_manager.dart';
 import '../widgets/update_dialog.dart';
 
 class SettingsScreen extends StatefulWidget {

@@ -1,12 +1,7 @@
-import 'dart:async';
-import 'dart:collection';
-
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:zakupyapk/core/deadline.dart';
 import 'package:zakupyapk/core/product.dart';
-import 'package:zakupyapk/utils/storage_manager.dart';
+import 'package:zakupyapk/storage/database_manager.dart';
+import 'package:zakupyapk/storage/storage_manager.dart';
 import 'package:zakupyapk/widgets/main_drawer.dart';
 import 'package:zakupyapk/widgets/product_editor_dialog.dart';
 import 'package:zakupyapk/widgets/product_card.dart';
@@ -20,10 +15,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late StreamSubscription dataStream;
-  final Map<String, Product> shoppingList = LinkedHashMap();
+  final db = DatabaseManager.instance;
+  List<Product> shoppingList = [];
   bool isDataReady = false;
-  final db = FirebaseDatabase.instance.reference(); //TODO: AppCheck
 
   /// Name of the shop serving as a filter.<br>
   /// Wildcard values:
@@ -31,60 +25,31 @@ class _HomeScreenState extends State<HomeScreen> {
   /// * '~' - show items with no shop specified.
   String filteredShop = '';
 
-  void activateListeners() {
-    dataStream = db.child('list').onValue.listen((event) {
-      setState(() {
-        isDataReady = true;
-        if (event.snapshot.value == null) {
-          isDataReady = true;
-          return;
-        }
-        var data = event.snapshot.value as Map<Object?, Object?>;
-        data.forEach((key, value) {
-          // TODO: move that to DatabaseManager
-          String id = key as String;
-          String productName = (value as Map)['name'];
-          String whoAdded = value['whoAdded'];
-          DateTime dateAdded = DateTime.parse(value['dateAdded']);
-          String? shopName = value['shop'];
-          Deadline? deadline;
-          if (value['deadline'] != null) {
-            deadline = Deadline.parse(value['deadline']);
-          }
-          var newProduct = Product(
-              id: id,
-              name: productName,
-              shop: shopName,
-              dateAdded: dateAdded,
-              whoAdded: whoAdded,
-              deadline: deadline);
-          shoppingList[id] = newProduct;
-        });
-      });
-    });
+  /// Used to wrap functions passed to the onPressed property
+  /// in buttons to disable them if the data is not ready yet
+  void Function()? disableIfDataNotReady(void Function() func) {
+    return isDataReady ? func : null;
   }
 
-  void editFunc(BuildContext context, {required String productId}) {
-    Product item = shoppingList[productId]!;
-    if (SM.getUserName() == item.whoAdded) {
+  void editFunc(BuildContext context, {required Product product}) {
+    if (SM.getUserName() == product.whoAdded) {
       showDialog(
           context: context,
           barrierDismissible: false,
           builder: (context) => ProductEditorDialog(
                 editingProduct: true,
-                product: item,
+                product: product,
               ));
     }
   }
 
-  void deleteFunc(BuildContext context, {required String productId}) {
-    Product item = shoppingList[productId]!;
+  void deleteFunc(BuildContext context, {required Product product}) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: Text('Usuń produkt'),
-          content: Text('Czy na pewno chcesz usunąć: ${item.name}?'),
+          content: Text('Czy na pewno chcesz usunąć: ${product.name}?'),
           actions: <Widget>[
             TextButton(
               child: Text('Anuluj'),
@@ -95,8 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
             TextButton(
               child: Text('Tak'),
               onPressed: () {
-                db.child('list').child(productId).remove();
-                shoppingList.remove(productId);
+                db.removeProduct(product.id);
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text('Usunięto wybrany produkt'),
@@ -111,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// Returns a filtered list of items to put inside the main ListView.
   List<Widget> getItemsToDisplay() {
-    Iterable<Product> products = shoppingList.values;
+    Iterable<Product> products = [...shoppingList];
     if (filteredShop != '') {
       // there is a filter applied
       products = products.where((item) {
@@ -123,29 +87,33 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     // create actual widgets from products
     Iterable<ProductCard> itemsToDisplay = products.map(wrapProductWithCard);
-    // reversed so that they appear in a chronological order
-    return itemsToDisplay.toList().reversed.toList();
+    return itemsToDisplay.toList();
   }
 
   ProductCard wrapProductWithCard(Product product) {
     return ProductCard(
         product: product,
-        editFunc: () => editFunc(context, productId: product.id),
-        deleteFunc: () => deleteFunc(context, productId: product.id));
+        editFunc: () => editFunc(context, product: product),
+        deleteFunc: () => deleteFunc(context, product: product));
   }
 
   @override
   void initState() {
     super.initState();
-    Firebase.initializeApp();
-    FirebaseDatabase.instance.setPersistenceEnabled(false);
-    activateListeners();
+    db.setShoppingList('dev');
+    db.setupListener((shoppingList) {
+      setState(() {
+        shoppingList.sort((p1, p2) => p2.dateAdded.compareTo(p1.dateAdded));
+        this.shoppingList = shoppingList;
+        isDataReady = true;
+      });
+    });
   }
 
   @override
   void deactivate() {
     super.deactivate();
-    dataStream.cancel();
+    db.cancelListener();
   }
 
   @override
@@ -158,9 +126,10 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.help),
-            onPressed: () => showHelpDialog(context),
+            onPressed: disableIfDataNotReady(() => showHelpDialog(context)),
           ),
           PopupMenuButton(
+            enabled: isDataReady,
             icon: Icon(Icons.filter_alt),
             itemBuilder: (BuildContext context) => Product.allAvailableShops
                 .map((e) => PopupMenuItem(
@@ -168,18 +137,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       value: e,
                     ))
                 .toList()
-                  ..insert(
-                      0,
-                      PopupMenuItem(
-                        child: Text('Wszystkie'),
-                        value: '',
-                      ))
-                  ..insert(
-                      1,
-                      PopupMenuItem(
-                        child: Text('Nieokreślone'),
-                        value: '~',
-                      )),
+              ..insert(
+                  0,
+                  PopupMenuItem(
+                    child: Text('Wszystkie'),
+                    value: '',
+                  ))
+              ..insert(
+                  1,
+                  PopupMenuItem(
+                    child: Text('Nieokreślone'),
+                    value: '~',
+                  )),
             onSelected: (newValue) {
               setState(() {
                 filteredShop = newValue as String;
@@ -203,15 +172,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: EdgeInsets.all(5.0),
                   ),
       ),
-      floatingActionButton: IgnorePointer(
-        ignoring: !isDataReady,
+      floatingActionButton: Visibility(
+        visible: isDataReady,
         child: FloatingActionButton(
-          onPressed: () {
+          onPressed: disableIfDataNotReady(() {
             showDialog(
                 context: context,
                 builder: (context) =>
                     ProductEditorDialog(editingProduct: false));
-          },
+          }),
           child: Icon(
             Icons.add_shopping_cart,
           ),

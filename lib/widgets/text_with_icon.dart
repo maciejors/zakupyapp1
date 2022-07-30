@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zakupyapk/utils/storage_manager.dart';
+import 'package:zakupyapk/storage/storage_manager.dart';
 
 class SimpleTextWithIcon extends StatelessWidget {
   final String text;
