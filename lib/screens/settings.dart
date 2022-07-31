@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:zakupyapk/core/product.dart';
-import 'package:zakupyapk/utils/storage_manager.dart';
+import 'package:zakupyapk/storage/storage_manager.dart';
 import 'package:zakupyapk/widgets/main_drawer.dart';
 import 'package:zakupyapk/widgets/product_card.dart';
 import 'package:zakupyapk/widgets/text_with_icon.dart';
-
-import '../utils/database_manager.dart';
-import '../widgets/update_dialog.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -16,48 +13,9 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  String shoppingListId = SM.getShoppingListId();
   String username = SM.getUserName();
   double mainFontSize = SM.getMainFontSize();
-  final db = DatabaseManager.instance;
-
-  void handleUpdateCheck(BuildContext ctx) {
-    // show loading
-    showDialog(
-      context: ctx,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        content: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [CircularProgressIndicator()],
-        ),
-      ),
-    );
-
-    db.isUpdateAvailable().then((value) {
-      if (!value) {
-        // hide loading
-        Navigator.of(ctx).pop();
-        // display info
-        ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
-          content: Text('Nie ma dostępnych aktualizacji'),
-        ));
-      } else {
-        // retrieve the latest release info
-        db.getLatestRelease().then((release) {
-          // hide loading
-          Navigator.of(ctx).pop();
-          // show update dialog
-          showDialog(
-            context: ctx,
-            barrierDismissible: false,
-            builder: (ctx) => DownloadUpdateDialog(
-              latestRelease: release,
-            ),
-          );
-        });
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,21 +29,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
         children: <Widget>[
           SizedBox(height: 5),
           SimpleTextWithIcon(
-            text: 'Aktualizacje',
-            iconData: Icons.download,
+            text: 'ID Listy zakupów:',
+            iconData: Icons.shopping_cart,
             color: Colors.orange,
             size: SM.getMainFontSize() * 1.5,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  handleUpdateCheck(context);
-                },
-                child: Text('Sprawdź dostępność aktualizacji'),
-              ),
-            ],
+          Padding(
+            padding: const EdgeInsets.only(left: 5, right: 5),
+            child: TextFormField(
+              initialValue: SM.getShoppingListId(),
+              decoration: InputDecoration(hintText: 'Wpisz ID...'),
+              onChanged: (newValue) {
+                setState(() {
+                  shoppingListId = newValue;
+                });
+              },
+            ),
           ),
           SizedBox(height: SM.getMainFontSize()),
           SimpleTextWithIcon(
@@ -154,8 +113,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             FocusManager.instance.primaryFocus!.unfocus();
           }
           setState(() {
-            SM.setMainFontSize(mainFontSize);
+            SM.setShoppingListId(shoppingListId);
             SM.setUserName(username);
+            SM.setMainFontSize(mainFontSize);
           });
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text('Zapisano ustawienia'),
