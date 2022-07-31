@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:zakupyapk/core/product.dart';
 import 'package:zakupyapk/storage/database_manager.dart';
 import 'package:zakupyapk/storage/storage_manager.dart';
@@ -6,6 +7,8 @@ import 'package:zakupyapk/widgets/main_drawer.dart';
 import 'package:zakupyapk/widgets/product_editor_dialog.dart';
 import 'package:zakupyapk/widgets/product_card.dart';
 import 'package:zakupyapk/widgets/show_help.dart';
+
+import '../widgets/update_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -19,6 +22,10 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Product> shoppingList = [];
   bool isDataReady = false;
   String shoppingListId = SM.getShoppingListId();
+
+  // this flag is necessary to prevent checking for update every time the
+  // product list gets updates
+  bool checkedForUpdate = false;
 
   /// Name of the shop serving as a filter.<br>
   /// Wildcard values:
@@ -74,6 +81,24 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void checkForUpdate() {
+    db.isUpdateAvailable().then((value) {
+      if (value) {
+        // retrieve the latest release info
+        db.getLatestRelease().then((release) {
+          // show update dialog
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (ctx) => DownloadUpdateDialog(
+              latestRelease: release,
+            ),
+          );
+        });
+      }
+    });
+  }
+
   /// Returns a filtered list of items to put inside the main ListView.
   List<Widget> getItemsToDisplay() {
     Iterable<Product> products = [...shoppingList];
@@ -104,22 +129,21 @@ class _HomeScreenState extends State<HomeScreen> {
     if (shoppingListId == '')
       return Center(
           child: Text(
-            'Nie wybrano żadnej listy zakupów. Możesz to zrobić w Ustawieniach',
-            textAlign: TextAlign.center,
-          ));
+        'Nie wybrano żadnej listy zakupów. Możesz to zrobić w Ustawieniach',
+        textAlign: TextAlign.center,
+      ));
 
     // if shoppingListId is specified, but the data is loading, display
     // a circular progress indicator
-    if (!isDataReady)
-      return Center(child: CircularProgressIndicator());
+    if (!isDataReady) return Center(child: CircularProgressIndicator());
 
     // if data is ready, but the shopping list is empty, display an info on it
     if (shoppingList.isEmpty)
       return Center(
           child: Text(
-            'Brak przedmiotów do wyświetlenia',
-            textAlign: TextAlign.center,
-          ));
+        'Brak przedmiotów do wyświetlenia',
+        textAlign: TextAlign.center,
+      ));
 
     // otherwise, display the shopping list
     return Scrollbar(
@@ -133,6 +157,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    
+    // check for updates
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      checkForUpdate();
+    });
+
+    // initialise the shopping list
     if (shoppingListId != '') {
       db.setShoppingList(shoppingListId);
       db.setupListener((shoppingList) {

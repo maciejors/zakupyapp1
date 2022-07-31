@@ -5,9 +5,6 @@ import 'package:zakupyapk/widgets/main_drawer.dart';
 import 'package:zakupyapk/widgets/product_card.dart';
 import 'package:zakupyapk/widgets/text_with_icon.dart';
 
-import '../storage/database_manager.dart';
-import '../widgets/update_dialog.dart';
-
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
 
@@ -16,50 +13,9 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-
   String shoppingListId = SM.getShoppingListId();
   String username = SM.getUserName();
   double mainFontSize = SM.getMainFontSize();
-  final db = DatabaseManager.instance;
-
-  void handleUpdateCheck(BuildContext ctx) {
-    // show loading
-    showDialog(
-      context: ctx,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        content: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [CircularProgressIndicator()],
-        ),
-      ),
-    );
-
-    db.isUpdateAvailable().then((value) {
-      if (!value) {
-        // hide loading
-        Navigator.of(ctx).pop();
-        // display info
-        ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
-          content: Text('Nie ma dostępnych aktualizacji'),
-        ));
-      } else {
-        // retrieve the latest release info
-        db.getLatestRelease().then((release) {
-          // hide loading
-          Navigator.of(ctx).pop();
-          // show update dialog
-          showDialog(
-            context: ctx,
-            barrierDismissible: false,
-            builder: (ctx) => DownloadUpdateDialog(
-              latestRelease: release,
-            ),
-          );
-        });
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,23 +28,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         padding: EdgeInsets.all(5.0),
         children: <Widget>[
           SizedBox(height: 5),
-          SimpleTextWithIcon(
-            text: 'Aktualizacje',
-            iconData: Icons.download,
-            color: Colors.orange,
-            size: SM.getMainFontSize() * 1.5,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  handleUpdateCheck(context);
-                },
-                child: Text('Sprawdź dostępność aktualizacji'),
-              ),
-            ],
-          ),
           SimpleTextWithIcon(
             text: 'ID Listy zakupów:',
             iconData: Icons.shopping_cart,
