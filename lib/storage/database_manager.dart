@@ -60,8 +60,14 @@ class DatabaseManager {
   /// Sets up the database reference pointing to the specified
   /// shopping list
   void setShoppingList(String shoppingListId) {
+    // second condition is not likely to ever evaluate to true
+    // since invalid ids are not accepted by the local storage manager
+    if (shoppingListId.length == 0 ||
+        shoppingListId.contains(RegExp(r'[/#\.\$\[\]]')))
+      return;
+
     _shoppingListRef = FirebaseDatabase.instance
-        .ref('list2/$shoppingListId'); //TODO: list2 -> list
+        .ref('shopping-lists/$shoppingListId/products');
   }
 
   /// Stores a single product.

@@ -8,11 +8,14 @@ class SM {
     _storage = await SharedPreferences.getInstance();
   }
 
-  static String? getShoppingListId() {
-    return _storage.getString('shoppingListId');
+  static String getShoppingListId() {
+    return _storage.getString('shoppingListId') ?? '';
   }
 
   static void setShoppingListId(String shoppingListId) {
+    // remove characters with a special meaning to the firebase
+    shoppingListId = shoppingListId.replaceAll(RegExp(r'[/#\.\$\[\]]'), '');
+
     _storage.setString('shoppingListId', shoppingListId);
   }
 

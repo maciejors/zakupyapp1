@@ -16,6 +16,8 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+
+  String shoppingListId = SM.getShoppingListId();
   String username = SM.getUserName();
   double mainFontSize = SM.getMainFontSize();
   final db = DatabaseManager.instance;
@@ -87,6 +89,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ],
           ),
+          SimpleTextWithIcon(
+            text: 'ID Listy zakupów:',
+            iconData: Icons.shopping_cart,
+            color: Colors.orange,
+            size: SM.getMainFontSize() * 1.5,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 5, right: 5),
+            child: TextFormField(
+              initialValue: SM.getShoppingListId(),
+              decoration: InputDecoration(hintText: 'Wpisz ID...'),
+              onChanged: (newValue) {
+                setState(() {
+                  shoppingListId = newValue;
+                });
+              },
+            ),
+          ),
           SizedBox(height: SM.getMainFontSize()),
           SimpleTextWithIcon(
             text: 'Nazwa użytkownika:',
@@ -154,8 +174,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             FocusManager.instance.primaryFocus!.unfocus();
           }
           setState(() {
-            SM.setMainFontSize(mainFontSize);
+            SM.setShoppingListId(shoppingListId);
             SM.setUserName(username);
+            SM.setMainFontSize(mainFontSize);
           });
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text('Zapisano ustawienia'),

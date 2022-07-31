@@ -18,6 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final db = DatabaseManager.instance;
   List<Product> shoppingList = [];
   bool isDataReady = false;
+  String shoppingListId = SM.getShoppingListId();
 
   /// Name of the shop serving as a filter.<br>
   /// Wildcard values:
@@ -97,17 +98,51 @@ class _HomeScreenState extends State<HomeScreen> {
         deleteFunc: () => deleteFunc(context, product: product));
   }
 
+  /// different body depending on [isDataReady] & [shoppingListId] values
+  Widget getBody() {
+    // if shoppingListId is not specified, display an info on it
+    if (shoppingListId == '')
+      return Center(
+          child: Text(
+            'Nie wybrano żadnej listy zakupów. Możesz to zrobić w Ustawieniach',
+            textAlign: TextAlign.center,
+          ));
+
+    // if shoppingListId is specified, but the data is loading, display
+    // a circular progress indicator
+    if (!isDataReady)
+      return Center(child: CircularProgressIndicator());
+
+    // if data is ready, but the shopping list is empty, display an info on it
+    if (shoppingList.isEmpty)
+      return Center(
+          child: Text(
+            'Brak przedmiotów do wyświetlenia',
+            textAlign: TextAlign.center,
+          ));
+
+    // otherwise, display the shopping list
+    return Scrollbar(
+      child: ListView(
+        children: getItemsToDisplay(),
+        padding: EdgeInsets.all(5.0),
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
-    db.setShoppingList('dev');
-    db.setupListener((shoppingList) {
-      setState(() {
-        shoppingList.sort((p1, p2) => p2.dateAdded.compareTo(p1.dateAdded));
-        this.shoppingList = shoppingList;
-        isDataReady = true;
+    if (shoppingListId != '') {
+      db.setShoppingList(shoppingListId);
+      db.setupListener((shoppingList) {
+        setState(() {
+          shoppingList.sort((p1, p2) => p2.dateAdded.compareTo(p1.dateAdded));
+          this.shoppingList = shoppingList;
+          isDataReady = true;
+        });
       });
-    });
+    }
   }
 
   @override
@@ -118,7 +153,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> itemsToDisplay = getItemsToDisplay();
     return Scaffold(
       drawer: MainDrawer(),
       appBar: AppBar(
@@ -158,20 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: Scrollbar(
-        child: !isDataReady
-            ? Center(child: CircularProgressIndicator())
-            : itemsToDisplay.isEmpty
-                ? Center(
-                    child: Text(
-                    'Brak przedmiotów do wyświetlenia',
-                    textAlign: TextAlign.center,
-                  ))
-                : ListView(
-                    children: itemsToDisplay,
-                    padding: EdgeInsets.all(5.0),
-                  ),
-      ),
+      body: getBody(),
       floatingActionButton: Visibility(
         visible: isDataReady,
         child: FloatingActionButton(
