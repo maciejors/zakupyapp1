@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -45,16 +48,6 @@ class DefaultFirebaseOptions {
         );
     }
   }
-
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAT2J53kIqnyjSi5Ql2IWjxe3k8Czaj1WE',
-    appId: '1:791577990847:web:a3492a10b4a16095b0d80a',
-    messagingSenderId: '791577990847',
-    projectId: 'zakupy-apk',
-    authDomain: 'zakupy-apk.firebaseapp.com',
-    databaseURL: 'https://zakupy-apk-default-rtdb.europe-west1.firebasedatabase.app',
-    storageBucket: 'zakupy-apk.appspot.com',
-  );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyA-7oYZt0AbdKC4VqeOeEQbZHxtrJIqZxY',

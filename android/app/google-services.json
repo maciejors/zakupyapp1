@@ -30,6 +30,13 @@
             {
               "client_id": "791577990847-8e11ai3ajaskakvp217ruqu966vsp4bi.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "791577990847-ndjh3eq3thbu97v8g9dlgdui41m9lml7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.meagle.zakupyapk"
+              }
             }
           ]
         }
