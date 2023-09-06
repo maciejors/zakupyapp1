@@ -26,7 +26,6 @@ class LabeledCheckbox extends StatefulWidget {
 }
 
 class _LabeledCheckboxState extends State<LabeledCheckbox> {
-
   @override
   Widget build(BuildContext context) {
     List<Widget> children = [

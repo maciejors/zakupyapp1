@@ -17,12 +17,8 @@ class AppRelease implements Comparable<AppRelease> {
   @override
   int compareTo(AppRelease other) {
     // example: ver = '1.10.2' -> verParts = [1, 10, 2]
-    List<int> verParts = id.split('.')
-        .map(int.parse)
-        .toList();
-    List<int> otherVerParts = other.id.split('.')
-        .map(int.parse)
-        .toList();
+    List<int> verParts = id.split('.').map(int.parse).toList();
+    List<int> otherVerParts = other.id.split('.').map(int.parse).toList();
 
     for (int i = 0; i < verParts.length; i++) {
       // checking all the version id numbers in order of importance

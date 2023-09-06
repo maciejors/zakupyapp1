@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:zakupyapk/core/urgency.dart';
+
+import 'package:zakupyapp/core/urgency.dart';
 
 /// A handy way to manage product's deadline
 class Deadline {
@@ -47,12 +48,10 @@ class Deadline {
     if (nowExact.isAfter(deadline)) {
       if (today.isAtSameMomentAs(deadlineDay) && isIgnoringTime) {
         result = Urgency.urgent;
-      }
-      else {
+      } else {
         result = Urgency.too_late;
       }
-    }
-    else if (dayDiff <= 1) {
+    } else if (dayDiff <= 1) {
       result = Urgency.urgent;
     }
     return result;

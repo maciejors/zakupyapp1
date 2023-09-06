@@ -1,4 +1,4 @@
-import 'package:zakupyapk/core/deadline.dart';
+import 'package:zakupyapp/core/deadline.dart';
 
 /// Represents a product from a
 class Product {

@@ -1,12 +1,12 @@
 // utility functions with no category
-
-import 'package:zakupyapk/core/apprelease.dart';
+import 'package:zakupyapp/core/apprelease.dart';
 
 /// Finds the latest release from the listed file names
 /// (assuming that all the files have a version id in their name)
 String getMaxVersion(Iterable<String> filenames) {
   String newestVersion = filenames
-      .map((filename) {  // extract version ids from file names
+      .map((filename) {
+        // extract version ids from file names
         RegExp regex = RegExp(r'zakupyapp-(\d+\.\d+\.\d+).apk');
         // extracting version id
         var match = regex.firstMatch(filename);
@@ -19,7 +19,8 @@ String getMaxVersion(Iterable<String> filenames) {
       })
       .where((element) => element != null)
       .cast<String>()
-      .reduce((ver1, ver2) {  // find the newest version
+      .reduce((ver1, ver2) {
+        // find the newest version
         // wrap with an AppRelease object since it implements Comparable
         // that compares versions
         var release1 = AppRelease(id: ver1, size: 0, downloadUrl: '');

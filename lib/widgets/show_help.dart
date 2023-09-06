@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:zakupyapk/storage/storage_manager.dart';
+
+import 'package:zakupyapp/storage/storage_manager.dart';
 
 void showHelpDialog(BuildContext context) {
   String sep = '\n\n';
@@ -35,9 +36,9 @@ void showHelpDialog(BuildContext context) {
             TextSpan(text: 'kliknij '),
             WidgetSpan(
                 child: Icon(
-                  Icons.filter_alt,
-                  size: commonSize * 1.1,
-                )),
+              Icons.filter_alt,
+              size: commonSize * 1.1,
+            )),
             TextSpan(text: '.'),
           ],
         ),

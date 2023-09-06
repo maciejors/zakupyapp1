@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:zakupyapk/core/deadline.dart';
-import 'package:zakupyapk/core/product.dart';
-import 'package:zakupyapk/storage/database_manager.dart';
-import 'package:zakupyapk/utils/date_time_functions.dart';
-import 'package:zakupyapk/storage/storage_manager.dart';
-import 'package:zakupyapk/widgets/labeled_checkbox.dart';
-import 'package:zakupyapk/widgets/text_with_icon.dart';
+
+import 'package:zakupyapp/core/deadline.dart';
+import 'package:zakupyapp/core/product.dart';
+import 'package:zakupyapp/storage/database_manager.dart';
+import 'package:zakupyapp/utils/date_time_functions.dart';
+import 'package:zakupyapp/storage/storage_manager.dart';
+import 'package:zakupyapp/widgets/labeled_checkbox.dart';
+import 'package:zakupyapp/widgets/text_with_icon.dart';
 
 class ProductEditorDialog extends StatefulWidget {
   /// Indicates the context of this dialog (editing/adding a new product)
@@ -168,16 +169,16 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
                           value: e,
                         ))
                     .toList()
-                      ..insert(
-                          0,
-                          DropdownMenuItem(
-                            child: Text('Nieokreślony'),
-                            value: '',
-                          ))
-                      ..add(DropdownMenuItem(
-                        child: Text('Inny:'),
-                        value: 'requestInput',
-                      )),
+                  ..insert(
+                      0,
+                      DropdownMenuItem(
+                        child: Text('Nieokreślony'),
+                        value: '',
+                      ))
+                  ..add(DropdownMenuItem(
+                    child: Text('Inny:'),
+                    value: 'requestInput',
+                  )),
                 onChanged: (newValue) {
                   setState(() {
                     _shopSelection = newValue as String;
@@ -230,7 +231,7 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
                 child: TextButton(
                   child: Text(dateToString(_selectedDay)),
                   style: TextButton.styleFrom(
-                    primary: Colors.black,
+                    foregroundColor: Colors.black,
                     backgroundColor: Colors.orange,
                   ),
                   onPressed: () {
@@ -262,7 +263,7 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
                 child: TextButton(
                   child: Text(timeToString(_selectedTime)),
                   style: TextButton.styleFrom(
-                    primary: Colors.black,
+                    foregroundColor: Colors.black,
                     backgroundColor: Colors.orange,
                   ),
                   onPressed: () {

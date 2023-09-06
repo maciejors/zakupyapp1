@@ -1,7 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SM {
-
   static late SharedPreferences _storage;
 
   static Future<void> setupStorage() async {

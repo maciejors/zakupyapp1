@@ -2,13 +2,12 @@ import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:zakupyapk/core/apprelease.dart';
-import 'package:zakupyapk/core/product.dart';
-import 'package:zakupyapk/utils/app_info.dart';
-import 'package:zakupyapk/utils/other.dart';
 
-import '../core/deadline.dart';
-import '../core/product.dart';
+import 'package:zakupyapp/core/apprelease.dart';
+import 'package:zakupyapp/core/product.dart';
+import 'package:zakupyapp/core/deadline.dart';
+import 'package:zakupyapp/utils/app_info.dart';
+import 'package:zakupyapp/utils/other.dart';
 
 /// A singleton responsible for interactions with the database
 class DatabaseManager {
@@ -63,11 +62,9 @@ class DatabaseManager {
     // second condition is not likely to ever evaluate to true
     // since invalid ids are not accepted by the local storage manager
     if (shoppingListId.length == 0 ||
-        shoppingListId.contains(RegExp(r'[/#.$\[\]]')))
-      return;
+        shoppingListId.contains(RegExp(r'[/#.$\[\]]'))) return;
 
-    _shoppingListRef = FirebaseDatabase.instance
-        .ref('shopping-lists/$shoppingListId/products');
+    _shoppingListRef = _db.child('shopping-lists/$shoppingListId/products');
   }
 
   /// Stores a single product.
@@ -96,7 +93,7 @@ class DatabaseManager {
         var data = event.snapshot.value as Map<Object?, Object?>;
         products = data.entries
             .map(_getProduct)
-            .where((p) => p != null)  // skip products that have failed to parse
+            .where((p) => p != null) // skip products that have failed to parse
             .cast<Product>()
             .toList();
       }

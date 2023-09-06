@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:zakupyapk/core/product.dart';
-import 'package:zakupyapk/storage/storage_manager.dart';
-import 'package:zakupyapk/widgets/main_drawer.dart';
-import 'package:zakupyapk/widgets/product_card.dart';
-import 'package:zakupyapk/widgets/text_with_icon.dart';
+
+import 'package:zakupyapp/core/product.dart';
+import 'package:zakupyapp/storage/storage_manager.dart';
+import 'package:zakupyapp/widgets/main_drawer.dart';
+import 'package:zakupyapp/widgets/product_card.dart';
+import 'package:zakupyapp/widgets/text_with_icon.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);

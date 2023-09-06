@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:zakupyapk/core/product.dart';
-import 'package:zakupyapk/utils/date_time_functions.dart';
-import 'package:zakupyapk/storage/storage_manager.dart';
-import 'package:zakupyapk/core/urgency.dart';
-import 'package:zakupyapk/widgets/text_with_icon.dart';
+
+import 'package:zakupyapp/core/product.dart';
+import 'package:zakupyapp/utils/date_time_functions.dart';
+import 'package:zakupyapp/storage/storage_manager.dart';
+import 'package:zakupyapp/core/urgency.dart';
+import 'package:zakupyapp/widgets/text_with_icon.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;

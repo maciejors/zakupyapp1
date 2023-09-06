@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:zakupyapk/core/product.dart';
-import 'package:zakupyapk/storage/database_manager.dart';
-import 'package:zakupyapk/storage/storage_manager.dart';
-import 'package:zakupyapk/widgets/main_drawer.dart';
-import 'package:zakupyapk/widgets/product_editor_dialog.dart';
-import 'package:zakupyapk/widgets/product_card.dart';
-import 'package:zakupyapk/widgets/show_help.dart';
 
-import '../widgets/update_dialog.dart';
+import 'package:zakupyapp/core/product.dart';
+import 'package:zakupyapp/storage/database_manager.dart';
+import 'package:zakupyapp/storage/storage_manager.dart';
+import 'package:zakupyapp/widgets/main_drawer.dart';
+import 'package:zakupyapp/widgets/product_editor_dialog.dart';
+import 'package:zakupyapp/widgets/product_card.dart';
+import 'package:zakupyapp/widgets/show_help.dart';
+import 'package:zakupyapp/widgets/update_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -157,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    
+
     // check for updates
     SchedulerBinding.instance.addPostFrameCallback((_) {
       checkForUpdate();
@@ -216,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   )),
             onSelected: (newValue) {
               setState(() {
-                filteredShop = newValue as String;
+                filteredShop = newValue;
               });
             },
             initialValue: filteredShop,
