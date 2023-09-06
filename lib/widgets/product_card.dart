@@ -11,6 +11,9 @@ class ProductCard extends StatelessWidget {
 
   final VoidCallback editFunc;
   final VoidCallback deleteFunc;
+  final VoidCallback addBuyerFunc;
+
+  final String username;
 
   final double? mainFontSize;
 
@@ -19,7 +22,9 @@ class ProductCard extends StatelessWidget {
       required this.product,
       required this.editFunc,
       required this.deleteFunc,
-      this.mainFontSize})
+      required this.addBuyerFunc,
+      this.mainFontSize,
+      required this.username})
       : super(key: key);
 
   /// Forms a nice looking text with icon informing about the
@@ -60,15 +65,33 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     double mainFontSize = this.mainFontSize ?? SM.getMainFontSize();
     return Card(
-      color: Colors.orange[50],
+      color: product.buyer == null
+          ? Colors.orange[100]
+          : product.buyer == username
+              ? Colors.orange[300]
+              : Colors.orange[50],
       child: InkWell(
         onTap: deleteFunc,
-        onDoubleTap: editFunc,
+        onDoubleTap: addBuyerFunc,
+        onLongPress: editFunc,
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              Visibility(
+                visible: product.buyer != null,
+                child: SimpleTextWithIcon(
+                  text: product.buyer == username
+                      ? 'Zadeklarowałeś kupno'
+                      : '${product.buyer} kupi to',
+                  iconData: Icons.shopping_cart_checkout,
+                  color: Colors.black,
+                  size: mainFontSize * 1.3,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: mainFontSize / 3),
               Text(
                 product.name,
                 style: TextStyle(

@@ -15,7 +15,7 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   String shoppingListId = SM.getShoppingListId();
-  String username = SM.getUserName();
+  String username = SM.getUsername();
   double mainFontSize = SM.getMainFontSize();
 
   @override
@@ -57,7 +57,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Padding(
             padding: const EdgeInsets.only(left: 5, right: 5),
             child: TextFormField(
-              initialValue: SM.getUserName(),
+              initialValue: SM.getUsername(),
               decoration: InputDecoration(hintText: 'Wpisz nazwę...'),
               onChanged: (newValue) {
                 setState(() {
@@ -102,7 +102,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             editFunc: () {},
             deleteFunc: () {},
+            addBuyerFunc: () {},
             mainFontSize: mainFontSize,
+            username: '',
           ),
         ],
       ),

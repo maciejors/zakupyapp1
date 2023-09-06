@@ -26,7 +26,7 @@ class SM {
     _storage.setDouble('mainFontSize', mainFontSize);
   }
 
-  static String getUserName() {
+  static String getUsername() {
     return _storage.getString('username') ?? 'Użytkownik bez nazwy';
   }
 

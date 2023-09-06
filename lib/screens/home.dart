@@ -40,8 +40,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return isDataReady ? func : null;
   }
 
-  void editFunc(BuildContext context, {required Product product}) {
-    if (SM.getUserName() == product.whoAdded) {
+  Future<void> editFunc(BuildContext context,
+      {required Product product}) async {
+    if (SM.getUsername() == product.whoAdded) {
       showDialog(
           context: context,
           barrierDismissible: false,
@@ -52,8 +53,9 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void deleteFunc(BuildContext context, {required Product product}) {
-    showDialog(
+  Future<void> deleteFunc(BuildContext context,
+      {required Product product}) async {
+    await showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
@@ -80,6 +82,23 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
+  }
+
+  Future<void> addBuyerFunc(BuildContext context,
+      {required Product product}) async {
+    String username = SM.getUsername();
+
+    if (product.buyer == null) {
+      db.setProductBuyer(product.id, username);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Dodano deklarację kupna'),
+      ));
+    } else if (product.buyer == username){
+      db.setProductBuyer(product.id, null);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Dodano deklarację kupna'),
+      ));
+    }
   }
 
   void checkForUpdate() {
@@ -119,9 +138,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   ProductCard wrapProductWithCard(Product product) {
     return ProductCard(
-        product: product,
-        editFunc: () => editFunc(context, product: product),
-        deleteFunc: () => deleteFunc(context, product: product));
+      product: product,
+      editFunc: () async => await editFunc(context, product: product),
+      deleteFunc: () async => await deleteFunc(context, product: product),
+      addBuyerFunc: () async => await addBuyerFunc(context, product: product),
+      username: SM.getUsername(),
+    );
   }
 
   /// different body depending on [isDataReady] & [shoppingListId] values

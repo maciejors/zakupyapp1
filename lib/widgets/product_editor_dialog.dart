@@ -57,7 +57,7 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
     var productData = {
       'name': _productName,
       'dateAdded': DateTime.now().toString(),
-      'whoAdded': SM.getUserName(),
+      'whoAdded': SM.getUsername(),
     };
     if (_shopSelection != '') {
       productData['shop'] =

@@ -43,14 +43,17 @@ class DatabaseManager {
       if (productRawData['deadline'] != null) {
         deadline = Deadline.parse(productRawData['deadline']!);
       }
+      String? buyer = productRawData['buyer'];
 
       return Product(
-          id: id,
-          name: productName,
-          shop: shopName,
-          dateAdded: dateAdded,
-          whoAdded: whoAdded,
-          deadline: deadline);
+        id: id,
+        name: productName,
+        shop: shopName,
+        dateAdded: dateAdded,
+        whoAdded: whoAdded,
+        deadline: deadline,
+        buyer: buyer,
+      );
     } catch (_) {
       return null;
     }
@@ -75,8 +78,19 @@ class DatabaseManager {
 
   /// Stores a single product.
   /// Takes a product data map as an argument
-  Future<void> storeProductFromData(String productId, Map<String, String> productData) async {
+  Future<void> storeProductFromData(
+      String productId, Map<String, String> productData) async {
     await _shoppingListRef?.child(productId).set(productData);
+  }
+
+  /// Sets a buyer attribute on a product.
+  /// Set [buyer] to [null] to remove this attribue.
+  Future<void> setProductBuyer(String productId, String? buyer) async {
+    if (buyer == null) {
+      await _shoppingListRef?.child(productId).child('buyer').remove();
+    } else {
+      await _shoppingListRef?.child(productId).child('buyer').set(buyer);
+    }
   }
 
   Future<void> removeProduct(String productId) async {

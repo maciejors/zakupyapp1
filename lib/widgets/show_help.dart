@@ -30,7 +30,7 @@ void showHelpDialog(BuildContext context) {
             TextSpan(text: ', kliknij w niego i przytrzymaj.$sep'),
             TextSpan(text: 'Aby '),
             TextSpan(
-              text: 'zadeklarować chęć kupna danego produktu',
+              text: 'dodać lub usunąć deklarację zamiaru kupna danego produktu',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             TextSpan(text: ', kliknij w niego podwójnie.$sep'),

@@ -1,6 +1,6 @@
 import 'package:zakupyapp/core/deadline.dart';
 
-/// Represents a product from a
+/// Represents a product from a shopping list
 class Product {
   static List<String> allAvailableShops = [
     'Biedronka',
@@ -16,6 +16,7 @@ class Product {
 
   final String? shop;
   final Deadline? deadline;
+  final String? buyer;
 
   Product(
       {required this.id,
@@ -23,7 +24,8 @@ class Product {
       required this.dateAdded,
       required this.whoAdded,
       this.shop,
-      this.deadline}) {
+      this.deadline,
+      this.buyer}) {
     // adding custom shops
     if (shop != null &&
         !allAvailableShops.contains(shop) &&
@@ -45,6 +47,9 @@ class Product {
     }
     if (deadline != null) {
       result['deadline'] = deadline.toString();
+    }
+    if (buyer != null) {
+      result['buyer'] = buyer!;
     }
     return result;
   }
