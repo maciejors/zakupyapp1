@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "791577990847",
+    "firebase_url": "https://zakupy-apk-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "zakupy-apk",
+    "storage_bucket": "zakupy-apk.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:791577990847:android:707350df7ca5553fb0d80a",
+        "android_client_info": {
+          "package_name": "com.meagle.zakupyapk.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "791577990847-8e11ai3ajaskakvp217ruqu966vsp4bi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-7oYZt0AbdKC4VqeOeEQbZHxtrJIqZxY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "791577990847-8e11ai3ajaskakvp217ruqu966vsp4bi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "791577990847-ndjh3eq3thbu97v8g9dlgdui41m9lml7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.meagle.zakupyapk.debug"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
@@ -159,9 +160,11 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     // check for updates
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      checkForUpdate();
-    });
+    if (kReleaseMode) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        checkForUpdate();
+      });
+    }
 
     // initialise the shopping list
     if (shoppingListId != '') {
