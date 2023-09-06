@@ -33,19 +33,19 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
   TimeOfDay _selectedTime = TimeOfDay.now();
   final DatabaseManager dbManager = DatabaseManager.instance;
 
-  void _confirmEditProduct() {
+  Future<void> _confirmEditProduct() async {
     var productData = formProductDataFromInput();
     // adjusting date of creation
     productData['dateAdded'] = widget.product!.dateAdded.toString();
-    dbManager.storeProductFromData(widget.product!.id, productData);
+    await dbManager.storeProductFromData(widget.product!.id, productData);
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text('Pomyślnie zedytowano produkt'),
     ));
   }
 
-  void _addProduct() {
-    dbManager.storeProductFromData(
+  Future<void> _addProduct() async {
+    await dbManager.storeProductFromData(
         Product.generateProductId(), formProductDataFromInput());
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(

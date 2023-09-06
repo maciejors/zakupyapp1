@@ -68,8 +68,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             TextButton(
               child: Text('Tak'),
-              onPressed: () {
-                db.removeProduct(product.id);
+              onPressed: () async {
+                await db.removeProduct(product.id);
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text('Usunięto wybrany produkt'),

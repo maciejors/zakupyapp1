@@ -27,6 +27,12 @@ void showHelpDialog(BuildContext context) {
               text: 'edytować dodany przez siebie produkt',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
+            TextSpan(text: ', kliknij w niego i przytrzymaj.$sep'),
+            TextSpan(text: 'Aby '),
+            TextSpan(
+              text: 'zadeklarować chęć kupna danego produktu',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             TextSpan(text: ', kliknij w niego podwójnie.$sep'),
             TextSpan(text: 'Aby '),
             TextSpan(

@@ -69,18 +69,18 @@ class DatabaseManager {
 
   /// Stores a single product.
   /// Takes a product class object as an argument
-  void storeProductFromClass(Product product) {
-    storeProductFromData(product.id, product.toMap());
+  Future<void> storeProductFromClass(Product product) async {
+    await storeProductFromData(product.id, product.toMap());
   }
 
   /// Stores a single product.
   /// Takes a product data map as an argument
-  void storeProductFromData(String productId, Map<String, String> productData) {
-    _shoppingListRef?.child(productId).set(productData);
+  Future<void> storeProductFromData(String productId, Map<String, String> productData) async {
+    await _shoppingListRef?.child(productId).set(productData);
   }
 
-  void removeProduct(String productId) {
-    _shoppingListRef?.child(productId).remove();
+  Future<void> removeProduct(String productId) async {
+    await _shoppingListRef?.child(productId).remove();
   }
 
   /// Sets up a live listener on the specified shopping list
@@ -101,8 +101,8 @@ class DatabaseManager {
     });
   }
 
-  void cancelListener() {
-    _dataStream?.cancel();
+  Future<void> cancelListener() async {
+    await _dataStream?.cancel();
   }
 
   /// Checks whether a new version of the app is avaiable in the database
