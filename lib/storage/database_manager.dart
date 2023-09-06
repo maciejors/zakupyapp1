@@ -63,7 +63,7 @@ class DatabaseManager {
     // second condition is not likely to ever evaluate to true
     // since invalid ids are not accepted by the local storage manager
     if (shoppingListId.length == 0 ||
-        shoppingListId.contains(RegExp(r'[/#\.\$\[\]]')))
+        shoppingListId.contains(RegExp(r'[/#.$\[\]]')))
       return;
 
     _shoppingListRef = FirebaseDatabase.instance
