@@ -135,7 +135,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           SwitchListTile(
             title: Text(
-              'Wyświetlaj produkty zadeklarowane przez innych',
+              'Ukrywaj produkty zadeklarowane przez innych',
               style: TextStyle(
                 color: Colors.black,
               ),
@@ -144,9 +144,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Icons.remove_red_eye,
               color: Colors.black,
             ),
-            value: SM.getDisplayDeclaredProductsFlag(),
+            value: SM.getHideProductsOthersDeclaredFlag(),
             onChanged: (newValue) => setState(() {
-              SM.setDisplayDeclaredProductsFlag(newValue);
+              SM.setHideProductsOthersDeclaredFlag(newValue);
             }),
           ),
           ListTile(

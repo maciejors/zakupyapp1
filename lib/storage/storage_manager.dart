@@ -37,12 +37,12 @@ class SM {
     _storage.setBool('checkForUpdatesFlag', checkForUpdatesFlag);
   }
 
-  static bool getDisplayDeclaredProductsFlag() {
-    return _storage.getBool('displayDeclaredProductsFlag') ?? true;
+  static bool getHideProductsOthersDeclaredFlag() {
+    return _storage.getBool('hideProductsOthersDeclaredFlag') ?? false;
   }
 
-  static void setDisplayDeclaredProductsFlag(bool displayDeclaredProductsFlag) {
+  static void setHideProductsOthersDeclaredFlag(bool hideProductsOthersDeclaredFlag) {
     _storage.setBool(
-        'displayDeclaredProductsFlag', displayDeclaredProductsFlag);
+        'hideProductsOthersDeclaredFlag', hideProductsOthersDeclaredFlag);
   }
 }

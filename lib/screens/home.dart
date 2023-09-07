@@ -201,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           shoppingList.sort((p1, p2) => p2.dateAdded.compareTo(p1.dateAdded));
           // check if user wants to see products that others declared to buy
-          if (!SM.getDisplayDeclaredProductsFlag()) {
+          if (SM.getHideProductsOthersDeclaredFlag()) {
             shoppingList = shoppingList
                 .where((p) => p.buyer == null || p.buyer == SM.getUsername())
                 .toList();
