@@ -9,8 +9,8 @@ void showHelpDialog(BuildContext context) {
     context: context,
     builder: (ctx) => AlertDialog(
       title: Text('Pomoc'),
-      content: RichText(
-        text: TextSpan(
+      content: Text.rich(
+        TextSpan(
           style: TextStyle(
             fontSize: commonSize,
             color: Colors.black,

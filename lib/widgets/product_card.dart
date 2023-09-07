@@ -118,8 +118,8 @@ class ProductCard extends StatelessWidget {
                 child: _formDeadlineDescription(mainFontSize),
               ),
               SizedBox(height: mainFontSize * 0.33),
-              RichText(
-                text: TextSpan(
+              Text.rich(
+                TextSpan(
                   style: TextStyle(fontSize: mainFontSize, color: Colors.black),
                   children: <TextSpan>[
                     TextSpan(

@@ -43,8 +43,8 @@ class SimpleTextWithIcon extends StatelessWidget {
     if (!iconFirst) {
       children = children.reversed.toList();
     }
-    return RichText(
-      text: TextSpan(
+    return Text.rich(
+      TextSpan(
         style: TextStyle(
           color: color,
           fontSize: commonSize,
