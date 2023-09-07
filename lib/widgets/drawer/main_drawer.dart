@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:zakupyapp/widgets/drawer/show_help.dart';
+
 class MainDrawer extends StatelessWidget {
   const MainDrawer({Key? key}) : super(key: key);
 
@@ -36,6 +38,13 @@ class MainDrawer extends StatelessWidget {
           title: Text('Ustawienia'),
           onTap: () {
             switchScreen(context, '/settings');
+          },
+        ),ListTile(
+          // settings
+          leading: Icon(Icons.help),
+          title: Text('Pomoc'),
+          onTap: () async {
+            await showHelpDialog(context);
           },
         ),
       ],

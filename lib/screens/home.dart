@@ -8,7 +8,6 @@ import 'package:zakupyapp/storage/storage_manager.dart';
 import 'package:zakupyapp/widgets/drawer/main_drawer.dart';
 import 'package:zakupyapp/widgets/home/product_editor_dialog.dart';
 import 'package:zakupyapp/widgets/home/product_card.dart';
-import 'package:zakupyapp/widgets/home/show_help.dart';
 import 'package:zakupyapp/widgets/home/update_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -220,10 +219,6 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text('Lista Zakupów'),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.help),
-            onPressed: disableIfDataNotReady(() => showHelpDialog(context)),
-          ),
           PopupMenuButton(
             enabled: isDataReady,
             icon: Icon(Icons.filter_alt),

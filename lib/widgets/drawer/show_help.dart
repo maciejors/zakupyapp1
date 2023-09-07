@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-void showHelpDialog(BuildContext context) {
+Future<void> showHelpDialog(BuildContext context) async {
   String sep = '\n\n';
-  showDialog(
+  await showDialog(
     context: context,
     builder: (ctx) => AlertDialog(
       title: Text('Pomoc'),
