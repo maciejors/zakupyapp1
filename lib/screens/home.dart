@@ -27,6 +27,8 @@ class _HomeScreenState extends State<HomeScreen> {
   // product list gets updates
   bool checkedForUpdate = false;
 
+  bool showOnlyDeclaredByUser = false;
+
   /// Name of the shop serving as a filter.<br>
   /// Wildcard values:
   /// * '' (empty string) - no filter,
@@ -130,6 +132,11 @@ class _HomeScreenState extends State<HomeScreen> {
         return item.shop == filteredShop;
       });
     }
+    if (showOnlyDeclaredByUser) {
+      products = products
+          .where((p) => p.buyer == SM.getUsername())
+          .toList();
+    }
     // create actual widgets from products
     Iterable<ProductCard> itemsToDisplay = products.map(wrapProductWithCard);
     return itemsToDisplay.toList();
@@ -219,9 +226,25 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text('Lista Zakupów'),
         actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.shopping_cart_checkout,
+              color: showOnlyDeclaredByUser
+                  ? Colors.black
+                  : Colors.deepOrange[900],
+            ),
+            onPressed: () {
+              setState(() {
+                showOnlyDeclaredByUser = !showOnlyDeclaredByUser;
+              });
+            },
+          ),
           PopupMenuButton(
             enabled: isDataReady,
-            icon: Icon(Icons.filter_alt),
+            icon: Icon(
+              Icons.filter_alt,
+              color: filteredShop != '' ? Colors.black : Colors.deepOrange[900],
+            ),
             itemBuilder: (BuildContext context) => Product.allAvailableShops
                 .map((e) => PopupMenuItem(
                       child: Text(e),

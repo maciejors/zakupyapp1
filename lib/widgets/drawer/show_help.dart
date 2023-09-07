@@ -41,7 +41,19 @@ Future<void> showHelpDialog(BuildContext context) async {
               Icons.filter_alt,
               size: 17,
             )),
-            TextSpan(text: '.'),
+            TextSpan(text: '.$sep'),
+            TextSpan(text: 'Aby '),
+            TextSpan(
+              text: 'wyświetlić tylko produkty które chcesz kupić, ',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            TextSpan(text: 'kliknij '),
+            WidgetSpan(
+                child: Icon(
+                  Icons.shopping_cart_checkout,
+                  size: 17,
+                )),
+            TextSpan(text: ' na górze ekranu.'),
           ],
         ),
       ),
