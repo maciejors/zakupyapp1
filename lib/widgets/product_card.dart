@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:zakupyapp/core/product.dart';
 import 'package:zakupyapp/utils/date_time_functions.dart';
-import 'package:zakupyapp/storage/storage_manager.dart';
 import 'package:zakupyapp/core/urgency.dart';
 import 'package:zakupyapp/widgets/text_with_icon.dart';
 
@@ -15,15 +14,12 @@ class ProductCard extends StatelessWidget {
 
   final String username;
 
-  final double? mainFontSize;
-
   const ProductCard(
       {Key? key,
       required this.product,
       required this.editFunc,
       required this.deleteFunc,
       required this.addBuyerFunc,
-      this.mainFontSize,
       required this.username})
       : super(key: key);
 
@@ -31,7 +27,7 @@ class ProductCard extends StatelessWidget {
   /// product's deadline.
   ///
   /// Returns an empty container if [product.deadline] is `null`.
-  Widget _formDeadlineDescription(double fontSize) {
+  Widget _formDeadlineDescription() {
     if (product.deadline == null) {
       return Container();
     }
@@ -56,14 +52,13 @@ class ProductCard extends StatelessWidget {
       text: 'Potrzebne na: ${product.deadline!.getPolishDescription()}',
       iconData: Icons.access_time,
       color: color,
-      size: fontSize,
       fontStyle: FontStyle.italic,
+      size: 15,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    double mainFontSize = this.mainFontSize ?? SM.getMainFontSize();
     return Card(
       color: product.buyer == null
           ? Colors.orange[100]
@@ -81,63 +76,65 @@ class ProductCard extends StatelessWidget {
             children: <Widget>[
               Visibility(
                 visible: product.buyer != null,
-                child: SimpleTextWithIcon(
-                  text: product.buyer == username
-                      ? 'Zadeklarowałeś kupno'
-                      : '${product.buyer} kupi to',
-                  iconData: Icons.shopping_cart_checkout,
-                  color: Colors.black,
-                  size: mainFontSize * 1.3,
-                  fontWeight: FontWeight.bold,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: SimpleTextWithIcon(
+                    text: product.buyer == username
+                        ? 'Zadeklarowałeś kupno'
+                        : '${product.buyer} kupi to',
+                    iconData: Icons.shopping_cart_checkout,
+                    color: Colors.black,
+                    size: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-              SizedBox(height: mainFontSize / 3),
               Text(
                 product.name,
                 style: TextStyle(
-                  fontSize: mainFontSize * 1.2,
+                  fontSize: 18
                 ),
               ),
-              SizedBox(height: mainFontSize / 3),
               Visibility(
                 visible: product.shop != null,
-                child: SimpleTextWithIcon(
-                  text: 'Sklep: ${product.shop}',
-                  iconData: Icons.shopping_cart,
-                  color: Colors.black,
-                  fontStyle: FontStyle.italic,
-                  size: mainFontSize,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: SimpleTextWithIcon(
+                    text: 'Sklep: ${product.shop}',
+                    iconData: Icons.shopping_cart,
+                    color: Colors.black,
+                    fontStyle: FontStyle.italic,
+                    size: 15,
+                  ),
                 ),
               ),
               Visibility(
                 visible: product.deadline != null,
-                child: SizedBox(height: mainFontSize * 0.1),
+                child: _formDeadlineDescription(),
               ),
-              Visibility(
-                visible: product.deadline != null,
-                child: _formDeadlineDescription(mainFontSize),
-              ),
-              SizedBox(height: mainFontSize * 0.33),
-              Text.rich(
-                TextSpan(
-                  style: TextStyle(fontSize: mainFontSize, color: Colors.black),
-                  children: <TextSpan>[
-                    TextSpan(
-                      text: 'Dodane przez: ',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text.rich(
+                  TextSpan(
+                    style: TextStyle(fontSize: 14, color: Colors.black),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: 'Dodane przez: ',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    TextSpan(
-                      text: product.whoAdded,
-                    ),
-                  ],
+                      TextSpan(
+                        text: product.whoAdded,
+                      ),
+                    ],
+                  ),
                 ),
               ),
               Text(
                 dateTimeToPolishString(product.dateAdded),
                 style: TextStyle(
-                  fontSize: mainFontSize,
+                  fontSize: 14,
                 ),
               ),
             ],

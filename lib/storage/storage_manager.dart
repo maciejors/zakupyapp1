@@ -18,14 +18,6 @@ class SM {
     _storage.setString('shoppingListId', shoppingListId.trim());
   }
 
-  static double getMainFontSize() {
-    return _storage.getDouble('mainFontSize') ?? 14.0;
-  }
-
-  static void setMainFontSize(double mainFontSize) {
-    _storage.setDouble('mainFontSize', mainFontSize);
-  }
-
   static String getUsername() {
     return _storage.getString('username') ?? 'Użytkownik bez nazwy';
   }

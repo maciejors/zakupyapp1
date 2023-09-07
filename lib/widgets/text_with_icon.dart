@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:zakupyapp/storage/storage_manager.dart';
-
 class SimpleTextWithIcon extends StatelessWidget {
   final String text;
   final IconData iconData;
@@ -30,7 +28,7 @@ class SimpleTextWithIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double commonSize = size ?? SM.getMainFontSize();
+    double commonSize = size ?? 14;
     List<InlineSpan> children = [
       WidgetSpan(
           child: Icon(

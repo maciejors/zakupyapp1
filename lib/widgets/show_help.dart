@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:zakupyapp/storage/storage_manager.dart';
-
 void showHelpDialog(BuildContext context) {
   String sep = '\n\n';
-  double commonSize = SM.getMainFontSize();
   showDialog(
     context: context,
     builder: (ctx) => AlertDialog(
@@ -12,7 +9,6 @@ void showHelpDialog(BuildContext context) {
       content: Text.rich(
         TextSpan(
           style: TextStyle(
-            fontSize: commonSize,
             color: Colors.black,
           ),
           children: <InlineSpan>[
@@ -43,7 +39,7 @@ void showHelpDialog(BuildContext context) {
             WidgetSpan(
                 child: Icon(
               Icons.filter_alt,
-              size: commonSize * 1.1,
+              size: 17,
             )),
             TextSpan(text: '.'),
           ],

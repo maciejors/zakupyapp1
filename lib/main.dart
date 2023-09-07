@@ -27,11 +27,7 @@ Future<void> main() async {
     },
     theme: ThemeData(
       primarySwatch: Colors.orange,
-      textTheme: TextTheme(
-        bodyMedium: TextStyle(
-          fontSize: SM.getMainFontSize(),
-        ),
       ),
     ),
-  ));
+  );
 }

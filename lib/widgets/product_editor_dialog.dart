@@ -134,7 +134,7 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
                 text: 'Nazwa produktu',
                 iconData: Icons.edit,
                 color: Colors.orange,
-                size: SM.getMainFontSize() * 1.5,
+                size: 18,
                 fontWeight: FontWeight.bold,
               ),
 
@@ -151,12 +151,12 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
               ),
 
               // Shop selection title
-              SizedBox(height: SM.getMainFontSize()),
+              SizedBox(height: 14),
               SimpleTextWithIcon(
                 text: 'Sklep',
                 iconData: Icons.shopping_cart,
                 color: Colors.orange,
-                size: SM.getMainFontSize() * 1.5,
+                size: 18,
                 fontWeight: FontWeight.bold,
               ),
 
@@ -201,12 +201,12 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
               ),
 
               // Deadline title
-              SizedBox(height: SM.getMainFontSize() * 0.5),
+              SizedBox(height: 7),
               SimpleTextWithIcon(
                 text: 'Potrzebne na',
                 iconData: Icons.access_time_outlined,
                 color: Colors.orange,
-                size: SM.getMainFontSize() * 1.5,
+                size: 18,
                 fontWeight: FontWeight.bold,
               ),
 
