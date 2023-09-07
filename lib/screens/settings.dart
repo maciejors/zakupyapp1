@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:zakupyapp/core/product.dart';
 import 'package:zakupyapp/storage/storage_manager.dart';
+import 'package:zakupyapp/utils/app_info.dart';
 import 'package:zakupyapp/widgets/main_drawer.dart';
-import 'package:zakupyapp/widgets/product_card.dart';
-import 'package:zakupyapp/widgets/text_with_icon.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -14,116 +12,154 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String shoppingListId = SM.getShoppingListId();
-  String username = SM.getUsername();
-  double mainFontSize = SM.getMainFontSize();
+  String _shoppingListIdInput = '';
+  String _usernameInput = '';
+
+  Future<void> showEditShoppingListIdDialog(BuildContext ctx) async {
+    _shoppingListIdInput = SM.getShoppingListId();
+    await showDialog(
+        context: ctx,
+        builder: (ctx) => AlertDialog(
+              title: Text('ID Listy zakupów'),
+              content: TextFormField(
+                initialValue: SM.getShoppingListId(),
+                decoration: InputDecoration(label: Text('Wpisz ID...')),
+                onChanged: (newValue) {
+                  setState(() {
+                    _shoppingListIdInput = newValue;
+                  });
+                },
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('Anuluj'),
+                  onPressed: () => Navigator.of(ctx).pop(),
+                ),
+                TextButton(
+                  child: Text('Zapisz'),
+                  onPressed: () {
+                    setState(() {
+                      SM.setShoppingListId(_shoppingListIdInput);
+                    });
+                    Navigator.of(ctx).pop();
+                    ScaffoldMessenger.of(ctx).showSnackBar(
+                        SnackBar(content: Text('Zapisano ID Listy zakupów')));
+                  },
+                ),
+              ],
+            ));
+  }
+
+  Future<void> showEditUsernameDialog(BuildContext ctx) async {
+    _usernameInput = SM.getUsername();
+    await showDialog(
+        context: ctx,
+        builder: (ctx) => AlertDialog(
+              title: Text('Nazwa użytkownika'),
+              content: TextFormField(
+                initialValue: SM.getUsername(),
+                decoration: InputDecoration(label: Text('Wpisz nazwę...')),
+                onChanged: (newValue) {
+                  setState(() {
+                    _usernameInput = newValue;
+                  });
+                },
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('Anuluj'),
+                  onPressed: () => Navigator.of(ctx).pop(),
+                ),
+                TextButton(
+                  child: Text('Zapisz'),
+                  onPressed: () {
+                    setState(() {
+                      SM.setUsername(_usernameInput);
+                    });
+                    Navigator.of(ctx).pop();
+                    ScaffoldMessenger.of(ctx).showSnackBar(
+                        SnackBar(content: Text('Zapisano nazwę użytkownika')));
+                  },
+                ),
+              ],
+            ));
+  }
 
   @override
   Widget build(BuildContext context) {
+    String shoppingListId = SM.getShoppingListId();
     return Scaffold(
       drawer: MainDrawer(),
       appBar: AppBar(
         title: Text('Ustawienia'),
       ),
       body: ListView(
-        padding: EdgeInsets.all(5.0),
+        padding: EdgeInsets.only(top: 5),
         children: <Widget>[
-          SizedBox(height: 5),
-          SimpleTextWithIcon(
-            text: 'ID Listy zakupów:',
-            iconData: Icons.shopping_cart,
-            color: Colors.orange,
-            size: SM.getMainFontSize() * 1.5,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 5, right: 5),
-            child: TextFormField(
-              initialValue: SM.getShoppingListId(),
-              decoration: InputDecoration(hintText: 'Wpisz ID...'),
-              onChanged: (newValue) {
-                setState(() {
-                  shoppingListId = newValue;
-                });
-              },
+          ListTile(
+            title: Text('ID Listy zakupów'),
+            subtitle:
+                Text(shoppingListId == '' ? 'Nie ustawione' : shoppingListId),
+            leading: Icon(
+              Icons.shopping_cart,
+              color: Colors.black,
             ),
+            titleAlignment: ListTileTitleAlignment.center,
+            onTap: () => showEditShoppingListIdDialog(context),
           ),
-          SizedBox(height: SM.getMainFontSize()),
-          SimpleTextWithIcon(
-            text: 'Nazwa użytkownika:',
-            iconData: Icons.account_circle,
-            color: Colors.orange,
-            size: SM.getMainFontSize() * 1.5,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 5, right: 5),
-            child: TextFormField(
-              initialValue: SM.getUsername(),
-              decoration: InputDecoration(hintText: 'Wpisz nazwę...'),
-              onChanged: (newValue) {
-                setState(() {
-                  username = newValue;
-                });
-              },
+          ListTile(
+            title: Text('Nazwa użytkownika'),
+            subtitle: Text(SM.getUsername()),
+            leading: Icon(
+              Icons.person,
+              color: Colors.black,
             ),
+            titleAlignment: ListTileTitleAlignment.center,
+            onTap: () => showEditUsernameDialog(context),
           ),
-          SizedBox(height: SM.getMainFontSize()),
-          SimpleTextWithIcon(
-            text: 'Rozmiar Czcionki:',
-            iconData: Icons.format_size,
-            color: Colors.orange,
-            size: SM.getMainFontSize() * 1.5,
-          ),
-          Slider(
-            value: mainFontSize,
-            onChanged: (newValue) {
-              setState(() {
-                mainFontSize = newValue;
-              });
-            },
-            min: 10,
-            max: 30,
-            divisions: 20,
-            label: mainFontSize.toInt().toString(),
-          ),
-          SizedBox(height: SM.getMainFontSize()),
-          SimpleTextWithIcon(
-            text: 'Podgląd karty produktu:',
-            iconData: Icons.preview,
-            color: Colors.orange,
-            size: SM.getMainFontSize() * 1.5,
-          ),
-          ProductCard(
-            product: Product(
-              id: '',
-              name: 'Przykładowa nazwa produktu',
-              shop: 'Przykładowy',
-              dateAdded: DateTime.now(),
-              whoAdded: username,
+          SwitchListTile(
+            title: Text(
+              'Sprawdzaj aktualizacje',
+              style: TextStyle(
+                color: Colors.black,
+              ),
             ),
-            editFunc: () {},
-            deleteFunc: () {},
-            addBuyerFunc: () {},
-            mainFontSize: mainFontSize,
-            username: '',
+            secondary: Icon(
+              Icons.update,
+              color: Colors.black,
+            ),
+            value: SM.getCheckForUpdatesFlag(),
+            onChanged: (newValue) => setState(() {
+              SM.setCheckForUpdatesFlag(newValue);
+            }),
+          ),
+          SwitchListTile(
+            title: Text(
+              'Wyświetlaj produkty zadeklarowane przez innych',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+            secondary: Icon(
+              Icons.remove_red_eye,
+              color: Colors.black,
+            ),
+            value: SM.getDisplayDeclaredProductsFlag(),
+            onChanged: (newValue) => setState(() {
+              SM.setDisplayDeclaredProductsFlag(newValue);
+            }),
+          ),
+          ListTile(
+            title: Text('Wersja aplikacji'),
+            subtitle: Text(AppInfo.getVersion()),
+            leading: Icon(
+              Icons.info,
+              color: Colors.black,
+            ),
+            titleAlignment: ListTileTitleAlignment.center,
+            onTap: () {},
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.save),
-        onPressed: () {
-          final FocusScopeNode currentScope = FocusScope.of(context);
-          if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
-            FocusManager.instance.primaryFocus!.unfocus();
-          }
-          setState(() {
-            SM.setShoppingListId(shoppingListId);
-            SM.setUserName(username);
-            SM.setMainFontSize(mainFontSize);
-          });
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Zapisano ustawienia'),
-          ));
-        },
       ),
     );
   }
