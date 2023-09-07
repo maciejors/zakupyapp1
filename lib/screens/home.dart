@@ -93,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Dodano deklarację kupna'),
       ));
-    } else if (product.buyer == username){
+    } else if (product.buyer == username) {
       db.setProductBuyer(product.id, null);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Dodano deklarację kupna'),
@@ -182,7 +182,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     // check for updates
-    if (kReleaseMode) {
+    if (kReleaseMode && SM.getCheckForUpdatesFlag()) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
         checkForUpdate();
       });
@@ -194,6 +194,12 @@ class _HomeScreenState extends State<HomeScreen> {
       db.setupListener((shoppingList) {
         setState(() {
           shoppingList.sort((p1, p2) => p2.dateAdded.compareTo(p1.dateAdded));
+          // check if user wants to see products that others declared to buy
+          if (!SM.getDisplayDeclaredProductsFlag()) {
+            shoppingList = shoppingList
+                .where((p) => p.buyer == null || p.buyer == SM.getUsername())
+                .toList();
+          }
           this.shoppingList = shoppingList;
           isDataReady = true;
         });
