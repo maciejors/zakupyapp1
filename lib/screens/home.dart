@@ -5,11 +5,11 @@ import 'package:flutter/scheduler.dart';
 import 'package:zakupyapp/core/product.dart';
 import 'package:zakupyapp/storage/database_manager.dart';
 import 'package:zakupyapp/storage/storage_manager.dart';
-import 'package:zakupyapp/widgets/main_drawer.dart';
-import 'package:zakupyapp/widgets/product_editor_dialog.dart';
-import 'package:zakupyapp/widgets/product_card.dart';
-import 'package:zakupyapp/widgets/show_help.dart';
-import 'package:zakupyapp/widgets/update_dialog.dart';
+import 'package:zakupyapp/widgets/drawer/main_drawer.dart';
+import 'package:zakupyapp/widgets/home/product_editor_dialog.dart';
+import 'package:zakupyapp/widgets/home/product_card.dart';
+import 'package:zakupyapp/widgets/home/show_help.dart';
+import 'package:zakupyapp/widgets/home/update_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);

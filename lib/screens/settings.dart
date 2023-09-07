@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:zakupyapp/storage/storage_manager.dart';
 import 'package:zakupyapp/utils/app_info.dart';
-import 'package:zakupyapp/widgets/main_drawer.dart';
+import 'package:zakupyapp/widgets/drawer/main_drawer.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);

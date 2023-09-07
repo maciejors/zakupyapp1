@@ -5,8 +5,8 @@ import 'package:zakupyapp/core/product.dart';
 import 'package:zakupyapp/storage/database_manager.dart';
 import 'package:zakupyapp/utils/date_time_functions.dart';
 import 'package:zakupyapp/storage/storage_manager.dart';
-import 'package:zakupyapp/widgets/labeled_checkbox.dart';
-import 'package:zakupyapp/widgets/text_with_icon.dart';
+import 'package:zakupyapp/widgets/shared/labeled_checkbox.dart';
+import 'package:zakupyapp/widgets/shared/text_with_icon.dart';
 
 class ProductEditorDialog extends StatefulWidget {
   /// Indicates the context of this dialog (editing/adding a new product)

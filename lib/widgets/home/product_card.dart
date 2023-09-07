@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:zakupyapp/core/product.dart';
 import 'package:zakupyapp/utils/date_time_functions.dart';
 import 'package:zakupyapp/core/urgency.dart';
-import 'package:zakupyapp/widgets/text_with_icon.dart';
+import 'package:zakupyapp/widgets/shared/text_with_icon.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
