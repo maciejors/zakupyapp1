@@ -12,7 +12,7 @@ class ProductCard extends StatelessWidget {
   final VoidCallback deleteFunc;
   final VoidCallback addBuyerFunc;
 
-  final String username;
+  final bool addedByUser;
 
   const ProductCard(
       {Key? key,
@@ -20,7 +20,7 @@ class ProductCard extends StatelessWidget {
       required this.editFunc,
       required this.deleteFunc,
       required this.addBuyerFunc,
-      required this.username})
+      required this.addedByUser})
       : super(key: key);
 
   /// Forms a nice looking text with icon informing about the
@@ -62,7 +62,7 @@ class ProductCard extends StatelessWidget {
     return Card(
       color: product.buyer == null
           ? Colors.orange[100]
-          : product.buyer == username
+          : product.buyer == addedByUser
               ? Colors.orange[300]
               : Colors.orange[50],
       child: InkWell(
@@ -79,7 +79,7 @@ class ProductCard extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 4),
                   child: SimpleTextWithIcon(
-                    text: product.buyer == username
+                    text: addedByUser
                         ? 'Zadeklarowałeś kupno'
                         : '${product.buyer} kupi to',
                     iconData: Icons.shopping_cart_checkout,
