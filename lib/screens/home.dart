@@ -6,6 +6,7 @@ import 'package:zakupyapp/core/shopping_list.dart';
 import 'package:zakupyapp/core/updater.dart';
 import 'package:zakupyapp/storage/storage_manager.dart';
 import 'package:zakupyapp/widgets/drawer/main_drawer.dart';
+import 'package:zakupyapp/widgets/home/product_editor/product_editor_card.dart';
 import 'package:zakupyapp/widgets/home/product_editor_dialog.dart';
 import 'package:zakupyapp/widgets/home/product_card.dart';
 import 'package:zakupyapp/widgets/home/update_dialog.dart';
@@ -21,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   ShoppingList shoppingList = ShoppingList();
   Updater updater = Updater();
   bool isDataReady = false;
+  Product? editedProduct;
 
   /// Used to wrap functions passed to the onPressed property
   /// in buttons to disable them if the data is not ready yet
@@ -31,14 +33,17 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> editFunc(BuildContext context,
       {required Product product}) async {
     if (product.isEditable) {
-      showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => ProductEditorDialog(
-                editingProduct: true,
-                product: product,
-                shoppingList: shoppingList,
-              ));
+      // showDialog(
+      //     context: context,
+      //     barrierDismissible: false,
+      //     builder: (context) => ProductEditorDialog(
+      //           editingProduct: true,
+      //           product: product,
+      //           shoppingList: shoppingList,
+      //         ));
+      setState(() {
+        editedProduct = product;
+      });
     }
   }
 
@@ -94,13 +99,38 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void toggleBuyerFilter() {
+    setState(() {
+      // cancel editing when filters change
+      editedProduct = null;
+      // toggle filter
+      shoppingList.showOnlyDeclaredByUser =
+      !shoppingList.showOnlyDeclaredByUser;
+    });
+  }
+
+  void setShopFilter(String filter) {
+    setState(() {
+      // cancel editing when filters change
+      editedProduct = null;
+      // apply filter
+      shoppingList.filteredShop = filter;
+    });
+  }
+
   /// Returns a list of widgets to put inside the main ListView.
   List<Widget> getItemsToDisplay() {
     // create actual widgets from products
-    return shoppingList
-        .getProductsToDisplay()
-        .map(wrapProductWithCard)
+    var products = shoppingList.getProductsToDisplay();
+    var result = products
+        .map<Widget>(wrapProductWithCard)
         .toList();
+    if (editedProduct != null) {
+      // substitute one of the product cards for the editable version
+      int editedProductIndex = products.indexOf(editedProduct!);
+      result[editedProductIndex] = ProductEditorCard(product: editedProduct!);
+    }
+    return result;
   }
 
   ProductCard wrapProductWithCard(Product product) {
@@ -190,12 +220,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ? Colors.black
                   : Colors.deepOrange[900],
             ),
-            onPressed: () {
-              setState(() {
-                shoppingList.showOnlyDeclaredByUser =
-                    !shoppingList.showOnlyDeclaredByUser;
-              });
-            },
+            onPressed: toggleBuyerFilter,
           ),
           PopupMenuButton(
             enabled: isDataReady,
@@ -224,11 +249,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Text('Nieokreślone'),
                         value: '~',
                       )),
-            onSelected: (newValue) {
-              setState(() {
-                shoppingList.filteredShop = newValue;
-              });
-            },
+            onSelected: setShopFilter,
             initialValue: shoppingList.filteredShop,
           ),
         ],
