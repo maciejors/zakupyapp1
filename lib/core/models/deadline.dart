@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:zakupyapp/core/urgency.dart';
+import 'package:zakupyapp/core/models/urgency.dart';
 
 /// A handy way to manage product's deadline
 class Deadline {

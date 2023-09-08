@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-import 'package:zakupyapp/core/apprelease.dart';
-import 'package:zakupyapp/core/product.dart';
-import 'package:zakupyapp/core/deadline.dart';
+import 'package:zakupyapp/core/models/apprelease.dart';
+import 'package:zakupyapp/core/models/product.dart';
+import 'package:zakupyapp/core/models/deadline.dart';
 import 'package:zakupyapp/utils/app_info.dart';
 import 'package:zakupyapp/utils/other.dart';
 
@@ -29,7 +29,7 @@ class DatabaseManager {
 
   /// Creates a new Product object from raw data.
   /// Returns [null] if data format is invalid
-  Product? _getProduct(MapEntry<Object?, Object?> rawData) {
+  Product? _getProductFromMap(MapEntry<Object?, Object?> rawData) {
     try {
       var productRawData = rawData.value as Map;
       String id = rawData.key as String;
@@ -106,7 +106,7 @@ class DatabaseManager {
       } else {
         var data = event.snapshot.value as Map<Object?, Object?>;
         products = data.entries
-            .map(_getProduct)
+            .map(_getProductFromMap)
             .where((p) => p != null) // skip products that have failed to parse
             .cast<Product>()
             .toList();

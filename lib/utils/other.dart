@@ -1,5 +1,5 @@
 // utility functions with no category
-import 'package:zakupyapp/core/apprelease.dart';
+import 'package:zakupyapp/core/models/apprelease.dart';
 
 /// Finds the latest release from the listed file names
 /// (assuming that all the files have a version id in their name)

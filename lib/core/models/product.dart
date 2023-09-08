@@ -1,14 +1,9 @@
-import 'package:zakupyapp/core/deadline.dart';
+import 'package:zakupyapp/core/models/deadline.dart';
+
+import 'package:zakupyapp/storage/storage_manager.dart';
 
 /// Represents a product from a shopping list
 class Product {
-  static List<String> allAvailableShops = [
-    'Biedronka',
-    'Lidl',
-    'Selgros',
-    'Emilka'
-  ];
-
   final String id;
   final String name;
   final String whoAdded;
@@ -25,14 +20,10 @@ class Product {
       required this.whoAdded,
       this.shop,
       this.deadline,
-      this.buyer}) {
-    // adding custom shops
-    if (shop != null &&
-        !allAvailableShops.contains(shop) &&
-        // true for settings screen
-        shop != 'Przykładowy') {
-      allAvailableShops.add(shop!);
-    }
+      this.buyer});
+
+  bool get isEditable {
+    return buyer == SM.getUsername();
   }
 
   /// Map does not contain ID of the product
