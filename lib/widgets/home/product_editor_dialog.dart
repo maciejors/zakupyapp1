@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:zakupyapp/core/deadline.dart';
-import 'package:zakupyapp/core/product.dart';
+import 'package:zakupyapp/core/models/deadline.dart';
+import 'package:zakupyapp/core/models/product.dart';
+import 'package:zakupyapp/core/shopping_list.dart';
 import 'package:zakupyapp/storage/database_manager.dart';
 import 'package:zakupyapp/utils/date_time_functions.dart';
 import 'package:zakupyapp/storage/storage_manager.dart';
@@ -12,11 +13,16 @@ class ProductEditorDialog extends StatefulWidget {
   /// Indicates the context of this dialog (editing/adding a new product)
   final bool editingProduct;
 
+  final ShoppingList shoppingList;
+
   /// Edited product. `null` if [editingProduct] is `false`
   final Product? product;
 
   const ProductEditorDialog(
-      {Key? key, required this.editingProduct, this.product})
+      {Key? key,
+      required this.editingProduct,
+      this.product,
+      required this.shoppingList})
       : super(key: key);
 
   @override
@@ -163,7 +169,7 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
               // Shop selection
               DropdownButton(
                 value: _shopSelection,
-                items: Product.allAvailableShops
+                items: widget.shoppingList.allAvailableShops
                     .map((e) => DropdownMenuItem(
                           child: Text(e),
                           value: e,

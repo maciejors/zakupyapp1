@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:zakupyapp/core/apprelease.dart';
+import 'package:zakupyapp/core/models/apprelease.dart';
 import 'package:zakupyapp/utils/app_info.dart';
 
 class DownloadUpdateDialog extends StatelessWidget {
