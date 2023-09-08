@@ -6,8 +6,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:zakupyapp/core/models/apprelease.dart';
 import 'package:zakupyapp/core/models/product.dart';
 import 'package:zakupyapp/core/models/deadline.dart';
-import 'package:zakupyapp/utils/app_info.dart';
-import 'package:zakupyapp/utils/other.dart';
 
 /// A singleton responsible for interactions with the database
 class DatabaseManager {
@@ -119,23 +117,11 @@ class DatabaseManager {
     await _dataStream?.cancel();
   }
 
-  /// Checks whether a new version of the app is avaiable in the database
-  Future<bool> isUpdateAvailable() async {
-    AppRelease currReleaseId = AppRelease(
-      id: AppInfo.getVersion(), // this is the only relevant argument here
-      size: 0,
-      downloadUrl: '',
-    );
-    AppRelease latestRelease = await getLatestRelease();
-
-    return currReleaseId.compareTo(latestRelease) < 0;
-  }
-
   /// Retrieves the latest release data from the database
   Future<AppRelease> getLatestRelease() async {
     ListResult apkNames = await _storage.child('releases').listAll();
     String latestReleaseId =
-        getMaxVersion(apkNames.items.map((ref) => ref.name));
+        AppRelease.getMaxVersion(apkNames.items.map((ref) => ref.name));
     var latestReleaseRef = _getReleaseReference(latestReleaseId);
 
     var meta = await latestReleaseRef.getMetadata();

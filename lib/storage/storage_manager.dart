@@ -13,7 +13,7 @@ class SM {
 
   static void setShoppingListId(String shoppingListId) {
     // remove characters with a special meaning to the firebase
-    shoppingListId = shoppingListId.replaceAll(RegExp(r'[/#\.\$\[\]]'), '');
+    shoppingListId = shoppingListId.replaceAll(RegExp(r'[/#.$\[\]]'), '');
 
     _storage.setString('shoppingListId', shoppingListId.trim());
   }
@@ -29,12 +29,12 @@ class SM {
     _storage.setString('username', username.trim());
   }
 
-  static bool getCheckForUpdatesFlag() {
-    return _storage.getBool('checkForUpdatesFlag') ?? true;
+  static bool getAreUpdatesEnabled() {
+    return _storage.getBool('areUpdatesEnabled') ?? true;
   }
 
-  static void setCheckForUpdatesFlag(bool checkForUpdatesFlag) {
-    _storage.setBool('checkForUpdatesFlag', checkForUpdatesFlag);
+  static void setAreUpdatesEnabled(bool areUpdatesEnabled) {
+    _storage.setBool('areUpdatesEnabled', areUpdatesEnabled);
   }
 
   static bool getHideProductsOthersDeclaredFlag() {

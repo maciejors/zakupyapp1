@@ -128,9 +128,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Icons.update,
               color: Colors.black,
             ),
-            value: SM.getCheckForUpdatesFlag(),
+            value: SM.getAreUpdatesEnabled(),
             onChanged: (newValue) => setState(() {
-              SM.setCheckForUpdatesFlag(newValue);
+              SM.setAreUpdatesEnabled(newValue);
             }),
           ),
           SwitchListTile(

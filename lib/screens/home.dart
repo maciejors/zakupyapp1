@@ -1,10 +1,9 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 import 'package:zakupyapp/core/models/product.dart';
 import 'package:zakupyapp/core/shopping_list.dart';
-import 'package:zakupyapp/storage/database_manager.dart';
+import 'package:zakupyapp/core/updater.dart';
 import 'package:zakupyapp/storage/storage_manager.dart';
 import 'package:zakupyapp/widgets/drawer/main_drawer.dart';
 import 'package:zakupyapp/widgets/home/product_editor_dialog.dart';
@@ -19,13 +18,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final db = DatabaseManager.instance;
   ShoppingList shoppingList = ShoppingList();
+  Updater updater = Updater();
   bool isDataReady = false;
-
-  // this flag is necessary to prevent checking for update every time the
-  // product list gets updates
-  bool checkedForUpdate = false;
 
   /// Used to wrap functions passed to the onPressed property
   /// in buttons to disable them if the data is not ready yet
@@ -99,24 +94,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void checkForUpdate() {
-    db.isUpdateAvailable().then((value) {
-      if (value) {
-        // retrieve the latest release info
-        db.getLatestRelease().then((release) {
-          // show update dialog
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (ctx) => DownloadUpdateDialog(
-              latestRelease: release,
-            ),
-          );
-        });
-      }
-    });
-  }
-
   /// Returns a list of widgets to put inside the main ListView.
   List<Widget> getItemsToDisplay() {
     // create actual widgets from products
@@ -136,7 +113,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// different body depending on [isDataReady] & [shoppingListId] values
+  /// different body depending on
+  /// [isDataReady] & [shoppingList.isInitialised] values
   Widget getBody() {
     // if shoppingListId is not specified, display an info on it
     if (!shoppingList.isInitialised)
@@ -172,11 +150,14 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     // check for updates
-    if (kReleaseMode && SM.getCheckForUpdatesFlag()) {
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        checkForUpdate();
-      });
-    }
+    SchedulerBinding.instance
+        .addPostFrameCallback((_) => updater.checkForUpdate((release) async =>
+            // show update dialog
+            await showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (ctx) => DownloadUpdateDialog(release: release),
+            )));
 
     // initialise the shopping list
     if (shoppingList.isInitialised) {

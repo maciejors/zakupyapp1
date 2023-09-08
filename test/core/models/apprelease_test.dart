@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:zakupyapp/utils/other.dart';
+import 'package:zakupyapp/core/models/apprelease.dart';
 
 void main() {
   test('getMaxVersion() correctly returns the latest version ID', () {
@@ -10,6 +10,6 @@ void main() {
       'zakupyapp-2.2.99.apk'
     ];
     String latest = '2.100.0';
-    expect(getMaxVersion(filenames), equals(latest));
+    expect(AppRelease.getMaxVersion(filenames), equals(latest));
   });
 }
