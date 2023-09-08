@@ -109,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
       editFunc: () async => await editFunc(context, product: product),
       deleteFunc: () async => await deleteFunc(context, product: product),
       addBuyerFunc: () async => await addBuyerFunc(context, product: product),
-      username: SM.getUsername(),
+      addedByUser: SM.getUsername() == product.buyer,
     );
   }
 
