@@ -7,7 +7,6 @@ import 'package:zakupyapp/core/updater.dart';
 import 'package:zakupyapp/storage/storage_manager.dart';
 import 'package:zakupyapp/widgets/drawer/main_drawer.dart';
 import 'package:zakupyapp/widgets/home/product_editor/product_editor_card.dart';
-import 'package:zakupyapp/widgets/home/product_editor_dialog.dart';
 import 'package:zakupyapp/widgets/home/product_card.dart';
 import 'package:zakupyapp/widgets/home/update_dialog.dart';
 
@@ -22,7 +21,9 @@ class _HomeScreenState extends State<HomeScreen> {
   ShoppingList shoppingList = ShoppingList();
   Updater updater = Updater();
   bool isDataReady = false;
+
   Product? editedProduct;
+  bool addingProduct = false;
 
   /// Used to wrap functions passed to the onPressed property
   /// in buttons to disable them if the data is not ready yet
@@ -30,7 +31,22 @@ class _HomeScreenState extends State<HomeScreen> {
     return isDataReady ? func : null;
   }
 
-  Future<void> editFunc(BuildContext context,
+  Future<void> addProductFunc(BuildContext context) async {
+    // showDialog(
+    //     context: context,
+    //     builder: (context) => ProductEditorDialog(
+    //           editingProduct: false,
+    //           shoppingList: shoppingList,
+    //         ));
+    if (!addingProduct) {
+      setState(() {
+        editedProduct = null;
+        addingProduct = true;
+      });
+    }
+  }
+
+  Future<void> editProductFunc(BuildContext context,
       {required Product product}) async {
     if (product.isEditable) {
       // showDialog(
@@ -42,12 +58,13 @@ class _HomeScreenState extends State<HomeScreen> {
       //           shoppingList: shoppingList,
       //         ));
       setState(() {
+        addingProduct = false;
         editedProduct = product;
       });
     }
   }
 
-  Future<void> deleteFunc(BuildContext context,
+  Future<void> deleteProductFunc(BuildContext context,
       {required Product product}) async {
     await showDialog(
       context: context,
@@ -105,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
       editedProduct = null;
       // toggle filter
       shoppingList.showOnlyDeclaredByUser =
-      !shoppingList.showOnlyDeclaredByUser;
+          !shoppingList.showOnlyDeclaredByUser;
     });
   }
 
@@ -122,22 +139,36 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Widget> getItemsToDisplay() {
     // create actual widgets from products
     var products = shoppingList.getProductsToDisplay();
-    var result = products
-        .map<Widget>(wrapProductWithCard)
-        .toList();
-    if (editedProduct != null) {
+    var result = products.map<Widget>(wrapProductWithCard).toList();
+
+    // handle adding product
+    if (addingProduct) {
+      // adding product key
+      final key = Key('a');
+      result.insert(0, ProductEditorCard(key: key));
+    }
+
+    // handle editing product
+    else if (editedProduct != null) {
       // substitute one of the product cards for the editable version
       int editedProductIndex = products.indexOf(editedProduct!);
-      result[editedProductIndex] = ProductEditorCard(product: editedProduct!);
+      // editing product key
+      final key = Key('e${editedProduct!.id}');
+      result[editedProductIndex] = ProductEditorCard(
+        product: editedProduct!,
+        key: key,
+      );
     }
     return result;
   }
 
   ProductCard wrapProductWithCard(Product product) {
     return ProductCard(
+      key: Key(product.id),
       product: product,
-      editFunc: () async => await editFunc(context, product: product),
-      deleteFunc: () async => await deleteFunc(context, product: product),
+      editFunc: () async => await editProductFunc(context, product: product),
+      deleteFunc: () async =>
+          await deleteProductFunc(context, product: product),
       addBuyerFunc: () async => await addBuyerFunc(context, product: product),
       addedByUser: SM.getUsername() == product.buyer,
     );
@@ -258,14 +289,7 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: Visibility(
         visible: isDataReady,
         child: FloatingActionButton(
-          onPressed: disableIfDataNotReady(() {
-            showDialog(
-                context: context,
-                builder: (context) => ProductEditorDialog(
-                      editingProduct: false,
-                      shoppingList: shoppingList,
-                    ));
-          }),
+          onPressed: disableIfDataNotReady(() => addProductFunc(context)),
           child: Icon(
             Icons.add_shopping_cart,
           ),

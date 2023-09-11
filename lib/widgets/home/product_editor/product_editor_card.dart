@@ -15,6 +15,7 @@ class _ProductEditorCardState extends State<ProductEditorCard> {
   String _productName = '';
   String _shopNameInput = '';
   String _shopSelection = '';
+  //TODO finish this widget
 
   @override
   void initState() {
