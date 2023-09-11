@@ -140,20 +140,15 @@ class _HomeScreenState extends State<HomeScreen> {
       int editedProductIndex = products.indexOf(product);
       result[editedProductIndex] = wrapProductWithCard(
         product,
-        key: Key('e${product.id}'),
         isEditing: true,
       );
     }
     return result;
   }
 
-  ProductCard wrapProductWithCard(Product product,
-      {Key? key, bool isEditing = false}) {
-    if (key == null) {
-      key = Key(product.id);
-    }
+  ProductCard wrapProductWithCard(Product product, {bool isEditing = false}) {
     return ProductCard(
-      key: key,
+      key: Key(product.id),
       product: product,
       editFunc: getEditProductFunc(product),
       deleteFunc: getDeleteProductFunc(product),
