@@ -4,9 +4,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:zakupyapp/core/models/product.dart';
 import 'package:zakupyapp/core/shopping_list.dart';
 import 'package:zakupyapp/core/updater.dart';
-import 'package:zakupyapp/storage/storage_manager.dart';
 import 'package:zakupyapp/widgets/drawer/main_drawer.dart';
-import 'package:zakupyapp/widgets/home/product_editor/product_editor_card.dart';
 import 'package:zakupyapp/widgets/home/product_card.dart';
 import 'package:zakupyapp/widgets/home/update_dialog.dart';
 
@@ -25,19 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Product? editedProduct;
   bool addingProduct = false;
 
-  /// Used to wrap functions passed to the onPressed property
-  /// in buttons to disable them if the data is not ready yet
-  void Function()? disableIfDataNotReady(void Function() func) {
-    return isDataReady ? func : null;
-  }
-
-  Future<void> addProductFunc(BuildContext context) async {
-    // showDialog(
-    //     context: context,
-    //     builder: (context) => ProductEditorDialog(
-    //           editingProduct: false,
-    //           shoppingList: shoppingList,
-    //         ));
+  void addProductFunc() {
     if (!addingProduct) {
       setState(() {
         editedProduct = null;
@@ -46,74 +32,66 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<void> editProductFunc(BuildContext context,
-      {required Product product}) async {
-    if (product.isEditable) {
-      // showDialog(
-      //     context: context,
-      //     barrierDismissible: false,
-      //     builder: (context) => ProductEditorDialog(
-      //           editingProduct: true,
-      //           product: product,
-      //           shoppingList: shoppingList,
-      //         ));
-      setState(() {
-        addingProduct = false;
-        editedProduct = product;
-      });
-    }
+  void Function() getEditProductFunc(Product product) {
+    return () {
+      if (product.isEditable)
+        setState(() {
+          addingProduct = false;
+          editedProduct = product;
+        });
+    };
   }
 
-  Future<void> deleteProductFunc(BuildContext context,
-      {required Product product}) async {
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Usuń produkt'),
-          content: Text('Czy na pewno chcesz usunąć: ${product.name}?'),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Anuluj'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text('Tak'),
-              onPressed: () async {
-                await shoppingList.removeProduct(product);
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text('Usunięto wybrany produkt'),
-                ));
-              },
-            ),
-          ],
+  void Function() getDeleteProductFunc(Product product) {
+    return () async => await showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Usuń produkt'),
+              content: Text('Czy na pewno chcesz usunąć: ${product.name}?'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('Anuluj'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: Text('Tak'),
+                  onPressed: () async {
+                    await shoppingList.removeProduct(product);
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Usunięto wybrany produkt'),
+                    ));
+                  },
+                ),
+              ],
+            );
+          },
         );
-      },
-    );
   }
 
-  Future<void> addBuyerFunc(BuildContext context,
-      {required Product product}) async {
-    bool? actionResult = await shoppingList.toggleProductBuyer(product);
-    // no action was taken
-    if (actionResult == null) {
-      return;
-    }
-    // buyer added
-    if (actionResult) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Dodano deklarację kupna'),
-      ));
-    }
-    // buyer removed
-    else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Usunięto deklarację kupna'),
-      ));
-    }
+  void Function() getAddBuyerFunc(Product product) {
+    return () async {
+      bool? actionResult = await shoppingList.toggleProductBuyer(product);
+      // no action was taken
+      if (actionResult == null) {
+        return;
+      }
+      // buyer added
+      if (actionResult) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Dodano deklarację kupna'),
+        ));
+      }
+      // buyer removed
+      else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Usunięto deklarację kupna'),
+        ));
+      }
+    };
   }
 
   void toggleBuyerFilter() {
@@ -138,39 +116,49 @@ class _HomeScreenState extends State<HomeScreen> {
   /// Returns a list of widgets to put inside the main ListView.
   List<Widget> getItemsToDisplay() {
     // create actual widgets from products
-    var products = shoppingList.getProductsToDisplay();
-    var result = products.map<Widget>(wrapProductWithCard).toList();
+    final products = shoppingList.getProductsToDisplay();
+    final result = products.map(wrapProductWithCard).toList();
 
     // handle adding product
     if (addingProduct) {
       // adding product key
-      final key = Key('a');
-      result.insert(0, ProductEditorCard(key: key));
+      final productCard = ProductCard(
+        key: Key('adding'),
+        product: null,
+        editFunc: () {},
+        deleteFunc: () {},
+        addBuyerFunc: () {},
+        isEditing: true,
+      );
+      result.insert(0, productCard);
     }
 
     // handle editing product
     else if (editedProduct != null) {
       // substitute one of the product cards for the editable version
-      int editedProductIndex = products.indexOf(editedProduct!);
-      // editing product key
-      final key = Key('e${editedProduct!.id}');
-      result[editedProductIndex] = ProductEditorCard(
-        product: editedProduct!,
-        key: key,
+      final product = editedProduct!;
+      int editedProductIndex = products.indexOf(product);
+      result[editedProductIndex] = wrapProductWithCard(
+        product,
+        key: Key('e${product.id}'),
+        isEditing: true,
       );
     }
     return result;
   }
 
-  ProductCard wrapProductWithCard(Product product) {
+  ProductCard wrapProductWithCard(Product product,
+      {Key? key, bool isEditing = false}) {
+    if (key == null) {
+      key = Key(product.id);
+    }
     return ProductCard(
-      key: Key(product.id),
+      key: key,
       product: product,
-      editFunc: () async => await editProductFunc(context, product: product),
-      deleteFunc: () async =>
-          await deleteProductFunc(context, product: product),
-      addBuyerFunc: () async => await addBuyerFunc(context, product: product),
-      addedByUser: SM.getUsername() == product.buyer,
+      editFunc: getEditProductFunc(product),
+      deleteFunc: getDeleteProductFunc(product),
+      addBuyerFunc: getAddBuyerFunc(product),
+      isEditing: isEditing,
     );
   }
 
@@ -289,7 +277,7 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: Visibility(
         visible: isDataReady,
         child: FloatingActionButton(
-          onPressed: disableIfDataNotReady(() => addProductFunc(context)),
+          onPressed: addProductFunc,
           child: Icon(
             Icons.add_shopping_cart,
           ),

@@ -26,6 +26,10 @@ class Product {
     return whoAdded == SM.getUsername();
   }
 
+  bool get isDeclaredByUser {
+    return buyer == SM.getUsername();
+  }
+
   /// Map does not contain ID of the product
   Map<String, String> toMap() {
     var result = {
