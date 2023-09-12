@@ -73,7 +73,7 @@ class ProductCardContent extends StatelessWidget {
         Visibility(
           visible: product.shop != null,
           child: Padding(
-            padding: const EdgeInsets.only(top: 4),
+            padding: const EdgeInsets.only(top: 8),
             child: SimpleTextWithIcon(
               text: 'Sklep: ${product.shop}',
               iconData: Icons.shopping_cart,
