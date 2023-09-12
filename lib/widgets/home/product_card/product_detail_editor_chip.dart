@@ -17,8 +17,8 @@ class ProductDetailEditorChip extends StatelessWidget {
       required this.activeLabel,
       required this.activeIcon});
 
-  final inactiveChipColor = Colors.deepOrange[300];
-  final activeChipColor = Colors.deepOrange[400];
+  final inactiveChipColor = Colors.deepOrange[200];
+  final activeChipColor = Colors.deepOrange[300];
 
   @override
   Widget build(BuildContext context) {
