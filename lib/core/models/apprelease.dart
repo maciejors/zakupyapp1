@@ -2,7 +2,7 @@
 class AppRelease implements Comparable<AppRelease> {
   final String id;
   final int size;
-  final String downloadUrl;
+  String downloadUrl;
 
   AppRelease({required this.id, required this.size, required this.downloadUrl});
 

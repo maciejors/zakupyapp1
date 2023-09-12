@@ -16,7 +16,7 @@ class Updater {
     // - this instance of Updater has already checked for update
     // - updates are turned off
     // - application was compiled in debug mode
-    if (_checkedForUpdate || !SM.getAreUpdatesEnabled() || kDebugMode) {
+    if (_checkedForUpdate || !SM.getUseFamilyStore() || kDebugMode) {
       return;
     }
     _checkedForUpdate = true;
@@ -28,6 +28,9 @@ class Updater {
       downloadUrl: '',  // not relevant
     );
     AppRelease latestRelease = await _db.getLatestRelease();
+    if (SM.getUseFamilyStore()) {
+      latestRelease.downloadUrl = 'https://familystore.com/app/14';
+    }
     bool isUpdateAvailable =  currRelease.compareTo(latestRelease) < 0;
 
     if (isUpdateAvailable && updateAvailableCallback != null) {

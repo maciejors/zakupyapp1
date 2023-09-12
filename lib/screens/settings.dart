@@ -119,18 +119,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           SwitchListTile(
             title: Text(
-              'Sprawdzaj aktualizacje',
+              'Aktualizuj za pomocą Family Store',
               style: TextStyle(
                 color: Colors.black,
               ),
             ),
+            subtitle: Text('Dostępne wkrótce!'),
             secondary: Icon(
               Icons.update,
               color: Colors.black,
             ),
-            value: SM.getAreUpdatesEnabled(),
-            onChanged: (newValue) => setState(() {
-              SM.setAreUpdatesEnabled(newValue);
+            value: SM.getUseFamilyStore(),
+            onChanged: true ? null : (newValue) => setState(() {
+              SM.setUseFamilyStore(newValue);
             }),
           ),
           SwitchListTile(
@@ -144,9 +145,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Icons.remove_red_eye,
               color: Colors.black,
             ),
-            value: SM.getHideProductsOthersDeclaredFlag(),
+            value: SM.getHideProductsOthersDeclared(),
             onChanged: (newValue) => setState(() {
-              SM.setHideProductsOthersDeclaredFlag(newValue);
+              SM.setHideProductsOthersDeclared(newValue);
             }),
           ),
           ListTile(

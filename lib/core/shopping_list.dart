@@ -11,7 +11,7 @@ class ShoppingList {
   final String _username = SM.getUsername();
 
   final bool hideProductsOthersDeclared =
-      SM.getHideProductsOthersDeclaredFlag();
+      SM.getHideProductsOthersDeclared();
   bool showOnlyDeclaredByUser = false;
 
   /// Name of the shop serving as a filter.<br>

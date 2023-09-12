@@ -11,16 +11,6 @@ class DownloadUpdateDialog extends StatelessWidget {
   const DownloadUpdateDialog({Key? key, required this.release})
       : super(key: key);
 
-  void copyDownloadUrl(BuildContext context) {
-    Navigator.of(context).pop();
-    Clipboard.setData(ClipboardData(text: release.downloadUrl));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Link do pobrania aktualizacji skopiowany do schowka.'),
-      ),
-    );
-  }
-
   void downloadInBrowser(BuildContext context) async {
     Navigator.of(context).pop();
     bool success = await launchUrl(
@@ -58,13 +48,7 @@ class DownloadUpdateDialog extends StatelessWidget {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: Text('Anuluj'),
-        ),
-        TextButton(
-          onPressed: () {
-            copyDownloadUrl(context);
-          },
-          child: Text('Skopiuj link'),
+          child: Text('Później'),
         ),
         TextButton(
           onPressed: () {
