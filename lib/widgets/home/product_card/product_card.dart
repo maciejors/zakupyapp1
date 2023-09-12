@@ -57,7 +57,9 @@ class ProductCard extends StatelessWidget {
         onDoubleTap: isEditing ? null : addBuyerFunc,
         onLongPress: isEditing ? null : editFunc,
         child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: isEditing
+                ? const EdgeInsets.symmetric(horizontal: 16)
+                : const EdgeInsets.all(16),
             child: isEditing
                 ? ProductEditor(
                     product: product,

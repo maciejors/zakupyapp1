@@ -42,64 +42,68 @@ class _HomeScreenState extends State<HomeScreen> {
     };
   }
 
-  VoidCallback getDeleteProductFunc(Product product) => () async => await showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text('Usuń produkt'),
-              content: Text('Czy na pewno chcesz usunąć: ${product.name}?'),
-              actions: <Widget>[
-                TextButton(
-                  child: Text('Anuluj'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                TextButton(
-                  child: Text('Tak'),
-                  onPressed: () async {
-                    await shoppingList.removeProduct(product);
-                    Navigator.of(context).pop();
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Usunięto wybrany produkt'),
-                    ));
-                  },
-                ),
-              ],
-            );
-          },
-        );
-
+  VoidCallback getDeleteProductFunc(Product product) =>
+      () async => await showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text('Usuń produkt'),
+                content: Text('Czy na pewno chcesz usunąć: ${product.name}?'),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('Anuluj'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  TextButton(
+                    child: Text('Tak'),
+                    onPressed: () async {
+                      await shoppingList.removeProduct(product);
+                      Navigator.of(context).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('Usunięto wybrany produkt'),
+                      ));
+                    },
+                  ),
+                ],
+              );
+            },
+          );
 
   VoidCallback getAddBuyerFunc(Product product) => () async {
-      bool? actionResult = await shoppingList.toggleProductBuyer(product);
-      // no action was taken
-      if (actionResult == null) {
-        return;
-      }
-      // buyer added
-      if (actionResult) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Dodano deklarację kupna'),
-        ));
-      }
-      // buyer removed
-      else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Usunięto deklarację kupna'),
-        ));
-      }
-    };
-
-  void confirmAddProductFunc(Product product) {
-  }
-
-  void confirmEditProductFunc(Product product) {
+        bool? actionResult = await shoppingList.toggleProductBuyer(product);
+        // no action was taken
+        if (actionResult == null) {
+          return;
+        }
+        // buyer added
+        if (actionResult) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Dodano deklarację kupna'),
+          ));
+        }
+        // buyer removed
+        else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Usunięto deklarację kupna'),
+          ));
+        }
+      };
+  
+  Future<void> confirmEditProductFunc(Product product) async {
+    setState(() {
+      editedProduct = null;
+      isAddingProduct = false;
+    });
+    await shoppingList.storeProduct(product);
   }
 
   void cancelEditProductFunc() {
-    editedProduct = null;
-    isAddingProduct = false;
+    setState(() {
+      editedProduct = null;
+      isAddingProduct = false;
+    });
   }
 
   void toggleBuyerFilter() {
@@ -136,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
         editFunc: () {},
         deleteFunc: () {},
         addBuyerFunc: () {},
-        onConfirmEdit: confirmAddProductFunc,
+        onConfirmEdit: confirmEditProductFunc,
         onCancelEdit: cancelEditProductFunc,
         isEditing: true,
         allAvailableShops: shoppingList.allAvailableShops,

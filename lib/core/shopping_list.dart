@@ -39,7 +39,7 @@ class ShoppingList {
     return filteredShop != '';
   }
 
-  Future<void> addProduct(Product product) async {
+  Future<void> storeProduct(Product product) async {
     await _db.storeProductFromClass(product);
     // add any new shops to the list of available shops
     if (product.shop != null && !allAvailableShops.contains(product.shop)) {

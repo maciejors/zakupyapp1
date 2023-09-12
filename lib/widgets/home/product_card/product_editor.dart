@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zakupyapp/core/models/deadline.dart';
 import 'package:zakupyapp/core/models/product.dart';
+import 'package:zakupyapp/storage/storage_manager.dart';
 import 'package:zakupyapp/widgets/home/product_card/product_detail_editor_chip.dart';
 import 'package:zakupyapp/widgets/home/product_card/select_shop_dialog.dart';
 
@@ -24,6 +25,8 @@ class ProductEditor extends StatefulWidget {
 }
 
 class _ProductEditorState extends State<ProductEditor> {
+  final _formKey = GlobalKey<FormState>();
+
   String _productName = '';
   String _selectedShop = '';
   DateTime? _selectedDay;
@@ -74,6 +77,30 @@ class _ProductEditorState extends State<ProductEditor> {
     setState(() => _selectedDay = null);
   }
 
+  void confirmEdit() {
+    if (_formKey.currentState!.validate()) {
+      final productId = widget.product == null
+          ? Product.generateProductId()
+          : widget.product!.id;
+      final productDateAdded =
+          widget.product == null ? DateTime.now() : widget.product!.dateAdded;
+      final newProduct = Product(
+        id: productId,
+        name: _productName,
+        dateAdded: productDateAdded,
+        whoAdded: SM.getUsername(),
+        shop: _selectedShop == '' ? null : _selectedShop,
+        deadline: _selectedDeadline,
+        buyer: widget.product?.buyer,
+      );
+      widget.onConfirmEdit(newProduct);
+    }
+  }
+
+  void cancelEdit() {
+    widget.onCancelEdit();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -87,40 +114,61 @@ class _ProductEditorState extends State<ProductEditor> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        // Product name input
-        TextFormField(
-          initialValue: _productName,
-          onSaved: (value) => _productName = value!,
-          decoration: InputDecoration(
-            hintText: 'Nazwa produktu...',
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          // Product name input
+          TextFormField(
+            initialValue: _productName,
+            onChanged: (value) => _productName = value,
+            decoration: InputDecoration(
+              hintText: 'Nazwa produktu...',
+            ),
+            validator: productNameValidator,
           ),
-          validator: productNameValidator,
-        ),
 
-        // Shop picker
-        ProductDetailEditorChip(
-          active: _selectedShop != '',
-          onPress: _selectShop,
-          onDisable: _clearShop,
-          inactiveLabel: 'Dodaj sklep',
-          activeLabel: 'Sklep: $_selectedShop',
-          icon: Icon(Icons.shopping_cart),
-        ),
+          // Shop picker
+          ProductDetailEditorChip(
+            active: _selectedShop != '',
+            onPress: _selectShop,
+            onDisable: _clearShop,
+            inactiveLabel: 'Dodaj sklep',
+            activeLabel: 'Sklep: $_selectedShop',
+            icon: Icon(Icons.shopping_cart),
+          ),
 
-        // Deadline picker
-        ProductDetailEditorChip(
-          active: _selectedDeadline != null,
-          onPress: _selectDate,
-          onDisable: _clearDate,
-          inactiveLabel: 'Dodaj deadline',
-          activeLabel:
-              'Potrzebne na: ${_selectedDeadline?.getPolishDescription()}',
-          icon: Icon(Icons.access_time),
-        ),
-      ],
+          // Deadline picker
+          ProductDetailEditorChip(
+            active: _selectedDeadline != null,
+            onPress: _selectDate,
+            onDisable: _clearDate,
+            inactiveLabel: 'Dodaj deadline',
+            activeLabel:
+                'Potrzebne na: ${_selectedDeadline?.getPolishDescription()}',
+            icon: Icon(Icons.access_time),
+          ),
+
+          // Save/cancel buttons
+          Flex(
+            direction: Axis.horizontal,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              TextButton(
+                onPressed: cancelEdit,
+                child: Text('Anuluj'),
+                style: TextButton.styleFrom(foregroundColor: Colors.black),
+              ),
+              TextButton(
+                onPressed: confirmEdit,
+                child: Text('Zapisz'),
+                style: TextButton.styleFrom(foregroundColor: Colors.black),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
