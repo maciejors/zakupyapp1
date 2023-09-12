@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zakupyapp/core/models/deadline.dart';
 import 'package:zakupyapp/core/models/product.dart';
+import 'package:zakupyapp/widgets/home/product_card/select_shop_dialog.dart';
 
 class ProductEditor extends StatefulWidget {
   // null if a new product is being added
@@ -23,17 +24,29 @@ class ProductEditor extends StatefulWidget {
 
 class _ProductEditorState extends State<ProductEditor> {
   String _productName = '';
-  String _shopSelection = '';
-  String _shopNameInput = '';
+  String _selectedShop = '';
   DateTime? _selectedDay;
   Deadline? get _selectedDeadline =>
       _selectedDay == null ? null : Deadline.ignoringTime(_selectedDay!);
 
-  final _formKey = GlobalKey<FormState>();
-
-  String? validatorNotEmpty(String? value) {
-    if (value!.isEmpty) return 'Pole nie może być puste';
+  String? productNameValidator(String? productName) {
+    if (productName!.isEmpty) return 'Pole nie może być puste';
     return null;
+  }
+
+  Future<void> _selectShop() async {
+    await showDialog(
+        context: context,
+        builder: (ctx) => SelectShopDialog(
+              initialSelectedShop: _selectedShop,
+              availableShops: widget.allAvailableShops,
+              onConfirmSelection: (shop) =>
+                  setState(() => _selectedShop = shop),
+            ));
+  }
+
+  void _clearShop() {
+    setState(() => _selectedShop = '');
   }
 
   Future<void> _selectDate() async {
@@ -63,96 +76,75 @@ class _ProductEditorState extends State<ProductEditor> {
     // if editing
     if (widget.product != null) {
       _productName = widget.product!.name;
-      _shopSelection = widget.product!.shop ?? '';
+      _selectedShop = widget.product!.shop ?? '';
       _selectedDay = widget.product!.deadline?.deadline;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          // Product name input
-          TextFormField(
-            initialValue: _productName,
-            onSaved: (value) => _productName = value!,
-            decoration: InputDecoration(
-              hintText: 'Nazwa produktu...',
-            ),
-            validator: validatorNotEmpty,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        // Product name input
+        TextFormField(
+          initialValue: _productName,
+          onSaved: (value) => _productName = value!,
+          decoration: InputDecoration(
+            hintText: 'Nazwa produktu...',
           ),
+          validator: productNameValidator,
+        ),
 
-          // Shop selection
-          DropdownButtonFormField(
-            decoration: InputDecoration(labelText: 'Sklep'),
-            value: _shopSelection,
-            items: widget.allAvailableShops
-                .map((e) => DropdownMenuItem(
-                      child: Text(e),
-                      value: e,
-                    ))
-                .toList()
-              ..insert(
-                  0,
-                  DropdownMenuItem(
-                    child: Text('Nieokreślony'),
-                    value: '',
-                  ))
-              ..add(DropdownMenuItem(
-                child: Text('Inny:'),
-                value: 'requestInput',
-              )),
-            onChanged: (value) {
-              setState(() {
-                _shopSelection = value!;
-              });
-            },
-          ),
-
-          // Shop name input
-          Visibility(
-            visible: _shopSelection == 'requestInput',
-            child: TextFormField(
-              autofocus: true,
-              decoration: InputDecoration(
-                hintText: 'Nazwa sklepu',
+        // Shop picker
+        _selectedShop == ''
+            ? ActionChip(
+                avatar: Icon(Icons.add_circle),
+                label: Text('Dodaj sklep'),
+                backgroundColor: Colors.deepOrange[200],
+                onPressed: _selectShop,
+              )
+            : Row(
+                // direction: Axis.horizontal,
+                children: [
+                  ActionChip(
+                    avatar: Icon(Icons.shopping_cart),
+                    label: Text('Sklep: ' + _selectedShop),
+                    backgroundColor: Colors.deepOrange[300],
+                    onPressed: _selectShop,
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.close),
+                    onPressed: _clearShop,
+                  ),
+                ],
               ),
-              onSaved: (value) {
-                _shopNameInput = value!;
-              },
-              validator: validatorNotEmpty,
-            ),
-          ),
 
-          // Deadline picker
-          _selectedDay == null
-              ? ActionChip(
-                  avatar: Icon(Icons.add_circle),
-                  label: Text('Dodaj deadline'),
-                  backgroundColor: Colors.deepOrange[200],
-                  onPressed: _selectDate,
-                )
-              : Row(
-                  // direction: Axis.horizontal,
-                  children: [
-                    ActionChip(
-                      avatar: Icon(Icons.access_time),
-                      label: Text('Potrzebne na: ' +
-                          _selectedDeadline!.getPolishDescription()),
-                      backgroundColor: Colors.deepOrange[300],
-                      onPressed: _selectDate,
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.close),
-                      onPressed: _clearDate,
-                    ),
-                  ],
-                )
-        ],
-      ),
+        // Deadline picker
+        _selectedDay == null
+            ? ActionChip(
+                avatar: Icon(Icons.add_circle),
+                label: Text('Dodaj deadline'),
+                backgroundColor: Colors.deepOrange[200],
+                onPressed: _selectDate,
+              )
+            : Row(
+                // direction: Axis.horizontal,
+                children: [
+                  ActionChip(
+                    avatar: Icon(Icons.access_time),
+                    label: Text('Potrzebne na: ' +
+                        _selectedDeadline!.getPolishDescription()),
+                    backgroundColor: Colors.deepOrange[300],
+                    onPressed: _selectDate,
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.close),
+                    onPressed: _clearDate,
+                  ),
+                ],
+              ),
+      ],
     );
   }
 }
