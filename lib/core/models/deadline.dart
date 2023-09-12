@@ -95,7 +95,7 @@ class Deadline {
             '${deadline.minute.toString().padLeft(2, '0')}';
       }
     } else if (dayDiff < 0) {
-      description = '$dayDiff dni temu';
+      description = '${-dayDiff} dni temu';
     } else if (dayDiff > 0) {
       description = 'za $dayDiff dni';
     }
