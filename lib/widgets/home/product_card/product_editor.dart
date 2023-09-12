@@ -126,6 +126,7 @@ class _ProductEditorState extends State<ProductEditor> {
             decoration: InputDecoration(
               hintText: 'Nazwa produktu...',
             ),
+            style: TextStyle(fontSize: 18),
             validator: productNameValidator,
           ),
 
