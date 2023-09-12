@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:zakupyapp/widgets/drawer/show_help.dart';
+import 'package:zakupyapp/widgets/drawer/help_dialog.dart';
 
 class MainDrawer extends StatelessWidget {
   const MainDrawer({Key? key}) : super(key: key);
@@ -11,6 +11,10 @@ class MainDrawer extends StatelessWidget {
     } else {
       Navigator.pushReplacementNamed(context, routeName);
     }
+  }
+
+  Future<void> showHelpDialog(BuildContext context) async {
+    await showDialog(context: context, builder: (ctx) => HelpDialog());
   }
 
   @override
@@ -39,13 +43,12 @@ class MainDrawer extends StatelessWidget {
           onTap: () {
             switchScreen(context, '/settings');
           },
-        ),ListTile(
+        ),
+        ListTile(
           // settings
           leading: Icon(Icons.help),
           title: Text('Pomoc'),
-          onTap: () async {
-            await showHelpDialog(context);
-          },
+          onTap: () async => await showHelpDialog(context),
         ),
       ],
     ));

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
-Future<void> showHelpDialog(BuildContext context) async {
-  String sep = '\n\n';
-  await showDialog(
-    context: context,
-    builder: (ctx) => AlertDialog(
+class HelpDialog extends StatelessWidget {
+  const HelpDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    String sep = '\n\n';
+    return AlertDialog(
       title: Text('Pomoc'),
       content: Text.rich(
         TextSpan(
@@ -50,9 +52,9 @@ Future<void> showHelpDialog(BuildContext context) async {
             TextSpan(text: 'kliknij '),
             WidgetSpan(
                 child: Icon(
-                  Icons.shopping_cart_checkout,
-                  size: 17,
-                )),
+              Icons.shopping_cart_checkout,
+              size: 17,
+            )),
             TextSpan(text: ' na górze ekranu.'),
           ],
         ),
@@ -64,6 +66,6 @@ Future<void> showHelpDialog(BuildContext context) async {
               Navigator.of(context).pop();
             }),
       ],
-    ),
-  );
+    );
+  }
 }
