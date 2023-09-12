@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 
 import 'package:zakupyapp/core/models/product.dart';
-import 'package:zakupyapp/widgets/home/product_card_content.dart';
-import 'package:zakupyapp/widgets/home/product_editor/product_editor.dart';
+import 'package:zakupyapp/widgets/home/product_card/product_card_content.dart';
+import 'package:zakupyapp/widgets/home/product_card/product_editor.dart';
 
 class ProductCard extends StatelessWidget {
   final Product? product;
 
+  // product card content
   final VoidCallback editFunc;
   final VoidCallback deleteFunc;
   final VoidCallback addBuyerFunc;
+
+  // product editor
+  final void Function(Product product) onConfirmEdit;
+  final List<String> allAvailableShops;
 
   final bool isEditing;
 
@@ -19,6 +24,8 @@ class ProductCard extends StatelessWidget {
       required this.editFunc,
       required this.deleteFunc,
       required this.addBuyerFunc,
+      required this.onConfirmEdit,
+      required this.allAvailableShops,
       this.isEditing = false})
       : super(key: key);
 
@@ -37,7 +44,11 @@ class ProductCard extends StatelessWidget {
         child: Padding(
             padding: const EdgeInsets.all(16),
             child: isEditing
-                ? ProductEditor(product: product)
+                ? ProductEditor(
+                    product: product,
+                    onConfirmEdit: onConfirmEdit,
+                    allAvailableShops: allAvailableShops,
+                  )
                 : ProductCardContent(product: product!)),
       ),
     );

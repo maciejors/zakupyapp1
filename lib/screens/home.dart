@@ -5,7 +5,7 @@ import 'package:zakupyapp/core/models/product.dart';
 import 'package:zakupyapp/core/shopping_list.dart';
 import 'package:zakupyapp/core/updater.dart';
 import 'package:zakupyapp/widgets/drawer/main_drawer.dart';
-import 'package:zakupyapp/widgets/home/product_card.dart';
+import 'package:zakupyapp/widgets/home/product_card/product_card.dart';
 import 'package:zakupyapp/widgets/home/update_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void Function() getEditProductFunc(Product product) {
+  VoidCallback getEditProductFunc(Product product) {
     return () {
       if (product.isEditable)
         setState(() {
@@ -42,8 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
     };
   }
 
-  void Function() getDeleteProductFunc(Product product) {
-    return () async => await showDialog(
+  VoidCallback getDeleteProductFunc(Product product) => () async => await showDialog(
           context: context,
           builder: (context) {
             return AlertDialog(
@@ -70,10 +69,9 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           },
         );
-  }
 
-  void Function() getAddBuyerFunc(Product product) {
-    return () async {
+
+  VoidCallback getAddBuyerFunc(Product product) => () async {
       bool? actionResult = await shoppingList.toggleProductBuyer(product);
       // no action was taken
       if (actionResult == null) {
@@ -92,6 +90,13 @@ class _HomeScreenState extends State<HomeScreen> {
         ));
       }
     };
+
+  void confirmAddProductFunc(Product product) {
+    return;
+  }
+
+  void confirmEditProductFunc(Product product) {
+    return;
   }
 
   void toggleBuyerFilter() {
@@ -128,7 +133,9 @@ class _HomeScreenState extends State<HomeScreen> {
         editFunc: () {},
         deleteFunc: () {},
         addBuyerFunc: () {},
+        onConfirmEdit: confirmAddProductFunc,
         isEditing: true,
+        allAvailableShops: shoppingList.allAvailableShops,
       );
       result.insert(0, productCard);
     }
@@ -153,7 +160,9 @@ class _HomeScreenState extends State<HomeScreen> {
       editFunc: getEditProductFunc(product),
       deleteFunc: getDeleteProductFunc(product),
       addBuyerFunc: getAddBuyerFunc(product),
+      onConfirmEdit: confirmEditProductFunc,
       isEditing: isEditing,
+      allAvailableShops: shoppingList.allAvailableShops,
     );
   }
 
