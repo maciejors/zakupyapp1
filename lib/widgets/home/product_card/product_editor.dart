@@ -128,6 +128,7 @@ class _ProductEditorState extends State<ProductEditor> {
             ),
             style: TextStyle(fontSize: 18),
             validator: productNameValidator,
+            focusNode: FocusNode(canRequestFocus: false),
           ),
 
           // Shop picker
