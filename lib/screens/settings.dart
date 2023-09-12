@@ -130,9 +130,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               color: Colors.black,
             ),
             value: SM.getUseFamilyStore(),
-            onChanged: true ? null : (newValue) => setState(() {
-              SM.setUseFamilyStore(newValue);
-            }),
+            onChanged: null,
           ),
           SwitchListTile(
             title: Text(
