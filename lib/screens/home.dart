@@ -244,47 +244,48 @@ class _HomeScreenState extends State<HomeScreen> {
       drawer: MainDrawer(),
       appBar: AppBar(
         title: Text('Lista Zakupów'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.shopping_cart_checkout,
-              color: shoppingList.showOnlyDeclaredByUser
-                  ? Colors.black
-                  : Colors.deepOrange[900],
-            ),
-            onPressed: toggleBuyerFilter,
-          ),
-          PopupMenuButton(
-            enabled: isDataReady,
-            icon: Icon(
-              Icons.filter_alt,
-              color: shoppingList.shopFilterApplied
-                  ? Colors.black
-                  : Colors.deepOrange[900],
-            ),
-            itemBuilder: (BuildContext context) =>
-                shoppingList.availableShops
-                    .map((e) => PopupMenuItem(
-                          child: Text(e),
-                          value: e,
-                        ))
-                    .toList()
-                  ..insert(
-                      0,
-                      PopupMenuItem(
-                        child: Text('Wszystkie'),
-                        value: '',
-                      ))
-                  ..insert(
-                      1,
-                      PopupMenuItem(
-                        child: Text('Nieokreślone'),
-                        value: '~',
-                      )),
-            onSelected: setShopFilter,
-            initialValue: shoppingList.filteredShop,
-          ),
-        ],
+        actions: !isDataReady
+            ? []
+            : <Widget>[
+                IconButton(
+                  icon: Icon(
+                    Icons.shopping_cart_checkout,
+                    color: shoppingList.showOnlyDeclaredByUser
+                        ? Colors.black
+                        : Colors.deepOrange[900],
+                  ),
+                  onPressed: toggleBuyerFilter,
+                ),
+                PopupMenuButton(
+                  icon: Icon(
+                    Icons.filter_alt,
+                    color: shoppingList.shopFilterApplied
+                        ? Colors.black
+                        : Colors.deepOrange[900],
+                  ),
+                  itemBuilder: (BuildContext context) =>
+                      shoppingList.availableShops
+                          .map((e) => PopupMenuItem(
+                                child: Text(e),
+                                value: e,
+                              ))
+                          .toList()
+                        ..insert(
+                            0,
+                            PopupMenuItem(
+                              child: Text('Wszystkie'),
+                              value: '',
+                            ))
+                        ..insert(
+                            1,
+                            PopupMenuItem(
+                              child: Text('Nieokreślone'),
+                              value: '~',
+                            )),
+                  onSelected: setShopFilter,
+                  initialValue: shoppingList.filteredShop,
+                ),
+              ],
       ),
       body: getBody(),
       floatingActionButton: Visibility(
