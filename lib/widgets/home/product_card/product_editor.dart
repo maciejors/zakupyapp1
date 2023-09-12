@@ -107,7 +107,7 @@ class _ProductEditorState extends State<ProductEditor> {
           onDisable: _clearShop,
           inactiveLabel: 'Dodaj sklep',
           activeLabel: 'Sklep: $_selectedShop',
-          activeIcon: Icon(Icons.shopping_cart),
+          icon: Icon(Icons.shopping_cart),
         ),
 
         // Deadline picker
@@ -118,7 +118,7 @@ class _ProductEditorState extends State<ProductEditor> {
           inactiveLabel: 'Dodaj deadline',
           activeLabel:
               'Potrzebne na: ${_selectedDeadline?.getPolishDescription()}',
-          activeIcon: Icon(Icons.access_time),
+          icon: Icon(Icons.access_time),
         ),
       ],
     );
