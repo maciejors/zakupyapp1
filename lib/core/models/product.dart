@@ -23,12 +23,11 @@ class Product {
       this.buyer});
 
   bool get isEditable {
-    return whoAdded == SM.getUsername();
+    final isDeclaredByOthers = buyer != null && !isDeclaredByUser;
+    return whoAdded == SM.getUsername() && !isDeclaredByOthers;
   }
 
-  bool get isDeclaredByUser {
-    return buyer == SM.getUsername();
-  }
+  bool get isDeclaredByUser => buyer == SM.getUsername();
 
   /// Map does not contain ID of the product
   Map<String, String> toMap() {
