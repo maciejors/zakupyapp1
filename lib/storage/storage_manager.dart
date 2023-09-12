@@ -29,20 +29,20 @@ class SM {
     _storage.setString('username', username.trim());
   }
 
-  static bool getAreUpdatesEnabled() {
-    return _storage.getBool('areUpdatesEnabled') ?? true;
+  static bool getUseFamilyStore() {
+    return _storage.getBool('useFamilyStore') ?? false;
   }
 
-  static void setAreUpdatesEnabled(bool areUpdatesEnabled) {
-    _storage.setBool('areUpdatesEnabled', areUpdatesEnabled);
+  static void setUseFamilyStore(bool useFamilyStore) {
+    _storage.setBool('useFamilyStore', useFamilyStore);
   }
 
-  static bool getHideProductsOthersDeclaredFlag() {
-    return _storage.getBool('hideProductsOthersDeclaredFlag') ?? false;
+  static bool getHideProductsOthersDeclared() {
+    return _storage.getBool('hideProductsOthersDeclared') ?? false;
   }
 
-  static void setHideProductsOthersDeclaredFlag(bool hideProductsOthersDeclaredFlag) {
+  static void setHideProductsOthersDeclared(bool hideProductsOthersDeclared) {
     _storage.setBool(
-        'hideProductsOthersDeclaredFlag', hideProductsOthersDeclaredFlag);
+        'hideProductsOthersDeclared', hideProductsOthersDeclared);
   }
 }
