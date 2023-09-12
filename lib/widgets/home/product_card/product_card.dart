@@ -14,6 +14,7 @@ class ProductCard extends StatelessWidget {
 
   // product editor
   final void Function(Product product) onConfirmEdit;
+  final VoidCallback onCancelEdit;
   final List<String> allAvailableShops;
 
   final bool isEditing;
@@ -21,11 +22,12 @@ class ProductCard extends StatelessWidget {
   const ProductCard(
       {Key? key,
       required this.product,
-      required this.editFunc,
+        required this.allAvailableShops,
+        required this.editFunc,
       required this.deleteFunc,
       required this.addBuyerFunc,
       required this.onConfirmEdit,
-      required this.allAvailableShops,
+        required this.onCancelEdit,
       this.isEditing = false})
       : super(key: key);
 
@@ -46,8 +48,9 @@ class ProductCard extends StatelessWidget {
             child: isEditing
                 ? ProductEditor(
                     product: product,
-                    onConfirmEdit: onConfirmEdit,
-                    allAvailableShops: allAvailableShops,
+              allAvailableShops: allAvailableShops,
+              onConfirmEdit: onConfirmEdit,
+              onCancelEdit: onCancelEdit,
                   )
                 : ProductCardContent(product: product!)),
       ),

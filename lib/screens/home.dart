@@ -21,13 +21,13 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isDataReady = false;
 
   Product? editedProduct;
-  bool addingProduct = false;
+  bool isAddingProduct = false;
 
   void addProductFunc() {
-    if (!addingProduct) {
+    if (!isAddingProduct) {
       setState(() {
         editedProduct = null;
-        addingProduct = true;
+        isAddingProduct = true;
       });
     }
   }
@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return () {
       if (product.isEditable)
         setState(() {
-          addingProduct = false;
+          isAddingProduct = false;
           editedProduct = product;
         });
     };
@@ -92,11 +92,14 @@ class _HomeScreenState extends State<HomeScreen> {
     };
 
   void confirmAddProductFunc(Product product) {
-    return;
   }
 
   void confirmEditProductFunc(Product product) {
-    return;
+  }
+
+  void cancelEditProductFunc() {
+    editedProduct = null;
+    isAddingProduct = false;
   }
 
   void toggleBuyerFilter() {
@@ -125,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final result = products.map(wrapProductWithCard).toList();
 
     // handle adding product
-    if (addingProduct) {
+    if (isAddingProduct) {
       // adding product key
       final productCard = ProductCard(
         key: Key('adding'),
@@ -134,6 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
         deleteFunc: () {},
         addBuyerFunc: () {},
         onConfirmEdit: confirmAddProductFunc,
+        onCancelEdit: cancelEditProductFunc,
         isEditing: true,
         allAvailableShops: shoppingList.allAvailableShops,
       );
@@ -161,6 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
       deleteFunc: getDeleteProductFunc(product),
       addBuyerFunc: getAddBuyerFunc(product),
       onConfirmEdit: confirmEditProductFunc,
+      onCancelEdit: cancelEditProductFunc,
       isEditing: isEditing,
       allAvailableShops: shoppingList.allAvailableShops,
     );
