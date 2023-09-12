@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:zakupyapp/widgets/shared/text_with_icon.dart';
 import 'package:zakupyapp/core/models/product.dart';
-import 'package:zakupyapp/core/models/urgency.dart';
+import 'package:zakupyapp/core/models/deadline.dart';
 import 'package:zakupyapp/utils/date_time_functions.dart';
 
 class ProductCardContent extends StatelessWidget {

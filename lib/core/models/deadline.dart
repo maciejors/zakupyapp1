@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:zakupyapp/core/models/urgency.dart';
+/// Deadline's urgency
+enum Urgency { too_late, urgent, not_urgent }
 
 /// A handy way to manage product's deadline
 class Deadline {
