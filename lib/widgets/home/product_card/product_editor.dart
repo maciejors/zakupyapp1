@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zakupyapp/core/models/deadline.dart';
 import 'package:zakupyapp/core/models/product.dart';
+import 'package:zakupyapp/widgets/home/product_card/product_detail_editor_chip.dart';
 import 'package:zakupyapp/widgets/home/product_card/select_shop_dialog.dart';
 
 class ProductEditor extends StatefulWidget {
@@ -28,6 +29,9 @@ class _ProductEditorState extends State<ProductEditor> {
   DateTime? _selectedDay;
   Deadline? get _selectedDeadline =>
       _selectedDay == null ? null : Deadline.ignoringTime(_selectedDay!);
+
+  final inactiveChipColor = Colors.deepOrange[300];
+  final activeChipColor = Colors.deepOrange[300];
 
   String? productNameValidator(String? productName) {
     if (productName!.isEmpty) return 'Pole nie może być puste';
@@ -97,53 +101,25 @@ class _ProductEditorState extends State<ProductEditor> {
         ),
 
         // Shop picker
-        _selectedShop == ''
-            ? ActionChip(
-                avatar: Icon(Icons.add_circle),
-                label: Text('Dodaj sklep'),
-                backgroundColor: Colors.deepOrange[200],
-                onPressed: _selectShop,
-              )
-            : Row(
-                // direction: Axis.horizontal,
-                children: [
-                  ActionChip(
-                    avatar: Icon(Icons.shopping_cart),
-                    label: Text('Sklep: ' + _selectedShop),
-                    backgroundColor: Colors.deepOrange[300],
-                    onPressed: _selectShop,
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.close),
-                    onPressed: _clearShop,
-                  ),
-                ],
-              ),
+        ProductDetailEditorChip(
+          active: _selectedShop != '',
+          onPress: _selectShop,
+          onDisable: _clearShop,
+          inactiveLabel: 'Dodaj sklep',
+          activeLabel: 'Sklep: $_selectedShop',
+          activeIcon: Icon(Icons.shopping_cart),
+        ),
 
         // Deadline picker
-        _selectedDay == null
-            ? ActionChip(
-                avatar: Icon(Icons.add_circle),
-                label: Text('Dodaj deadline'),
-                backgroundColor: Colors.deepOrange[200],
-                onPressed: _selectDate,
-              )
-            : Row(
-                // direction: Axis.horizontal,
-                children: [
-                  ActionChip(
-                    avatar: Icon(Icons.access_time),
-                    label: Text('Potrzebne na: ' +
-                        _selectedDeadline!.getPolishDescription()),
-                    backgroundColor: Colors.deepOrange[300],
-                    onPressed: _selectDate,
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.close),
-                    onPressed: _clearDate,
-                  ),
-                ],
-              ),
+        ProductDetailEditorChip(
+          active: _selectedDeadline != null,
+          onPress: _selectDate,
+          onDisable: _clearDate,
+          inactiveLabel: 'Dodaj deadline',
+          activeLabel:
+              'Potrzebne na: ${_selectedDeadline?.getPolishDescription()}',
+          activeIcon: Icon(Icons.access_time),
+        ),
       ],
     );
   }
