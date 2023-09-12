@@ -63,7 +63,7 @@ class ProductCard extends StatelessWidget {
             child: isEditing
                 ? ProductEditor(
                     product: product,
-                    allAvailableShops: allAvailableShops,
+                    availableShops: allAvailableShops,
                     onConfirmEdit: onConfirmEdit,
                     onCancelEdit: onCancelEdit,
                   )

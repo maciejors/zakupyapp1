@@ -8,7 +8,7 @@ import 'package:zakupyapp/widgets/home/product_card/select_shop_dialog.dart';
 class ProductEditor extends StatefulWidget {
   // null if a new product is being added
   final Product? product;
-  final List<String> allAvailableShops;
+  final List<String> availableShops;
 
   final void Function(Product product) onConfirmEdit;
   final VoidCallback onCancelEdit;
@@ -16,7 +16,7 @@ class ProductEditor extends StatefulWidget {
   const ProductEditor(
       {super.key,
       this.product,
-      required this.allAvailableShops,
+      required this.availableShops,
       required this.onConfirmEdit,
       required this.onCancelEdit});
 
@@ -46,7 +46,7 @@ class _ProductEditorState extends State<ProductEditor> {
         context: context,
         builder: (ctx) => SelectShopDialog(
               initialSelectedShop: _selectedShop,
-              availableShops: widget.allAvailableShops,
+              availableShops: widget.availableShops,
               onConfirmSelection: (shop) =>
                   setState(() => _selectedShop = shop),
             ));

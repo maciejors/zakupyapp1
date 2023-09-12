@@ -6,12 +6,7 @@ import '../storage/storage_manager.dart';
 /// represents a product list which can be filtered etc
 class ShoppingList {
   List<Product> _products = [];
-  final List<String> allAvailableShops = [
-    'Biedronka',
-    'Lidl',
-    'Selgros',
-    'Emilka'
-  ];
+  List<String> availableShops = [];
   final String _id = SM.getShoppingListId();
   final String _username = SM.getUsername();
 
@@ -41,10 +36,6 @@ class ShoppingList {
 
   Future<void> storeProduct(Product product) async {
     await _db.storeProductFromClass(product);
-    // add any new shops to the list of available shops
-    if (product.shop != null && !allAvailableShops.contains(product.shop)) {
-      allAvailableShops.add(product.shop!);
-    }
   }
 
   Future<void> removeProduct(Product product) async {
@@ -91,15 +82,33 @@ class ShoppingList {
     return result.toList();
   }
 
-  void startListening(void Function()? onProductsUpdatedCallback) {
+  void _refreshAvailableShops(List<String> defaultShops) {
+    availableShops = [...defaultShops];
+    // add any new shops to the list of available shops
+    for (var product in _products) {
+      if (product.shop != null && !availableShops.contains(product.shop)) {
+        availableShops.add(product.shop!);
+      }
+    }
+  }
+
+  void startListening(
+      {required void Function() onProductsUpdatedCallback,
+      required void Function() onDefaultShopsReveivedCallback}) {
     _db.setShoppingList(_id);
+    // set default shops
+    _db.getDefaultShops().then((value) {
+      _refreshAvailableShops(value);
+      onDefaultShopsReveivedCallback();
+    });
+    // setup product listener
     _db.setupListener((newProductsList) {
       newProductsList.sort((p1, p2) => p2.dateAdded.compareTo(p1.dateAdded));
       this._products = newProductsList;
+      // received products may contain new shops
+      _refreshAvailableShops(availableShops);
       // callback
-      if (onProductsUpdatedCallback != null) {
-        onProductsUpdatedCallback();
-      }
+      onProductsUpdatedCallback();
     });
   }
 

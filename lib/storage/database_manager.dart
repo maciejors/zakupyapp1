@@ -14,6 +14,7 @@ class DatabaseManager {
 
   final DatabaseReference _db = FirebaseDatabase.instance.ref();
   DatabaseReference? _shoppingListRef = null;
+  DatabaseReference? _defaultShopsRef = null;
   final Reference _storage = FirebaseStorage.instance.ref();
 
   StreamSubscription? _dataStream = null;
@@ -66,6 +67,21 @@ class DatabaseManager {
         shoppingListId.contains(RegExp(r'[/#.$\[\]]'))) return;
 
     _shoppingListRef = _db.child('shopping-lists/$shoppingListId/products');
+    _defaultShopsRef =
+        _db.child('shopping-lists/$shoppingListId/default-shops');
+  }
+
+  Future<List<String>> getDefaultShops() async {
+    if (_shoppingListRef == null) {
+      return [];
+    }
+    var snapshot = await _defaultShopsRef!.get();
+    if (!snapshot.exists) {
+      // no default shops
+      return [];
+    }
+    List<Object?> snapshotValue = snapshot.value as List<Object?>;
+    return snapshotValue.cast<String>();
   }
 
   /// Stores a single product.

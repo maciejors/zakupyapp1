@@ -90,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ));
         }
       };
-  
+
   Future<void> confirmEditProductFunc(Product product) async {
     setState(() {
       editedProduct = null;
@@ -143,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
         onConfirmEdit: confirmEditProductFunc,
         onCancelEdit: cancelEditProductFunc,
         isEditing: true,
-        allAvailableShops: shoppingList.allAvailableShops,
+        allAvailableShops: shoppingList.availableShops,
       );
       result.insert(0, productCard);
     }
@@ -171,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
       onConfirmEdit: confirmEditProductFunc,
       onCancelEdit: cancelEditProductFunc,
       isEditing: isEditing,
-      allAvailableShops: shoppingList.allAvailableShops,
+      allAvailableShops: shoppingList.availableShops,
     );
   }
 
@@ -223,12 +223,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // initialise the shopping list
     if (shoppingList.isInitialised) {
-      shoppingList.startListening(() {
-        // on new products refresh the view as well as update isDataReady flag
-        setState(() {
-          isDataReady = true;
-        });
-      });
+      // on new products refresh the view as well as update isDataReady flag
+      // on default shops received refresh the view so that the filters work
+      shoppingList.startListening(
+        onProductsUpdatedCallback: () => setState(() => isDataReady = true),
+        onDefaultShopsReveivedCallback: () => setState(() {}),
+      );
     }
   }
 
@@ -263,7 +263,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   : Colors.deepOrange[900],
             ),
             itemBuilder: (BuildContext context) =>
-                shoppingList.allAvailableShops
+                shoppingList.availableShops
                     .map((e) => PopupMenuItem(
                           child: Text(e),
                           value: e,
