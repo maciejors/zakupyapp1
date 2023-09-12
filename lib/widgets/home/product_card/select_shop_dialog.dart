@@ -39,7 +39,11 @@ class _SelectShopDialogState extends State<SelectShopDialog> {
           selected: _selectedChip == index,
           onSelected: (bool selected) => setState(() {
             _selectedChip = index;
-            _selectedShop = selected ? _chipValues[index] : '';
+            _selectedShop = _chipValues[index];
+            // close dialog early
+            if (_selectedShop != '~') {
+              onConfirm();
+            }
           }),
           selectedColor: Colors.deepOrange[300],
         ),
