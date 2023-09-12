@@ -17,7 +17,6 @@ class Updater {
     // - updates are turned off
     // - application was compiled in debug mode
     if (_checkedForUpdate || !SM.getAreUpdatesEnabled() || kDebugMode) {
-      print('hi2');
       return;
     }
     _checkedForUpdate = true;
@@ -30,7 +29,6 @@ class Updater {
     );
     AppRelease latestRelease = await _db.getLatestRelease();
     bool isUpdateAvailable =  currRelease.compareTo(latestRelease) < 0;
-    print('hi');
 
     if (isUpdateAvailable && updateAvailableCallback != null) {
       updateAvailableCallback(latestRelease);
