@@ -31,7 +31,7 @@ class _ProductEditorState extends State<ProductEditor> {
   String _selectedShop = '';
   DateTime? _selectedDay;
   Deadline? get _selectedDeadline =>
-      _selectedDay == null ? null : Deadline.ignoringTime(_selectedDay!);
+      _selectedDay == null ? null : Deadline(_selectedDay!);
 
   final inactiveChipColor = Colors.deepOrange[300];
   final activeChipColor = Colors.deepOrange[300];
@@ -108,7 +108,7 @@ class _ProductEditorState extends State<ProductEditor> {
     if (widget.product != null) {
       _productName = widget.product!.name;
       _selectedShop = widget.product!.shop ?? '';
-      _selectedDay = widget.product!.deadline?.deadline;
+      _selectedDay = widget.product!.deadline?.deadlineDay;
     }
   }
 
