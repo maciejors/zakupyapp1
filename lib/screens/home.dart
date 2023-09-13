@@ -235,9 +235,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
-  void deactivate() {
-    super.deactivate();
+  void dispose() {
     shoppingList.stopListening();
+    super.dispose();
   }
 
   @override
