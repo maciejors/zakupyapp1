@@ -12,15 +12,22 @@ class Product {
   final String? shop;
   final Deadline? deadline;
   final String? buyer;
+  final double quantity;
+  final String quantityUnit;
+  
+  String get quantityLabel => formQuantityLabel(quantity, quantityUnit);
 
-  Product(
-      {required this.id,
-      required this.name,
-      required this.dateAdded,
-      required this.whoAdded,
-      this.shop,
-      this.deadline,
-      this.buyer});
+  Product({
+    required this.id,
+    required this.name,
+    required this.dateAdded,
+    required this.whoAdded,
+    this.shop,
+    this.deadline,
+    this.buyer,
+    required this.quantity,
+    required this.quantityUnit,
+  });
 
   bool get isEditable {
     final isDeclaredByOthers = buyer != null && !isDeclaredByUser;
@@ -57,5 +64,19 @@ class Product {
         '-${now.minute.toString().padLeft(2, '0')}'
         '-${now.second.toString().padLeft(2, '0')}'
         '-${now.millisecond.toString().padLeft(3, '0')}';
+  }
+  
+  // has to be static because it will be used in Product Editor where
+  // there is no access to the Product instance
+  static String formQuantityLabel(double quantity, String quantityUnit) {
+    final String displayedQuantity;
+    final int quantityToInt = quantity.toInt();
+    if (quantityToInt == quantity) {
+      // e.g 28.0
+      displayedQuantity = quantityToInt.toString();
+    } else {
+      displayedQuantity = quantity.toString();
+    }
+    return '$displayedQuantity $quantityUnit';
   }
 }

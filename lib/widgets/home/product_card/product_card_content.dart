@@ -40,7 +40,6 @@ class ProductCardContent extends StatelessWidget {
       iconData: Icons.access_time,
       color: color,
       fontStyle: FontStyle.italic,
-      size: 15,
     );
   }
 
@@ -70,17 +69,22 @@ class ProductCardContent extends StatelessWidget {
               fontSize: 18
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: SimpleTextWithIcon(
+            text: 'Ilość: ${product.quantityLabel}',
+            iconData: Icons.numbers,
+            color: Colors.black,
+            fontStyle: FontStyle.italic,
+          ),
+        ),
         Visibility(
           visible: product.shop != null,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: SimpleTextWithIcon(
-              text: 'Sklep: ${product.shop}',
-              iconData: Icons.shopping_cart,
-              color: Colors.black,
-              fontStyle: FontStyle.italic,
-              size: 15,
-            ),
+          child: SimpleTextWithIcon(
+            text: 'Sklep: ${product.shop}',
+            iconData: Icons.shopping_cart,
+            color: Colors.black,
+            fontStyle: FontStyle.italic,
           ),
         ),
         Visibility(
@@ -91,7 +95,7 @@ class ProductCardContent extends StatelessWidget {
           padding: const EdgeInsets.only(top: 8),
           child: Text.rich(
             TextSpan(
-              style: TextStyle(fontSize: 14, color: Colors.black),
+              style: TextStyle(fontSize: 13, color: Colors.black),
               children: <TextSpan>[
                 TextSpan(
                   text: 'Dodane przez: ',
@@ -109,7 +113,7 @@ class ProductCardContent extends StatelessWidget {
         Text(
           dateTimeToPolishString(product.dateAdded),
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 13,
           ),
         ),
       ],

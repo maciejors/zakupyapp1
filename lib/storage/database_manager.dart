@@ -43,6 +43,9 @@ class DatabaseManager {
         deadline = Deadline.parse(productRawData['deadline']!);
       }
       String? buyer = productRawData['buyer'];
+      // default values for older products
+      double quantity = productRawData['quantity'] ?? 1;
+      String quantityUnit = productRawData['quantityUnit'] ?? 'szt.';
 
       return Product(
         id: id,
@@ -52,8 +55,11 @@ class DatabaseManager {
         whoAdded: whoAdded,
         deadline: deadline,
         buyer: buyer,
+        quantity: quantity,
+        quantityUnit: quantityUnit,
       );
-    } catch (_) {
+    } catch (e) {
+      print('Failed to parse a product due to a following error:\n$e');
       return null;
     }
   }
@@ -94,6 +100,7 @@ class DatabaseManager {
   /// Takes a product data map as an argument
   Future<void> storeProductFromData(
       String productId, Map<String, String> productData) async {
+    productData['modelVersion'] = '2';
     await _shoppingListRef?.child(productId).set(productData);
   }
 

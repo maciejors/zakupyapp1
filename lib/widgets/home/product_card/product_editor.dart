@@ -32,9 +32,8 @@ class _ProductEditorState extends State<ProductEditor> {
   DateTime? _selectedDay;
   Deadline? get _selectedDeadline =>
       _selectedDay == null ? null : Deadline(_selectedDay!);
-
-  final inactiveChipColor = Colors.deepOrange[300];
-  final activeChipColor = Colors.deepOrange[300];
+  double _selectedQuantity = 1;
+  String _selectedQuantityUnit = 'szt.';
 
   String? productNameValidator(String? productName) {
     if (productName!.isEmpty) return 'Pole nie może być puste';
@@ -92,6 +91,8 @@ class _ProductEditorState extends State<ProductEditor> {
         shop: _selectedShop == '' ? null : _selectedShop,
         deadline: _selectedDeadline,
         buyer: widget.product?.buyer,
+        quantity: _selectedQuantity,
+        quantityUnit: _selectedQuantityUnit,
       );
       widget.onConfirmEdit(newProduct);
     }
