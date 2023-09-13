@@ -190,7 +190,9 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!isDataReady) return Center(child: CircularProgressIndicator());
 
     // if data is ready, but the shopping list is empty, display an info on it
-    if (shoppingList.isEmpty)
+    // also check if no product is added (otherwise products can't be added
+    // when the list is empty
+    if (shoppingList.isEmpty && !isAddingProduct)
       return Center(
           child: Text(
         'Brak przedmiotów do wyświetlenia',
