@@ -1,3 +1,3 @@
 # zakupyapk
 
-Lista zakupowa
+## A simple shopping list app
