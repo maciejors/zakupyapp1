@@ -15,16 +15,12 @@ class ProductCard extends StatelessWidget {
   // product editor
   final void Function(Product product) onConfirmEdit;
   final VoidCallback onCancelEdit;
-  final List<String> availableShops;
-  final List<String> availableQuantityUnits;
 
   final bool isEditing;
 
   const ProductCard(
       {Key? key,
       required this.product,
-      required this.availableShops,
-      required this.availableQuantityUnits,
       required this.editFunc,
       required this.deleteFunc,
       required this.addBuyerFunc,
@@ -65,8 +61,6 @@ class ProductCard extends StatelessWidget {
             child: isEditing
                 ? ProductEditor(
                     product: product,
-                    availableShops: availableShops,
-                    availableQuantityUnits: availableQuantityUnits,
                     onConfirmEdit: onConfirmEdit,
                     onCancelEdit: onCancelEdit,
                   )

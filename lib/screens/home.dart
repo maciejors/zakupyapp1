@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:provider/provider.dart';
 
 import 'package:zakupyapp/core/models/product.dart';
 import 'package:zakupyapp/core/shopping_list.dart';
@@ -143,8 +144,6 @@ class _HomeScreenState extends State<HomeScreen> {
         onConfirmEdit: confirmEditProductFunc,
         onCancelEdit: cancelEditProductFunc,
         isEditing: true,
-        availableShops: shoppingList.availableShops,
-        availableQuantityUnits: shoppingList.availableQuantityUnits,
       );
       result.insert(0, productCard);
     }
@@ -172,8 +171,6 @@ class _HomeScreenState extends State<HomeScreen> {
       onConfirmEdit: confirmEditProductFunc,
       onCancelEdit: cancelEditProductFunc,
       isEditing: isEditing,
-      availableShops: shoppingList.availableShops,
-      availableQuantityUnits: shoppingList.availableQuantityUnits,
     );
   }
 
@@ -202,9 +199,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // otherwise, display the shopping list
     return Scrollbar(
-      child: ListView(
-        children: getItemsToDisplay(),
-        padding: EdgeInsets.all(5.0),
+      child: Provider<ShoppingList>(
+        create: (context) => shoppingList,
+        builder: (context, child) => ListView(
+          children: getItemsToDisplay(),
+          padding: EdgeInsets.all(5.0),
+        ),
       ),
     );
   }

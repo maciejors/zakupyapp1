@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:zakupyapp/core/models/deadline.dart';
 import 'package:zakupyapp/core/models/product.dart';
+import 'package:zakupyapp/core/shopping_list.dart';
 import 'package:zakupyapp/storage/storage_manager.dart';
 import 'package:zakupyapp/widgets/home/product_card/product_detail_editor_chip.dart';
 import 'package:zakupyapp/widgets/home/product_card/select_quantity_dialog.dart';
@@ -9,8 +11,6 @@ import 'package:zakupyapp/widgets/home/product_card/select_shop_dialog.dart';
 class ProductEditor extends StatefulWidget {
   // null if a new product is being added
   final Product? product;
-  final List<String> availableShops;
-  final List<String> availableQuantityUnits;
 
   final void Function(Product product) onConfirmEdit;
   final VoidCallback onCancelEdit;
@@ -18,8 +18,6 @@ class ProductEditor extends StatefulWidget {
   const ProductEditor(
       {super.key,
       this.product,
-      required this.availableShops,
-      required this.availableQuantityUnits,
       required this.onConfirmEdit,
       required this.onCancelEdit});
 
@@ -29,6 +27,7 @@ class ProductEditor extends StatefulWidget {
 
 class _ProductEditorState extends State<ProductEditor> {
   final _formKey = GlobalKey<FormState>();
+  late final ShoppingList _provider;
 
   String _productName = '';
   String _selectedShop = '';
@@ -49,7 +48,7 @@ class _ProductEditorState extends State<ProductEditor> {
         builder: (ctx) => SelectQuantityDialog(
               initialSelectedQuantity: _selectedQuantity,
               initialSelectedQuantityUnit: _selectedQuantityUnit,
-              availableQuantityUnits: widget.availableQuantityUnits,
+              availableQuantityUnits: _provider.availableQuantityUnits,
               onConfirmSelection: (quantity, quantityUnit) => setState(() {
                 _selectedQuantity = quantity;
                 _selectedQuantityUnit = quantityUnit;
@@ -62,7 +61,7 @@ class _ProductEditorState extends State<ProductEditor> {
         context: context,
         builder: (ctx) => SelectShopDialog(
               initialSelectedShop: _selectedShop,
-              availableShops: widget.availableShops,
+              availableShops: _provider.availableShops,
               onConfirmSelection: (shop) =>
                   setState(() => _selectedShop = shop),
             ));
@@ -122,6 +121,8 @@ class _ProductEditorState extends State<ProductEditor> {
   @override
   void initState() {
     super.initState();
+    // get shop and quantity units lists
+    _provider = Provider.of<ShoppingList>(context, listen: false);
     // if editing
     if (widget.product != null) {
       _productName = widget.product!.name;
