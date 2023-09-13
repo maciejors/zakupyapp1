@@ -1,12 +1,13 @@
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:zakupyapk/screens/home.dart';
-import 'package:zakupyapk/screens/settings.dart';
-import 'package:zakupyapk/utils/app_info.dart';
-import 'package:zakupyapk/storage/storage_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
+import 'package:zakupyapp/storage/storage_manager.dart';
+import 'package:zakupyapp/utils/app_info.dart';
+import 'package:zakupyapp/screens/home.dart';
+import 'package:zakupyapp/screens/settings.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +16,9 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await FirebaseAppCheck.instance.activate();
+  await FirebaseAppCheck.instance.activate(
+      androidProvider:
+          kReleaseMode ? AndroidProvider.playIntegrity : AndroidProvider.debug);
 
   runApp(MaterialApp(
     routes: {
@@ -24,11 +27,7 @@ Future<void> main() async {
     },
     theme: ThemeData(
       primarySwatch: Colors.orange,
-      textTheme: TextTheme(
-        bodyText2: TextStyle(
-          fontSize: SM.getMainFontSize(),
-        ),
       ),
     ),
-  ));
+  );
 }

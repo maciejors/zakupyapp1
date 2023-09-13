@@ -1,7 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SM {
-
   static late SharedPreferences _storage;
 
   static Future<void> setupStorage() async {
@@ -14,24 +13,36 @@ class SM {
 
   static void setShoppingListId(String shoppingListId) {
     // remove characters with a special meaning to the firebase
-    shoppingListId = shoppingListId.replaceAll(RegExp(r'[/#\.\$\[\]]'), '');
+    shoppingListId = shoppingListId.replaceAll(RegExp(r'[/#.$\[\]]'), '');
 
-    _storage.setString('shoppingListId', shoppingListId);
+    _storage.setString('shoppingListId', shoppingListId.trim());
   }
 
-  static double getMainFontSize() {
-    return _storage.getDouble('mainFontSize') ?? 14.0;
-  }
-
-  static void setMainFontSize(double mainFontSize) {
-    _storage.setDouble('mainFontSize', mainFontSize);
-  }
-
-  static String getUserName() {
+  static String getUsername() {
     return _storage.getString('username') ?? 'Użytkownik bez nazwy';
   }
 
-  static void setUserName(String username) {
-    _storage.setString('username', username);
+  static void setUsername(String username) {
+    if (username == '') {
+      username = 'Użytkownik bez nazwy';
+    }
+    _storage.setString('username', username.trim());
+  }
+
+  static bool getUseFamilyStore() {
+    return _storage.getBool('useFamilyStore') ?? false;
+  }
+
+  static void setUseFamilyStore(bool useFamilyStore) {
+    _storage.setBool('useFamilyStore', useFamilyStore);
+  }
+
+  static bool getHideProductsOthersDeclared() {
+    return _storage.getBool('hideProductsOthersDeclared') ?? false;
+  }
+
+  static void setHideProductsOthersDeclared(bool hideProductsOthersDeclared) {
+    _storage.setBool(
+        'hideProductsOthersDeclared', hideProductsOthersDeclared);
   }
 }

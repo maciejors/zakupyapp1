@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:zakupyapk/core/product.dart';
-import 'package:zakupyapk/storage/database_manager.dart';
-import 'package:zakupyapk/storage/storage_manager.dart';
-import 'package:zakupyapk/widgets/main_drawer.dart';
-import 'package:zakupyapk/widgets/product_editor_dialog.dart';
-import 'package:zakupyapk/widgets/product_card.dart';
-import 'package:zakupyapk/widgets/show_help.dart';
+import 'package:provider/provider.dart';
 
-import '../widgets/update_dialog.dart';
+import 'package:zakupyapp/core/models/product.dart';
+import 'package:zakupyapp/core/shopping_list.dart';
+import 'package:zakupyapp/core/updater.dart';
+import 'package:zakupyapp/widgets/drawer/main_drawer.dart';
+import 'package:zakupyapp/widgets/home/product_card/product_card.dart';
+import 'package:zakupyapp/widgets/home/update_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -18,115 +17,168 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final db = DatabaseManager.instance;
-  List<Product> shoppingList = [];
+  ShoppingList shoppingList = ShoppingList();
+  Updater updater = Updater();
   bool isDataReady = false;
-  String shoppingListId = SM.getShoppingListId();
 
-  // this flag is necessary to prevent checking for update every time the
-  // product list gets updates
-  bool checkedForUpdate = false;
+  Product? editedProduct;
+  bool isAddingProduct = false;
 
-  /// Name of the shop serving as a filter.<br>
-  /// Wildcard values:
-  /// * '' (empty string) - no filter,
-  /// * '~' - show items with no shop specified.
-  String filteredShop = '';
-
-  /// Used to wrap functions passed to the onPressed property
-  /// in buttons to disable them if the data is not ready yet
-  void Function()? disableIfDataNotReady(void Function() func) {
-    return isDataReady ? func : null;
-  }
-
-  void editFunc(BuildContext context, {required Product product}) {
-    if (SM.getUserName() == product.whoAdded) {
-      showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => ProductEditorDialog(
-                editingProduct: true,
-                product: product,
-              ));
+  void addProductFunc() {
+    if (!isAddingProduct) {
+      setState(() {
+        editedProduct = null;
+        isAddingProduct = true;
+      });
     }
   }
 
-  void deleteFunc(BuildContext context, {required Product product}) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Usuń produkt'),
-          content: Text('Czy na pewno chcesz usunąć: ${product.name}?'),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Anuluj'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text('Tak'),
-              onPressed: () {
-                db.removeProduct(product.id);
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text('Usunięto wybrany produkt'),
-                ));
-              },
-            ),
-          ],
-        );
-      },
-    );
+  VoidCallback getEditProductFunc(Product product) {
+    return () {
+      if (product.isEditable)
+        setState(() {
+          isAddingProduct = false;
+          editedProduct = product;
+        });
+    };
   }
 
-  void checkForUpdate() {
-    db.isUpdateAvailable().then((value) {
-      if (value) {
-        // retrieve the latest release info
-        db.getLatestRelease().then((release) {
-          // show update dialog
-          showDialog(
+  VoidCallback getDeleteProductFunc(Product product) =>
+      () async => await showDialog(
             context: context,
-            barrierDismissible: false,
-            builder: (ctx) => DownloadUpdateDialog(
-              latestRelease: release,
-            ),
+            builder: (context) {
+              return AlertDialog(
+                title: Text('Usuń produkt'),
+                content: Text('Czy na pewno chcesz usunąć: ${product.name}?'),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('Anuluj'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  TextButton(
+                    child: Text('Tak'),
+                    onPressed: () async {
+                      await shoppingList.removeProduct(product);
+                      Navigator.of(context).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('Usunięto wybrany produkt'),
+                      ));
+                    },
+                  ),
+                ],
+              );
+            },
           );
-        });
-      }
+
+  VoidCallback getAddBuyerFunc(Product product) => () async {
+        bool? actionResult = await shoppingList.toggleProductBuyer(product);
+        // no action was taken
+        if (actionResult == null) {
+          return;
+        }
+        // buyer added
+        if (actionResult) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Dodano deklarację kupna'),
+          ));
+        }
+        // buyer removed
+        else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Usunięto deklarację kupna'),
+          ));
+        }
+      };
+
+  Future<void> confirmEditProductFunc(Product product) async {
+    setState(() {
+      editedProduct = null;
+      isAddingProduct = false;
+    });
+    await shoppingList.storeProduct(product);
+  }
+
+  void cancelEditProductFunc() {
+    setState(() {
+      editedProduct = null;
+      isAddingProduct = false;
     });
   }
 
-  /// Returns a filtered list of items to put inside the main ListView.
+  void toggleBuyerFilter() {
+    setState(() {
+      // cancel editing when filters change
+      editedProduct = null;
+      // toggle filter
+      shoppingList.showOnlyDeclaredByUser =
+          !shoppingList.showOnlyDeclaredByUser;
+    });
+  }
+
+  void setShopFilter(String filter) {
+    setState(() {
+      // cancel editing when filters change
+      editedProduct = null;
+      // apply filter
+      shoppingList.filteredShop = filter;
+    });
+  }
+
+  /// Returns a list of widgets to put inside the main ListView.
   List<Widget> getItemsToDisplay() {
-    Iterable<Product> products = [...shoppingList];
-    if (filteredShop != '') {
-      // there is a filter applied
-      products = products.where((item) {
-        if (filteredShop == '~') {
-          return item.shop == null;
-        }
-        return item.shop == filteredShop;
-      });
-    }
     // create actual widgets from products
-    Iterable<ProductCard> itemsToDisplay = products.map(wrapProductWithCard);
-    return itemsToDisplay.toList();
+    final products = shoppingList.getProductsToDisplay();
+    final result = products.map(wrapProductWithCard).toList();
+
+    // handle adding product
+    if (isAddingProduct) {
+      // adding product key
+      final productCard = ProductCard(
+        key: Key('adding'),
+        product: null,
+        editFunc: () {},
+        deleteFunc: () {},
+        addBuyerFunc: () {},
+        onConfirmEdit: confirmEditProductFunc,
+        onCancelEdit: cancelEditProductFunc,
+        isEditing: true,
+      );
+      result.insert(0, productCard);
+    }
+
+    // handle editing product
+    else if (editedProduct != null) {
+      // substitute one of the product cards for the editable version
+      final product = editedProduct!;
+      int editedProductIndex = products.indexOf(product);
+      result[editedProductIndex] = wrapProductWithCard(
+        product,
+        isEditing: true,
+      );
+    }
+    return result;
   }
 
-  ProductCard wrapProductWithCard(Product product) {
+  ProductCard wrapProductWithCard(Product product, {bool isEditing = false}) {
     return ProductCard(
-        product: product,
-        editFunc: () => editFunc(context, product: product),
-        deleteFunc: () => deleteFunc(context, product: product));
+      key: Key(product.id),
+      product: product,
+      editFunc: getEditProductFunc(product),
+      deleteFunc: getDeleteProductFunc(product),
+      addBuyerFunc: getAddBuyerFunc(product),
+      onConfirmEdit: confirmEditProductFunc,
+      onCancelEdit: cancelEditProductFunc,
+      isEditing: isEditing,
+    );
   }
 
-  /// different body depending on [isDataReady] & [shoppingListId] values
+  /// different body depending on
+  /// [isDataReady] & [shoppingList.isInitialised] values
   Widget getBody() {
     // if shoppingListId is not specified, display an info on it
-    if (shoppingListId == '')
+    if (!shoppingList.isInitialised)
       return Center(
           child: Text(
         'Nie wybrano żadnej listy zakupów. Możesz to zrobić w Ustawieniach',
@@ -147,9 +199,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // otherwise, display the shopping list
     return Scrollbar(
-      child: ListView(
-        children: getItemsToDisplay(),
-        padding: EdgeInsets.all(5.0),
+      child: Provider<ShoppingList>(
+        create: (context) => shoppingList,
+        builder: (context, child) => ListView(
+          children: getItemsToDisplay(),
+          padding: EdgeInsets.all(5.0),
+        ),
       ),
     );
   }
@@ -157,29 +212,32 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    
+
     // check for updates
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      checkForUpdate();
-    });
+    SchedulerBinding.instance
+        .addPostFrameCallback((_) => updater.checkForUpdate((release) async =>
+            // show update dialog
+            await showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (ctx) => DownloadUpdateDialog(release: release),
+            )));
 
     // initialise the shopping list
-    if (shoppingListId != '') {
-      db.setShoppingList(shoppingListId);
-      db.setupListener((shoppingList) {
-        setState(() {
-          shoppingList.sort((p1, p2) => p2.dateAdded.compareTo(p1.dateAdded));
-          this.shoppingList = shoppingList;
-          isDataReady = true;
-        });
-      });
+    if (shoppingList.isInitialised) {
+      // on new products refresh the view as well as update isDataReady flag
+      // on default shops received refresh the view so that the filters work
+      shoppingList.startListening(
+        onProductsUpdatedCallback: () => setState(() => isDataReady = true),
+        onDefaultShopsReveivedCallback: () => setState(() {}),
+      );
     }
   }
 
   @override
-  void deactivate() {
-    super.deactivate();
-    db.cancelListener();
+  void dispose() {
+    shoppingList.stopListening();
+    super.dispose();
   }
 
   @override
@@ -188,51 +246,54 @@ class _HomeScreenState extends State<HomeScreen> {
       drawer: MainDrawer(),
       appBar: AppBar(
         title: Text('Lista Zakupów'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.help),
-            onPressed: disableIfDataNotReady(() => showHelpDialog(context)),
-          ),
-          PopupMenuButton(
-            enabled: isDataReady,
-            icon: Icon(Icons.filter_alt),
-            itemBuilder: (BuildContext context) => Product.allAvailableShops
-                .map((e) => PopupMenuItem(
-                      child: Text(e),
-                      value: e,
-                    ))
-                .toList()
-              ..insert(
-                  0,
-                  PopupMenuItem(
-                    child: Text('Wszystkie'),
-                    value: '',
-                  ))
-              ..insert(
-                  1,
-                  PopupMenuItem(
-                    child: Text('Nieokreślone'),
-                    value: '~',
-                  )),
-            onSelected: (newValue) {
-              setState(() {
-                filteredShop = newValue as String;
-              });
-            },
-            initialValue: filteredShop,
-          ),
-        ],
+        actions: !isDataReady
+            ? []
+            : <Widget>[
+                IconButton(
+                  icon: Icon(
+                    Icons.shopping_cart_checkout,
+                    color: shoppingList.showOnlyDeclaredByUser
+                        ? Colors.black
+                        : Colors.deepOrange[900],
+                  ),
+                  onPressed: toggleBuyerFilter,
+                ),
+                PopupMenuButton(
+                  icon: Icon(
+                    Icons.filter_alt,
+                    color: shoppingList.shopFilterApplied
+                        ? Colors.black
+                        : Colors.deepOrange[900],
+                  ),
+                  itemBuilder: (BuildContext context) =>
+                      shoppingList.availableShops
+                          .map((e) => PopupMenuItem(
+                                child: Text(e),
+                                value: e,
+                              ))
+                          .toList()
+                        ..insert(
+                            0,
+                            PopupMenuItem(
+                              child: Text('Wszystkie'),
+                              value: '',
+                            ))
+                        ..insert(
+                            1,
+                            PopupMenuItem(
+                              child: Text('Nieokreślone'),
+                              value: '~',
+                            )),
+                  onSelected: setShopFilter,
+                  initialValue: shoppingList.filteredShop,
+                ),
+              ],
       ),
       body: getBody(),
       floatingActionButton: Visibility(
         visible: isDataReady,
         child: FloatingActionButton(
-          onPressed: disableIfDataNotReady(() {
-            showDialog(
-                context: context,
-                builder: (context) =>
-                    ProductEditorDialog(editingProduct: false));
-          }),
+          onPressed: addProductFunc,
           child: Icon(
             Icons.add_shopping_cart,
           ),

@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:zakupyapk/storage/storage_manager.dart';
 
-void showHelpDialog(BuildContext context) {
-  String sep = '\n\n';
-  double commonSize = SM.getMainFontSize();
-  showDialog(
-    context: context,
-    builder: (ctx) => AlertDialog(
+class HelpDialog extends StatelessWidget {
+  const HelpDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    String sep = '\n\n';
+    return AlertDialog(
       title: Text('Pomoc'),
-      content: RichText(
-        text: TextSpan(
+      content: Text.rich(
+        TextSpan(
           style: TextStyle(
-            fontSize: commonSize,
             color: Colors.black,
           ),
           children: <InlineSpan>[
@@ -26,6 +25,12 @@ void showHelpDialog(BuildContext context) {
               text: 'edytować dodany przez siebie produkt',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
+            TextSpan(text: ', kliknij w niego i przytrzymaj.$sep'),
+            TextSpan(text: 'Aby '),
+            TextSpan(
+              text: 'dodać lub usunąć deklarację zamiaru kupna danego produktu',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             TextSpan(text: ', kliknij w niego podwójnie.$sep'),
             TextSpan(text: 'Aby '),
             TextSpan(
@@ -35,10 +40,22 @@ void showHelpDialog(BuildContext context) {
             TextSpan(text: 'kliknij '),
             WidgetSpan(
                 child: Icon(
-                  Icons.filter_alt,
-                  size: commonSize * 1.1,
-                )),
-            TextSpan(text: '.'),
+              Icons.filter_alt,
+              size: 17,
+            )),
+            TextSpan(text: '.$sep'),
+            TextSpan(text: 'Aby '),
+            TextSpan(
+              text: 'wyświetlić tylko produkty które chcesz kupić, ',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            TextSpan(text: 'kliknij '),
+            WidgetSpan(
+                child: Icon(
+              Icons.shopping_cart_checkout,
+              size: 17,
+            )),
+            TextSpan(text: ' na górze ekranu.'),
           ],
         ),
       ),
@@ -49,6 +66,6 @@ void showHelpDialog(BuildContext context) {
               Navigator.of(context).pop();
             }),
       ],
-    ),
-  );
+    );
+  }
 }

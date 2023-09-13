@@ -1,33 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:zakupyapk/core/apprelease.dart';
-import 'package:zakupyapk/utils/app_info.dart';
+
+import 'package:zakupyapp/core/models/apprelease.dart';
+import 'package:zakupyapp/utils/app_info.dart';
 
 class DownloadUpdateDialog extends StatelessWidget {
-  final AppRelease latestRelease;
+  final AppRelease release;
 
-  const DownloadUpdateDialog({Key? key, required this.latestRelease})
+  const DownloadUpdateDialog({Key? key, required this.release})
       : super(key: key);
 
-  void copyDownloadUrl(BuildContext context) {
-    Navigator.of(context).pop();
-    Clipboard.setData(ClipboardData(text: latestRelease.downloadUrl));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Link do pobrania aktualizacji skopiowany do schowka.'),
-      ),
-    );
-  }
-
-  void downloadInBrowser(BuildContext context) async {
+  Future<void> downloadInBrowser(BuildContext context) async {
     Navigator.of(context).pop();
     bool success = await launchUrl(
-      Uri.parse(latestRelease.downloadUrl),
+      Uri.parse(release.downloadUrl),
       mode: LaunchMode.externalApplication,
     );
     if (!success) {
-      Clipboard.setData(ClipboardData(text: latestRelease.downloadUrl));
+      Clipboard.setData(ClipboardData(text: release.downloadUrl));
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           duration: Duration(seconds: 8),
@@ -48,8 +39,8 @@ class DownloadUpdateDialog extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text('Twoja wersja: ${AppInfo.getVersion()}'),
-          Text('Najnowsza wersja: ${latestRelease.id} '
-              '(${latestRelease.getRoundedSizeMB()}MB)'),
+          Text('Najnowsza wersja: ${release.id} '
+              '(${release.getRoundedSizeMB()}MB)'),
         ],
       ),
       actions: <Widget>[
@@ -57,13 +48,7 @@ class DownloadUpdateDialog extends StatelessWidget {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: Text('Anuluj'),
-        ),
-        TextButton(
-          onPressed: () {
-            copyDownloadUrl(context);
-          },
-          child: Text('Skopiuj link'),
+          child: Text('Później'),
         ),
         TextButton(
           onPressed: () {
