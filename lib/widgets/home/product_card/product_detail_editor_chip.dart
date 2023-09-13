@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class ProductDetailEditorChip extends StatelessWidget {
   final bool active;
   final VoidCallback onPress;
-  final VoidCallback onDisable;
+  final VoidCallback? onDisable;
   final String inactiveLabel;
   final String activeLabel;
   final Icon icon;
@@ -12,8 +12,8 @@ class ProductDetailEditorChip extends StatelessWidget {
       {super.key,
       required this.active,
       required this.onPress,
-      required this.onDisable,
-      required this.inactiveLabel,
+      this.onDisable,
+      this.inactiveLabel = '',
       required this.activeLabel,
       required this.icon});
 
@@ -32,9 +32,12 @@ class ProductDetailEditorChip extends StatelessWidget {
                 backgroundColor: activeChipColor,
                 onPressed: onPress,
               ),
-              IconButton(
-                icon: Icon(Icons.close),
-                onPressed: onDisable,
+              Visibility(
+                visible: onDisable != null,
+                child: IconButton(
+                  icon: Icon(Icons.close),
+                  onPressed: onDisable,
+                ),
               ),
             ],
           )

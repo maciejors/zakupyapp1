@@ -143,7 +143,8 @@ class _HomeScreenState extends State<HomeScreen> {
         onConfirmEdit: confirmEditProductFunc,
         onCancelEdit: cancelEditProductFunc,
         isEditing: true,
-        allAvailableShops: shoppingList.availableShops,
+        availableShops: shoppingList.availableShops,
+        availableQuantityUnits: shoppingList.availableQuantityUnits,
       );
       result.insert(0, productCard);
     }
@@ -171,7 +172,8 @@ class _HomeScreenState extends State<HomeScreen> {
       onConfirmEdit: confirmEditProductFunc,
       onCancelEdit: cancelEditProductFunc,
       isEditing: isEditing,
-      allAvailableShops: shoppingList.availableShops,
+      availableShops: shoppingList.availableShops,
+      availableQuantityUnits: shoppingList.availableQuantityUnits,
     );
   }
 

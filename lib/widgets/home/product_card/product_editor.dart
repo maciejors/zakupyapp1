@@ -3,12 +3,14 @@ import 'package:zakupyapp/core/models/deadline.dart';
 import 'package:zakupyapp/core/models/product.dart';
 import 'package:zakupyapp/storage/storage_manager.dart';
 import 'package:zakupyapp/widgets/home/product_card/product_detail_editor_chip.dart';
+import 'package:zakupyapp/widgets/home/product_card/select_quantity_dialog.dart';
 import 'package:zakupyapp/widgets/home/product_card/select_shop_dialog.dart';
 
 class ProductEditor extends StatefulWidget {
   // null if a new product is being added
   final Product? product;
   final List<String> availableShops;
+  final List<String> availableQuantityUnits;
 
   final void Function(Product product) onConfirmEdit;
   final VoidCallback onCancelEdit;
@@ -17,6 +19,7 @@ class ProductEditor extends StatefulWidget {
       {super.key,
       this.product,
       required this.availableShops,
+      required this.availableQuantityUnits,
       required this.onConfirmEdit,
       required this.onCancelEdit});
 
@@ -38,6 +41,20 @@ class _ProductEditorState extends State<ProductEditor> {
   String? productNameValidator(String? productName) {
     if (productName!.isEmpty) return 'Pole nie może być puste';
     return null;
+  }
+
+  Future<void> _selectQuantity() async {
+    await showDialog(
+        context: context,
+        builder: (ctx) => SelectQuantityDialog(
+              initialSelectedQuantity: _selectedQuantity,
+              initialSelectedQuantityUnit: _selectedQuantityUnit,
+              availableQuantityUnits: widget.availableQuantityUnits,
+              onConfirmSelection: (quantity, quantityUnit) => setState(() {
+                _selectedQuantity = quantity;
+                _selectedQuantityUnit = quantityUnit;
+              }),
+            ));
   }
 
   Future<void> _selectShop() async {
@@ -110,6 +127,8 @@ class _ProductEditorState extends State<ProductEditor> {
       _productName = widget.product!.name;
       _selectedShop = widget.product!.shop ?? '';
       _selectedDay = widget.product!.deadline?.deadlineDay;
+      _selectedQuantity = widget.product!.quantity;
+      _selectedQuantityUnit = widget.product!.quantityUnit;
     }
   }
 
@@ -130,6 +149,18 @@ class _ProductEditorState extends State<ProductEditor> {
             style: TextStyle(fontSize: 18),
             validator: productNameValidator,
             focusNode: FocusNode(canRequestFocus: false),
+          ),
+
+          // Quantity picker
+          ProductDetailEditorChip(
+            active: true,
+            onPress: _selectQuantity,
+            activeLabel: 'Ilość: ' +
+                Product.formQuantityLabel(
+                  _selectedQuantity,
+                  _selectedQuantityUnit,
+                ),
+            icon: Icon(Icons.shopping_cart),
           ),
 
           // Shop picker

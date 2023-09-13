@@ -1,12 +1,13 @@
 import 'package:zakupyapp/core/models/product.dart';
 import 'package:zakupyapp/storage/database_manager.dart';
 
-import '../storage/storage_manager.dart';
+import 'package:zakupyapp/storage/storage_manager.dart';
 
 /// represents a product list which can be filtered etc
 class ShoppingList {
   List<Product> _products = [];
   List<String> availableShops = [];
+  List<String> availableQuantityUnits = [];
   final String _id = SM.getShoppingListId();
   final String _username = SM.getUsername();
 
@@ -82,12 +83,19 @@ class ShoppingList {
     return result.toList();
   }
 
-  void _refreshAvailableShops(List<String> defaultShops) {
+  /// Refreshes available shops and quantity units lists based on the product
+  /// data.
+  void _refreshLists(List<String> defaultShops) {
     availableShops = [...defaultShops];
-    // add any new shops to the list of available shops
+    availableQuantityUnits = ['szt.', 'kg', 'dag', 'L'];
     for (var product in _products) {
+      // add any new shops to the list of available shops
       if (product.shop != null && !availableShops.contains(product.shop)) {
         availableShops.add(product.shop!);
+      }
+      // add any new quantity units to the list of available qus
+      if (!availableQuantityUnits.contains(product.quantityUnit)) {
+        availableQuantityUnits.add(product.quantityUnit);
       }
     }
   }
@@ -98,7 +106,7 @@ class ShoppingList {
     _db.setShoppingList(_id);
     // set default shops
     _db.getDefaultShops().then((value) {
-      _refreshAvailableShops(value);
+      _refreshLists(value);
       onDefaultShopsReveivedCallback();
     });
     // setup product listener
@@ -106,7 +114,7 @@ class ShoppingList {
       newProductsList.sort((p1, p2) => p2.dateAdded.compareTo(p1.dateAdded));
       this._products = newProductsList;
       // received products may contain new shops
-      _refreshAvailableShops(availableShops);
+      _refreshLists(availableShops);
       // callback
       onProductsUpdatedCallback();
     });
