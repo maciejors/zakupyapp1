@@ -145,6 +145,8 @@ class _ProductEditorState extends State<ProductEditor> {
             initialValue: _productName,
             onChanged: (value) => _productName = value,
             decoration: InputDecoration(
+              isDense: true,
+              contentPadding: EdgeInsets.only(bottom: 8),
               hintText: 'Nazwa produktu...',
             ),
             style: TextStyle(fontSize: 18),

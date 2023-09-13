@@ -48,26 +48,26 @@ class ProductCardContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Visibility(
-          visible: product.buyer != null,
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 4),
-            child: SimpleTextWithIcon(
-              text: product.isDeclaredByUser
-                  ? 'Zadeklarowałeś kupno'
-                  : '${product.buyer} kupi to',
-              iconData: Icons.shopping_cart_checkout,
-              color: Colors.black,
-              size: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+        AnimatedSwitcher(
+          duration: Duration(milliseconds: 150),
+          child: product.buyer != null
+              ? Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: SimpleTextWithIcon(
+                    text: product.isDeclaredByUser
+                        ? 'Kupisz to'
+                        : '${product.buyer} kupi to',
+                    iconData: Icons.shopping_cart_checkout,
+                    color: Colors.black,
+                    size: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
+              : SizedBox.shrink(),
         ),
         Text(
           product.name,
-          style: TextStyle(
-              fontSize: 18
-          ),
+          style: TextStyle(fontSize: 18),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 8),

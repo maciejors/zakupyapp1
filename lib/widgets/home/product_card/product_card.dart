@@ -54,17 +54,27 @@ class ProductCard extends StatelessWidget {
         onTap: isEditing ? null : deleteFunc,
         onDoubleTap: isEditing ? null : addBuyerFunc,
         onLongPress: isEditing ? null : editFunc,
-        child: Padding(
-            padding: isEditing
-                ? const EdgeInsets.fromLTRB(16, 4, 16, 0)
-                : const EdgeInsets.all(16),
-            child: isEditing
-                ? ProductEditor(
+        child: AnimatedSize(
+          duration: Duration(milliseconds: 250),
+          alignment: Alignment.topCenter,
+          child: isEditing
+              ? Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                  child: ProductEditor(
                     product: product,
                     onConfirmEdit: onConfirmEdit,
                     onCancelEdit: onCancelEdit,
-                  )
-                : ProductCardContent(product: product!)),
+                  ),
+                )
+              : AnimatedSize(
+                  duration: Duration(milliseconds: 250),
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: ProductCardContent(product: product!),
+                  ),
+                ),
+        ),
       ),
     );
   }
