@@ -11,7 +11,7 @@ class DownloadUpdateDialog extends StatelessWidget {
   const DownloadUpdateDialog({Key? key, required this.release})
       : super(key: key);
 
-  void downloadInBrowser(BuildContext context) async {
+  Future<void> downloadInBrowser(BuildContext context) async {
     Navigator.of(context).pop();
     bool success = await launchUrl(
       Uri.parse(release.downloadUrl),
