@@ -44,7 +44,7 @@ class DatabaseManager {
       }
       String? buyer = productRawData['buyer'];
       // default values for older products
-      double quantity = productRawData['quantity'] ?? 1;
+      double quantity = double.parse(productRawData['quantity'] ?? '1');
       String quantityUnit = productRawData['quantityUnit'] ?? 'szt.';
 
       return Product(

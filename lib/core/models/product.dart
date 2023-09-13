@@ -42,6 +42,8 @@ class Product {
       'name': name,
       'dateAdded': dateAdded.toString(),
       'whoAdded': whoAdded,
+      'quantity': quantity.toString(),
+      'quantityUnit': quantityUnit,
     };
     if (shop != null) {
       result['shop'] = shop!;
