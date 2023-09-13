@@ -204,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Provider<ShoppingList>(
         create: (context) => shoppingList,
         builder: (context, child) => ListView(
-          children: getItemsToDisplay(),
+          children: itemsToDisplay,
           padding: EdgeInsets.all(5.0),
         ),
       ),
