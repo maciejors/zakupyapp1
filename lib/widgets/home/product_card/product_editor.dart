@@ -29,6 +29,8 @@ class _ProductEditorState extends State<ProductEditor> {
   final _formKey = GlobalKey<FormState>();
   late final ShoppingList _provider;
 
+  final _productNameFocusNode = FocusNode(canRequestFocus: false);
+
   String _productName = '';
   String _selectedShop = '';
   DateTime? _selectedDay;
@@ -43,6 +45,7 @@ class _ProductEditorState extends State<ProductEditor> {
   }
 
   Future<void> _selectQuantity() async {
+    _productNameFocusNode.unfocus();
     await showDialog(
         context: context,
         builder: (ctx) => SelectQuantityDialog(
@@ -57,6 +60,7 @@ class _ProductEditorState extends State<ProductEditor> {
   }
 
   Future<void> _selectShop() async {
+    _productNameFocusNode.unfocus();
     await showDialog(
         context: context,
         builder: (ctx) => SelectShopDialog(
@@ -72,6 +76,7 @@ class _ProductEditorState extends State<ProductEditor> {
   }
 
   Future<void> _selectDate() async {
+    _productNameFocusNode.unfocus();
     // https://stackoverflow.com/questions/52727535/what-is-the-correct-way-to-add-date-picker-in-flutter-app
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -151,7 +156,8 @@ class _ProductEditorState extends State<ProductEditor> {
             ),
             style: TextStyle(fontSize: 18),
             validator: productNameValidator,
-            focusNode: FocusNode(canRequestFocus: false),
+            autofocus: true,
+            focusNode: _productNameFocusNode,
           ),
 
           // Quantity picker
