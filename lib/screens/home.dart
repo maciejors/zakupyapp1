@@ -189,8 +189,10 @@ class _HomeScreenState extends State<HomeScreen> {
     // a circular progress indicator
     if (!isDataReady) return Center(child: CircularProgressIndicator());
 
-    // if data is ready, but the shopping list is empty, display an info on it
-    if (shoppingList.isEmpty)
+    final itemsToDisplay = getItemsToDisplay();
+
+    // if data is ready, but there are no items to display, show an info on it
+    if (itemsToDisplay.isEmpty)
       return Center(
           child: Text(
         'Brak przedmiotów do wyświetlenia',

@@ -27,10 +27,6 @@ class ShoppingList {
     return _id != '';
   }
 
-  bool get isEmpty {
-    return _products.isEmpty;
-  }
-
   bool get shopFilterApplied {
     return filteredShop != '';
   }
