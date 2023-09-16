@@ -170,9 +170,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               color: Colors.black,
             ),
             titleAlignment: ListTileTitleAlignment.center,
-            onTap: () async {
-               await showUpdateDialog();
-            },
+            onTap: kDebugMode ? () async => await showUpdateDialog() : null,
           ),
         ],
       ),
