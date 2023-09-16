@@ -169,7 +169,7 @@ class _ProductEditorState extends State<ProductEditor> {
                   _selectedQuantity,
                   _selectedQuantityUnit,
                 ),
-            icon: Icon(Icons.shopping_cart),
+            icon: Icon(Icons.numbers),
           ),
 
           // Shop picker
