@@ -8,6 +8,7 @@ class HelpDialog extends StatelessWidget {
     String sep = '\n\n';
     return AlertDialog(
       title: Text('Pomoc'),
+      scrollable: true,
       content: Text.rich(
         TextSpan(
           style: TextStyle(
