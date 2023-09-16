@@ -1,8 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:zakupyapp/core/updater.dart';
 
 import 'package:zakupyapp/storage/storage_manager.dart';
 import 'package:zakupyapp/utils/app_info.dart';
 import 'package:zakupyapp/widgets/drawer/main_drawer.dart';
+
+import '../widgets/shared/update_dialog.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -85,6 +89,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ));
   }
 
+  Future<void> showUpdateDialog() async {
+    final latestRelease = await Updater().getLatestRelease();
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => DownloadUpdateDialog(release: latestRelease),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     String shoppingListId = SM.getShoppingListId();
@@ -124,13 +137,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 color: Colors.black,
               ),
             ),
-            subtitle: Text('Dostępne wkrótce!'),
             secondary: Icon(
               Icons.update,
               color: Colors.black,
             ),
             value: SM.getUseFamilyStore(),
-            onChanged: null,
+            onChanged: (value) => setState(() {
+              SM.setUseFamilyStore(value);
+            }),
           ),
           SwitchListTile(
             title: Text(
@@ -156,7 +170,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               color: Colors.black,
             ),
             titleAlignment: ListTileTitleAlignment.center,
-            onTap: () {},
+            onTap: kDebugMode ? () async => await showUpdateDialog() : null,
           ),
         ],
       ),

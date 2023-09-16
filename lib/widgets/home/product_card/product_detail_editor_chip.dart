@@ -28,7 +28,12 @@ class ProductDetailEditorChip extends StatelessWidget {
             children: [
               ActionChip(
                 avatar: icon,
-                label: Text(activeLabel),
+                label: Text(
+                  activeLabel,
+                  style: TextStyle(
+                    fontSize: 15,
+                  ),
+                ),
                 backgroundColor: activeChipColor,
                 onPressed: onPress,
               ),
@@ -43,7 +48,12 @@ class ProductDetailEditorChip extends StatelessWidget {
           )
         : ActionChip(
             avatar: icon,
-            label: Text(inactiveLabel),
+            label: Text(
+              inactiveLabel,
+              style: TextStyle(
+                fontSize: 15,
+              ),
+            ),
             backgroundColor: inactiveChipColor,
             onPressed: onPress,
           );

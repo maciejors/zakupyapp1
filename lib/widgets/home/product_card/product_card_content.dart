@@ -40,6 +40,7 @@ class ProductCardContent extends StatelessWidget {
       iconData: Icons.access_time,
       color: color,
       fontStyle: FontStyle.italic,
+      size: 15,
     );
   }
 
@@ -59,7 +60,7 @@ class ProductCardContent extends StatelessWidget {
                         : '${product.buyer} kupi to',
                     iconData: Icons.shopping_cart_checkout,
                     color: Colors.black,
-                    size: 18,
+                    size: 19,
                     fontWeight: FontWeight.bold,
                   ),
                 )
@@ -67,7 +68,7 @@ class ProductCardContent extends StatelessWidget {
         ),
         Text(
           product.name,
-          style: TextStyle(fontSize: 18),
+          style: TextStyle(fontSize: 19),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 8),
@@ -76,6 +77,7 @@ class ProductCardContent extends StatelessWidget {
             iconData: Icons.numbers,
             color: Colors.black,
             fontStyle: FontStyle.italic,
+            size: 15,
           ),
         ),
         Visibility(
@@ -85,6 +87,7 @@ class ProductCardContent extends StatelessWidget {
             iconData: Icons.shopping_cart,
             color: Colors.black,
             fontStyle: FontStyle.italic,
+            size: 15,
           ),
         ),
         Visibility(
