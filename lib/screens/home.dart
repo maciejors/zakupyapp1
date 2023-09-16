@@ -7,7 +7,7 @@ import 'package:zakupyapp/core/shopping_list.dart';
 import 'package:zakupyapp/core/updater.dart';
 import 'package:zakupyapp/widgets/drawer/main_drawer.dart';
 import 'package:zakupyapp/widgets/home/product_card/product_card.dart';
-import 'package:zakupyapp/widgets/home/update_dialog.dart';
+import 'package:zakupyapp/widgets/shared/update_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);

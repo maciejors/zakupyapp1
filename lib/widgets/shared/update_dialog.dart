@@ -13,8 +13,9 @@ class DownloadUpdateDialog extends StatelessWidget {
 
   Future<void> downloadInBrowser(BuildContext context) async {
     Navigator.of(context).pop();
+    Uri uri = Uri.parse(release.downloadUrl);
     bool success = await launchUrl(
-      Uri.parse(release.downloadUrl),
+      uri,
       mode: LaunchMode.externalApplication,
     );
     if (!success) {
@@ -49,6 +50,13 @@ class DownloadUpdateDialog extends StatelessWidget {
             Navigator.of(context).pop();
           },
           child: Text('Później'),
+        ),
+        TextButton(
+          onPressed: () {
+            Clipboard.setData(ClipboardData(text: release.downloadUrl));
+            Navigator.of(context).pop();
+          },
+          child: Text('Skopiuj link'),
         ),
         TextButton(
           onPressed: () {
