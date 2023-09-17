@@ -5,6 +5,7 @@ import 'package:zakupyapp/core/updater.dart';
 import 'package:zakupyapp/storage/storage_manager.dart';
 import 'package:zakupyapp/utils/app_info.dart';
 import 'package:zakupyapp/widgets/drawer/main_drawer.dart';
+import 'package:zakupyapp/widgets/settings/settings_group_title.dart';
 
 import '../widgets/shared/update_dialog.dart';
 
@@ -89,7 +90,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ));
   }
 
-  Future<void> showUpdateDialog() async {
+  /// Clicking the version label in debug model will cause
+  /// update dialog to pop up
+  Future<void> handleClickVersionLabel() async {
+    if (!kDebugMode) {
+      return;
+    }
     final latestRelease = await Updater().getLatestRelease();
     await showDialog(
       context: context,
@@ -107,8 +113,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         title: Text('Ustawienia'),
       ),
       body: ListView(
-        padding: EdgeInsets.only(top: 5),
+        padding: EdgeInsets.only(top: 4),
         children: <Widget>[
+          SettingsGroupTitle(titleText: 'Lista zakupów'),
           ListTile(
             title: Text('ID Listy zakupów'),
             subtitle:
@@ -132,22 +139,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           SwitchListTile(
             title: Text(
-              'Aktualizuj za pomocą Family Store',
-              style: TextStyle(
-                color: Colors.black,
-              ),
-            ),
-            secondary: Icon(
-              Icons.update,
-              color: Colors.black,
-            ),
-            value: SM.getUseFamilyStore(),
-            onChanged: (value) => setState(() {
-              SM.setUseFamilyStore(value);
-            }),
-          ),
-          SwitchListTile(
-            title: Text(
               'Ukrywaj produkty zadeklarowane przez innych',
               style: TextStyle(
                 color: Colors.black,
@@ -162,6 +153,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
               SM.setHideProductsOthersDeclared(newValue);
             }),
           ),
+          SettingsGroupTitle(titleText: 'Aktualizacje'),
+          SwitchListTile(
+            title: Text(
+              'Aktualizuj za pomocą Family Store',
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+            secondary: Icon(
+              Icons.update,
+              color: Colors.black,
+            ),
+            value: SM.getUseFamilyStore(),
+            onChanged: (value) => setState(() {
+              SM.setUseFamilyStore(value);
+            }),
+          ),
           ListTile(
             title: Text('Wersja aplikacji'),
             subtitle: Text(AppInfo.getVersion()),
@@ -170,7 +178,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               color: Colors.black,
             ),
             titleAlignment: ListTileTitleAlignment.center,
-            onTap: kDebugMode ? () async => await showUpdateDialog() : null,
+            onTap: handleClickVersionLabel,
           ),
         ],
       ),
