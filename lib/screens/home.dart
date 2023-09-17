@@ -111,6 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       // cancel editing when filters change
       editedProduct = null;
+      isAddingProduct = false;
       // toggle filter
       shoppingList.showOnlyDeclaredByUser =
           !shoppingList.showOnlyDeclaredByUser;
@@ -121,6 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       // cancel editing when filters change
       editedProduct = null;
+      isAddingProduct = false;
       // apply filter
       shoppingList.filteredShop = filter;
     });
