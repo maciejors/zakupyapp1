@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:zakupyapp/constants.dart';
 
 import 'package:zakupyapp/widgets/drawer/help_dialog.dart';
 
@@ -15,6 +17,11 @@ class MainDrawer extends StatelessWidget {
 
   Future<void> showHelpDialog(BuildContext context) async {
     await showDialog(context: context, builder: (ctx) => HelpDialog());
+  }
+
+  Future<void> viewInFamilyStore() async {
+    Uri uri = Uri.parse(Constants.FAMILY_STORE_URL);
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
   @override
@@ -49,6 +56,12 @@ class MainDrawer extends StatelessWidget {
           leading: Icon(Icons.help),
           title: Text('Pomoc'),
           onTap: () async => await showHelpDialog(context),
+        ),
+        ListTile(
+          // settings
+          leading: Icon(Icons.launch),
+          title: Text('Wyświetl aplikację w Family Store'),
+          onTap: viewInFamilyStore,
         ),
       ],
     ));
