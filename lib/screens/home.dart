@@ -203,9 +203,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scrollbar(
       child: Provider<ShoppingList>(
         create: (context) => shoppingList,
-        builder: (context, child) => ListView(
-          children: itemsToDisplay,
+        child: ListView.builder(
           padding: EdgeInsets.all(5.0),
+          itemCount: itemsToDisplay.length,
+          itemBuilder: (context, index) => itemsToDisplay[index],
         ),
       ),
     );
