@@ -248,7 +248,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       drawer: MainDrawer(),
       appBar: AppBar(
-        title: Text('Lista Zakupów'),
+        title: Text('Lista zakupów'),
         actions: !isDataReady
             ? []
             : <Widget>[
