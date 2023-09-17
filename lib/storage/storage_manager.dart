@@ -1,4 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zakupyapp/constants.dart';
 
 class SM {
   static late SharedPreferences _storage;
@@ -19,12 +20,12 @@ class SM {
   }
 
   static String getUsername() {
-    return _storage.getString('username') ?? 'Użytkownik bez nazwy';
+    return _storage.getString('username') ?? Constants.DEFAULT_USERNAME;
   }
 
   static void setUsername(String username) {
     if (username == '') {
-      username = 'Użytkownik bez nazwy';
+      username = Constants.DEFAULT_USERNAME;
     }
     _storage.setString('username', username.trim());
   }
