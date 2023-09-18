@@ -24,12 +24,15 @@ class _HomeScreenState extends State<HomeScreen> {
   Product? editedProduct;
   bool isAddingProduct = false;
 
+  final animatedListKey = GlobalKey<AnimatedListState>();
+
   void addProductFunc() {
     if (!isAddingProduct) {
-      setState(() {
-        editedProduct = null;
-        isAddingProduct = true;
-      });
+        setState(() {
+          editedProduct = null;
+          isAddingProduct = true;
+        });
+        animatedListKey.currentState?.insertItem(0);
     }
   }
 
@@ -205,10 +208,18 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scrollbar(
       child: Provider<ShoppingList>(
         create: (context) => shoppingList,
-        child: ListView.builder(
+        child: AnimatedList(
+          key: animatedListKey,
           padding: EdgeInsets.all(5.0),
-          itemCount: itemsToDisplay.length,
-          itemBuilder: (context, index) => itemsToDisplay[index],
+          initialItemCount: itemsToDisplay.length,
+          itemBuilder: (context, index, animation) => SizeTransition(
+            sizeFactor: animation,
+            axisAlignment: 1,
+            child: Container(
+              width: double.infinity, // otherwise cards shrink in width
+              child: itemsToDisplay[index],
+            ),
+          ),
         ),
       ),
     );
@@ -233,7 +244,9 @@ class _HomeScreenState extends State<HomeScreen> {
       // on new products refresh the view as well as update isDataReady flag
       // on default shops received refresh the view so that the filters work
       shoppingList.startListening(
-        onProductsUpdatedCallback: () => setState(() => isDataReady = true),
+        onProductsUpdatedCallback: () {
+          if (!isDataReady) setState(() => isDataReady = true);
+        },
         onDefaultShopsReveivedCallback: () => setState(() {}),
       );
     }
