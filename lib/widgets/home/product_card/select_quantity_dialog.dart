@@ -55,7 +55,7 @@ class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
     if (_formKey.currentState!.validate()) {
       final selectedUnit =
           _selectedUnit == '~' ? _customUnitInput : _selectedUnit;
-      widget.onConfirmSelection(_quantityInput, selectedUnit);
+      widget.onConfirmSelection(_quantityInput, selectedUnit.trim());
       Navigator.of(context).pop();
     }
   }

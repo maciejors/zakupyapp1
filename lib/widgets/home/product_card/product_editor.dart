@@ -99,7 +99,7 @@ class _ProductEditorState extends State<ProductEditor> {
     if (_formKey.currentState!.validate()) {
       final newProduct = Product(
         id: widget.product.id,
-        name: _productName,
+        name: _productName.trim(),
         dateAdded: widget.product.dateAdded,
         whoAdded: widget.product.whoAdded,
         shop: _selectedShop == '' ? null : _selectedShop,

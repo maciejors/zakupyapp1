@@ -53,7 +53,7 @@ class _SelectShopDialogState extends State<SelectShopDialog> {
     if (_formKey.currentState!.validate()) {
       final selectedShop =
           _selectedShop == '~' ? _customShopInput : _selectedShop;
-      widget.onConfirmSelection(selectedShop);
+      widget.onConfirmSelection(selectedShop.trim());
       Navigator.of(context).pop();
     }
   }
