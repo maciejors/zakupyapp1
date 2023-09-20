@@ -35,7 +35,7 @@ class _ProductEditorState extends State<ProductEditor> {
   Deadline? get _selectedDeadline =>
       _selectedDay == null ? null : Deadline(_selectedDay!);
   double _selectedQuantity = 1;
-  String _selectedQuantityUnit = 'szt.';
+  String _selectedQuantityUnit = '';
 
   String? productNameValidator(String? productName) {
     if (productName!.isEmpty) return 'Pole nie może być puste';

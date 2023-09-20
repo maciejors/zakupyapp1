@@ -149,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ? SM.getUsername()
             : null,
         quantity: 1,
-        quantityUnit: 'szt',
+        quantityUnit: 'szt.',
       );
       final addProductCard = wrapProductWithWidget(defaults, isEditing: true);
       result.insert(0, addProductCard);
