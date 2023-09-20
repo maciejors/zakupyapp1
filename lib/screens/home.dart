@@ -134,12 +134,25 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // handle adding product
     if (isAddingProduct) {
-      // adding product key
-      final productCard = ProductCard.emptyEditor(
-          newProductId: Product.generateProductId(),
-          onConfirmEdit: confirmEditProductFunc,
-          onCancelEdit: cancelEditProductFunc);
-      result.insert(0, productCard);
+      final defaults = Product(
+        // default values for editor
+        id: Product.generateProductId(),
+        name: '',
+        dateAdded: DateTime.now(),
+        whoAdded: SM.getUsername(),
+        // set shop by default if filter active
+        shop: shoppingListManager.isShopFilterApplied
+            ? shoppingListManager.filteredShop
+            : null,
+        // set buyer by default if filter active
+        buyer: shoppingListManager.showOnlyDeclaredByUser
+            ? SM.getUsername()
+            : null,
+        quantity: 1,
+        quantityUnit: 'szt',
+      );
+      final addProductCard = wrapProductWithWidget(defaults, isEditing: true);
+      result.insert(0, addProductCard);
     }
     // handle editing product
     else if (editedProduct != null) {

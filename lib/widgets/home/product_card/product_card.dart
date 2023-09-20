@@ -5,11 +5,7 @@ import 'package:zakupyapp/widgets/home/product_card/product_card_content.dart';
 import 'package:zakupyapp/widgets/home/product_card/product_editor.dart';
 
 class ProductCard extends StatelessWidget {
-  /// null if a new product is being added
-  final Product? product;
-
-  /// not null only if a new product is being added
-  final String? newProductId;
+  final Product product;
 
   // product card content
   final VoidCallback editFunc;
@@ -31,36 +27,19 @@ class ProductCard extends StatelessWidget {
     required this.onConfirmEdit,
     required this.onCancelEdit,
     this.isEditing = false,
-    this.newProductId = null,
   }) : super(key: key);
 
-  ProductCard.emptyEditor({
-    required String newProductId,
-    required void Function(Product product) onConfirmEdit,
-    required void Function() onCancelEdit,
-  }) : this(
-          key: Key(newProductId),
-          product: null,
-          editFunc: () {},
-          deleteFunc: (p) {},
-          addBuyerFunc: () {},
-          onConfirmEdit: onConfirmEdit,
-          onCancelEdit: onCancelEdit,
-          isEditing: true,
-          newProductId: newProductId,
-        );
-
   Color? get cardColor {
-    // default or when adding a product
-    if (product == null || product?.buyer == null) {
+    // undeclared
+    if (product.buyer == null) {
       return Colors.orange[100];
     }
     // declared by user and not editing
-    if (product!.isDeclaredByUser && !isEditing) {
+    if (product.isDeclaredByUser && !isEditing) {
       return Colors.orange[300];
     }
     // declared by user but editing
-    if (product!.isDeclaredByUser && isEditing) {
+    if (product.isDeclaredByUser && isEditing) {
       return Colors.orange[200];
     }
     // declared by someone else
@@ -73,7 +52,7 @@ class ProductCard extends StatelessWidget {
       builder: (context) {
         return AlertDialog(
           title: Text('Usuń produkt'),
-          content: Text('Czy na pewno chcesz usunąć: ${product!.name}?'),
+          content: Text('Czy na pewno chcesz usunąć: ${product.name}?'),
           actions: <Widget>[
             TextButton(
               child: Text('Anuluj'),
@@ -85,7 +64,7 @@ class ProductCard extends StatelessWidget {
               child: Text('Tak'),
               onPressed: () {
                 Navigator.of(context).pop();
-                deleteFunc(product!);
+                deleteFunc(product);
               },
             ),
           ],
@@ -112,7 +91,6 @@ class ProductCard extends StatelessWidget {
                     padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                     child: ProductEditor(
                       product: product,
-                      newProductId: newProductId,
                       onConfirmEdit: onConfirmEdit,
                       onCancelEdit: onCancelEdit,
                     ),
@@ -122,7 +100,7 @@ class ProductCard extends StatelessWidget {
                     alignment: Alignment.bottomCenter,
                     child: Padding(
                       padding: const EdgeInsets.all(16),
-                      child: ProductCardContent(product: product!),
+                      child: ProductCardContent(product: product),
                     ),
                   ),
           ),
