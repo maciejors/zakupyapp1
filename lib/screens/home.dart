@@ -1,10 +1,12 @@
+import 'package:diffutil_sliverlist/diffutil_sliverlist.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 
 import 'package:zakupyapp/core/models/product.dart';
-import 'package:zakupyapp/core/shopping_list.dart';
+import 'package:zakupyapp/core/shopping_list_manager.dart';
 import 'package:zakupyapp/core/updater.dart';
+import 'package:zakupyapp/storage/storage_manager.dart';
 import 'package:zakupyapp/widgets/drawer/main_drawer.dart';
 import 'package:zakupyapp/widgets/home/product_card/product_card.dart';
 import 'package:zakupyapp/widgets/shared/update_dialog.dart';
@@ -17,199 +19,180 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  ShoppingList shoppingList = ShoppingList();
-  Updater updater = Updater();
-  bool isDataReady = false;
+  final ShoppingListManager shoppingListManager =
+      ShoppingListManager(SM.getShoppingListId());
+  final Updater updater = Updater();
+
+  List<Widget> itemsToDisplay = [];
+
+  bool isFirstLoadDone = false;
 
   Product? editedProduct;
   bool isAddingProduct = false;
+
+  /// Updates [editedProduct] & [isAddingProduct] flags and resets
+  /// itemsToDisplay list to remove any editors. Doesn't call setState
+  void hideEditor() {
+    isAddingProduct = false;
+    editedProduct = null;
+    setItemsToDisplay(shoppingListManager.filteredProducts);
+  }
+
+  /*
+  //
+  ====== CARD CALLBACKS ======
+  //
+   */
 
   void addProductFunc() {
     if (!isAddingProduct) {
       setState(() {
         editedProduct = null;
         isAddingProduct = true;
+        setItemsToDisplay(shoppingListManager.filteredProducts);
       });
     }
   }
 
-  VoidCallback getEditProductFunc(Product product) {
-    return () {
-      if (product.isEditable)
-        setState(() {
-          isAddingProduct = false;
-          editedProduct = product;
-        });
-    };
+  void editProductFunc(Product product) {
+    if (product.isEditable)
+      setState(() {
+        isAddingProduct = false;
+        editedProduct = product;
+        setItemsToDisplay(shoppingListManager.filteredProducts);
+      });
   }
 
-  VoidCallback getDeleteProductFunc(Product product) =>
-      () async => await showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: Text('Usuń produkt'),
-                content: Text('Czy na pewno chcesz usunąć: ${product.name}?'),
-                actions: <Widget>[
-                  TextButton(
-                    child: Text('Anuluj'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  TextButton(
-                    child: Text('Tak'),
-                    onPressed: () async {
-                      await shoppingList.removeProduct(product);
-                      Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Usunięto wybrany produkt'),
-                      ));
-                    },
-                  ),
-                ],
-              );
-            },
-          );
+  Future<void> deleteProductFunc(Product product) async {
+    await shoppingListManager.removeProduct(product);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Usunięto wybrany produkt'),
+    ));
+  }
 
-  VoidCallback getAddBuyerFunc(Product product) => () async {
-        bool? actionResult = await shoppingList.toggleProductBuyer(product);
-        // no action was taken
-        if (actionResult == null) {
-          return;
-        }
-        // buyer added
-        if (actionResult) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Dodano deklarację kupna'),
-          ));
-        }
-        // buyer removed
-        else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Usunięto deklarację kupna'),
-          ));
-        }
-      };
+  Future<void> addBuyerFunc(Product product) async {
+    bool? actionResult = await shoppingListManager.toggleProductBuyer(product);
+    // no action was taken
+    if (actionResult == null) {
+      return;
+    }
+    // buyer added
+    if (actionResult) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Dodano deklarację kupna'),
+      ));
+    }
+    // buyer removed
+    else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Usunięto deklarację kupna'),
+      ));
+    }
+  }
 
   Future<void> confirmEditProductFunc(Product product) async {
-    setState(() {
-      editedProduct = null;
-      isAddingProduct = false;
-    });
-    await shoppingList.storeProduct(product);
+    hideEditor();
+    await shoppingListManager.storeProduct(product);
   }
 
   void cancelEditProductFunc() {
-    setState(() {
-      editedProduct = null;
-      isAddingProduct = false;
-    });
+    setState(() => hideEditor());
   }
 
+  /*
+  //
+  ====== FILTERS ======
+  //
+   */
+
   void toggleBuyerFilter() {
-    setState(() {
-      // cancel editing when filters change
-      editedProduct = null;
-      // toggle filter
-      shoppingList.showOnlyDeclaredByUser =
-          !shoppingList.showOnlyDeclaredByUser;
-    });
+    // cancel editing when filters change
+    hideEditor();
+    // toggle filter
+    shoppingListManager.showOnlyDeclaredByUser =
+        !shoppingListManager.showOnlyDeclaredByUser;
   }
 
   void setShopFilter(String filter) {
-    setState(() {
-      // cancel editing when filters change
-      editedProduct = null;
-      // apply filter
-      shoppingList.filteredShop = filter;
-    });
+    // cancel editing when filters change
+    hideEditor();
+    // apply filter
+    shoppingListManager.filteredShop = filter;
   }
 
-  /// Returns a list of widgets to put inside the main ListView.
-  List<Widget> getItemsToDisplay() {
+  /*
+  //
+  ====== UPDATING SHOPPING LIST ======
+  //
+   */
+
+  /// Updates [itemsToDisplay] which stores a list of widgets to put inside the
+  /// main list view.
+  void setItemsToDisplay(List<Product> products) {
     // create actual widgets from products
-    final products = shoppingList.getProductsToDisplay();
-    final result = products.map(wrapProductWithCard).toList();
+    final result = products.map(wrapProductWithWidget).toList();
 
     // handle adding product
     if (isAddingProduct) {
-      // adding product key
-      final productCard = ProductCard(
-        key: Key('adding'),
-        product: null,
-        editFunc: () {},
-        deleteFunc: () {},
-        addBuyerFunc: () {},
-        onConfirmEdit: confirmEditProductFunc,
-        onCancelEdit: cancelEditProductFunc,
-        isEditing: true,
+      final defaults = Product(
+        // default values for editor
+        id: Product.generateProductId(),
+        name: '',
+        dateAdded: DateTime.now(),
+        whoAdded: SM.getUsername(),
+        // set shop by default if filter active
+        shop: shoppingListManager.isShopFilterApplied
+            ? shoppingListManager.filteredShop
+            : null,
+        // set buyer by default if filter active
+        buyer: shoppingListManager.showOnlyDeclaredByUser
+            ? SM.getUsername()
+            : null,
+        quantity: 1,
+        quantityUnit: 'szt.',
       );
-      result.insert(0, productCard);
+      final addProductCard = wrapProductWithWidget(defaults, isEditing: true);
+      result.insert(0, addProductCard);
     }
-
     // handle editing product
     else if (editedProduct != null) {
       // substitute one of the product cards for the editable version
       final product = editedProduct!;
       int editedProductIndex = products.indexOf(product);
-      result[editedProductIndex] = wrapProductWithCard(
+      result[editedProductIndex] = wrapProductWithWidget(
         product,
         isEditing: true,
       );
     }
-    return result;
+    itemsToDisplay = result;
   }
 
-  ProductCard wrapProductWithCard(Product product, {bool isEditing = false}) {
+  Widget wrapProductWithWidget(Product product, {bool isEditing = false}) {
     return ProductCard(
       key: Key(product.id),
       product: product,
-      editFunc: getEditProductFunc(product),
-      deleteFunc: getDeleteProductFunc(product),
-      addBuyerFunc: getAddBuyerFunc(product),
+      editFunc: () => editProductFunc(product),
+      deleteFunc: deleteProductFunc,
+      addBuyerFunc: () => addBuyerFunc(product),
       onConfirmEdit: confirmEditProductFunc,
       onCancelEdit: cancelEditProductFunc,
       isEditing: isEditing,
     );
   }
 
-  /// different body depending on
-  /// [isDataReady] & [shoppingList.isInitialised] values
-  Widget getBody() {
-    // if shoppingListId is not specified, display an info on it
-    if (!shoppingList.isInitialised)
-      return Center(
-          child: Text(
-        'Nie wybrano żadnej listy zakupów. Możesz to zrobić w Ustawieniach',
-        textAlign: TextAlign.center,
-      ));
-
-    // if shoppingListId is specified, but the data is loading, display
-    // a circular progress indicator
-    if (!isDataReady) return Center(child: CircularProgressIndicator());
-
-    final itemsToDisplay = getItemsToDisplay();
-
-    // if data is ready, but there are no items to display, show an info on it
-    if (itemsToDisplay.isEmpty)
-      return Center(
-          child: Text(
-        'Brak przedmiotów do wyświetlenia',
-        textAlign: TextAlign.center,
-      ));
-
-    // otherwise, display the shopping list
-    return Scrollbar(
-      child: Provider<ShoppingList>(
-        create: (context) => shoppingList,
-        builder: (context, child) => ListView(
-          children: itemsToDisplay,
-          padding: EdgeInsets.all(5.0),
-        ),
-      ),
-    );
+  /// Will run every time products list is updated
+  void onProductsUpdated(List<Product> snapshot) {
+    setState(() {
+      isFirstLoadDone = true;
+      setItemsToDisplay(snapshot);
+    });
   }
+
+  /*
+  //
+  ====== LIFECYCLE METHODS ======
+  //
+   */
 
   @override
   void initState() {
@@ -226,20 +209,88 @@ class _HomeScreenState extends State<HomeScreen> {
             )));
 
     // initialise the shopping list
-    if (shoppingList.isInitialised) {
-      // on new products refresh the view as well as update isDataReady flag
-      // on default shops received refresh the view so that the filters work
-      shoppingList.startListening(
-        onProductsUpdatedCallback: () => setState(() => isDataReady = true),
-        onDefaultShopsReveivedCallback: () => setState(() {}),
-      );
+    if (shoppingListManager.isInitialised) {
+      shoppingListManager.onProductsUpdated = onProductsUpdated;
+      shoppingListManager.onDefaultShopsReveived = () => setState(() {
+            // empty setState to refresh filters with contents of
+            // shoppingListManager.availableShops
+          });
+      shoppingListManager.subscribe();
     }
   }
 
   @override
   void dispose() {
-    shoppingList.stopListening();
+    shoppingListManager.unsubscribe();
     super.dispose();
+  }
+
+  /*
+  //
+  ====== WIDGET TREE ======
+  //
+   */
+
+  /// different body depending on [isFirstLoadDone] &
+  /// [shoppingListManager.isInitialised] values
+  Widget getBody() {
+    // if shoppingListId is not specified, display an info on it
+    if (!shoppingListManager.isInitialised)
+      return Center(
+          child: Text(
+        'Nie wybrano żadnej listy zakupów. Możesz to zrobić w Ustawieniach',
+        textAlign: TextAlign.center,
+      ));
+
+    // if shoppingListId is specified, but the data is loading, display
+    // a circular progress indicator
+    if (!isFirstLoadDone) return Center(child: CircularProgressIndicator());
+
+    // for content shown if itemsToDisplay.isEmpty
+    final screenHeight = MediaQuery.of(context).size.height;
+    final padding = MediaQuery.of(context).viewPadding;
+    final viewHeight = screenHeight - padding.top - kToolbarHeight;
+
+    // otherwise, display the shopping list
+    return Provider<ShoppingListManager>(
+      create: (context) => shoppingListManager,
+      child: CustomScrollView(
+        slivers: [
+          DiffUtilSliverList.fromKeyedWidgetList(
+            children: List.from(itemsToDisplay),
+            insertAnimationBuilder: (context, animation, child) =>
+                FadeTransition(
+              opacity: animation,
+              child: SizeTransition(
+                sizeFactor: animation,
+                axisAlignment: 1,
+                child: child,
+              ),
+            ),
+            removeAnimationBuilder: (context, animation, child) =>
+                FadeTransition(
+              opacity: animation,
+              child: SizeTransition(
+                sizeFactor: animation,
+                axisAlignment: 1,
+                child: child,
+              ),
+            ),
+          ),
+          if (itemsToDisplay.isEmpty)
+            SliverToBoxAdapter(
+              child: Container(
+                height: viewHeight,
+                child: Center(
+                    child: Text(
+                  'Brak przedmiotów do wyświetlenia',
+                  textAlign: TextAlign.center,
+                )),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -247,14 +298,14 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       drawer: MainDrawer(),
       appBar: AppBar(
-        title: Text('Lista Zakupów'),
-        actions: !isDataReady
+        title: Text('Lista zakupów'),
+        actions: !isFirstLoadDone
             ? []
             : <Widget>[
                 IconButton(
                   icon: Icon(
                     Icons.shopping_cart_checkout,
-                    color: shoppingList.showOnlyDeclaredByUser
+                    color: shoppingListManager.showOnlyDeclaredByUser
                         ? Colors.black
                         : Colors.deepOrange[900],
                   ),
@@ -263,12 +314,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 PopupMenuButton(
                   icon: Icon(
                     Icons.filter_alt,
-                    color: shoppingList.shopFilterApplied
+                    color: shoppingListManager.isShopFilterApplied
                         ? Colors.black
                         : Colors.deepOrange[900],
                   ),
                   itemBuilder: (BuildContext context) =>
-                      shoppingList.availableShops
+                      shoppingListManager.availableShops
                           .map((e) => PopupMenuItem(
                                 child: Text(e),
                                 value: e,
@@ -287,13 +338,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               value: '~',
                             )),
                   onSelected: setShopFilter,
-                  initialValue: shoppingList.filteredShop,
+                  initialValue: shoppingListManager.filteredShop,
                 ),
               ],
       ),
       body: getBody(),
       floatingActionButton: Visibility(
-        visible: isDataReady,
+        visible: isFirstLoadDone,
         child: FloatingActionButton(
           onPressed: addProductFunc,
           child: Icon(

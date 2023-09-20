@@ -1,6 +1,6 @@
 name: zakupyapp
 description: Lista zakupowa
-version: 1.5.1  # updated 14/09/2023
+version: 1.5.2  # updated 17/09/2023
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -17,6 +17,7 @@ dependencies:
   test: ^1.24.3
   url_launcher: ^6.1.14
   provider: ^6.0.5
+  diffutil_sliverlist: ^0.5.1
 
 dev_dependencies:
   flutter_test:

@@ -2,22 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zakupyapp/core/models/deadline.dart';
 import 'package:zakupyapp/core/models/product.dart';
-import 'package:zakupyapp/core/shopping_list.dart';
-import 'package:zakupyapp/storage/storage_manager.dart';
+import 'package:zakupyapp/core/shopping_list_manager.dart';
 import 'package:zakupyapp/widgets/home/product_card/product_detail_editor_chip.dart';
 import 'package:zakupyapp/widgets/home/product_card/select_quantity_dialog.dart';
 import 'package:zakupyapp/widgets/home/product_card/select_shop_dialog.dart';
 
 class ProductEditor extends StatefulWidget {
-  // null if a new product is being added
-  final Product? product;
+  final Product product;
 
   final void Function(Product product) onConfirmEdit;
   final VoidCallback onCancelEdit;
 
   const ProductEditor(
       {super.key,
-      this.product,
+      required this.product,
       required this.onConfirmEdit,
       required this.onCancelEdit});
 
@@ -27,7 +25,7 @@ class ProductEditor extends StatefulWidget {
 
 class _ProductEditorState extends State<ProductEditor> {
   final _formKey = GlobalKey<FormState>();
-  late final ShoppingList _provider;
+  late final ShoppingListManager _provider;
 
   final _productNameFocusNode = FocusNode(canRequestFocus: false);
 
@@ -37,7 +35,7 @@ class _ProductEditorState extends State<ProductEditor> {
   Deadline? get _selectedDeadline =>
       _selectedDay == null ? null : Deadline(_selectedDay!);
   double _selectedQuantity = 1;
-  String _selectedQuantityUnit = 'szt.';
+  String _selectedQuantityUnit = '';
 
   String? productNameValidator(String? productName) {
     if (productName!.isEmpty) return 'Pole nie może być puste';
@@ -99,19 +97,14 @@ class _ProductEditorState extends State<ProductEditor> {
 
   void confirmEdit() {
     if (_formKey.currentState!.validate()) {
-      final productId = widget.product == null
-          ? Product.generateProductId()
-          : widget.product!.id;
-      final productDateAdded =
-          widget.product == null ? DateTime.now() : widget.product!.dateAdded;
       final newProduct = Product(
-        id: productId,
+        id: widget.product.id,
         name: _productName,
-        dateAdded: productDateAdded,
-        whoAdded: SM.getUsername(),
+        dateAdded: widget.product.dateAdded,
+        whoAdded: widget.product.whoAdded,
         shop: _selectedShop == '' ? null : _selectedShop,
         deadline: _selectedDeadline,
-        buyer: widget.product?.buyer,
+        buyer: widget.product.buyer,
         quantity: _selectedQuantity,
         quantityUnit: _selectedQuantityUnit,
       );
@@ -126,16 +119,14 @@ class _ProductEditorState extends State<ProductEditor> {
   @override
   void initState() {
     super.initState();
-    // get shop and quantity units lists
-    _provider = Provider.of<ShoppingList>(context, listen: false);
-    // if editing
-    if (widget.product != null) {
-      _productName = widget.product!.name;
-      _selectedShop = widget.product!.shop ?? '';
-      _selectedDay = widget.product!.deadline?.deadlineDay;
-      _selectedQuantity = widget.product!.quantity;
-      _selectedQuantityUnit = widget.product!.quantityUnit;
-    }
+    // provider for shop and quantity units lists
+    _provider = Provider.of<ShoppingListManager>(context, listen: false);
+    // default values for editor
+    _productName = widget.product.name;
+    _selectedShop = widget.product.shop ?? '';
+    _selectedDay = widget.product.deadline?.deadlineDay;
+    _selectedQuantity = widget.product.quantity;
+    _selectedQuantityUnit = widget.product.quantityUnit;
   }
 
   @override
@@ -156,7 +147,7 @@ class _ProductEditorState extends State<ProductEditor> {
             ),
             style: TextStyle(fontSize: 18),
             validator: productNameValidator,
-            autofocus: true,
+            autofocus: widget.product.name == '',
             focusNode: _productNameFocusNode,
           ),
 

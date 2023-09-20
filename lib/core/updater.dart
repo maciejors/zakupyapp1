@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:zakupyapp/constants.dart';
 import 'package:zakupyapp/storage/database_manager.dart';
 import 'package:zakupyapp/storage/storage_manager.dart';
 
@@ -15,7 +16,7 @@ class Updater {
   Future<AppRelease> getLatestRelease() async {
     AppRelease latestRelease = await _db.getLatestRelease();
     if (SM.getUseFamilyStore()) {
-      latestRelease.downloadUrl = 'https://family-store-dev.vercel.app/apps/14';
+      latestRelease.downloadUrl = Constants.FAMILY_STORE_URL;
     }
     return latestRelease;
   }

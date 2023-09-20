@@ -81,4 +81,10 @@ class Product {
     }
     return '$displayedQuantity $quantityUnit';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (other.runtimeType != Product) return false;
+    return id == (other as Product).id;
+  }
 }
