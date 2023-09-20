@@ -233,13 +233,10 @@ class _HomeScreenState extends State<HomeScreen> {
     // a circular progress indicator
     if (!isFirstLoadDone) return Center(child: CircularProgressIndicator());
 
-    // if data is ready, but there are no items to display, show an info on it
-    if (itemsToDisplay.isEmpty)
-      return Center(
-          child: Text(
-        'Brak przedmiotów do wyświetlenia',
-        textAlign: TextAlign.center,
-      ));
+    // for content shown if itemsToDisplay.isEmpty
+    final screenHeight = MediaQuery.of(context).size.height;
+    final padding = MediaQuery.of(context).viewPadding;
+    final viewHeight = screenHeight - padding.top - kToolbarHeight;
 
     // otherwise, display the shopping list
     return Provider<ShoppingListManager>(
@@ -267,6 +264,17 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
+          if (itemsToDisplay.isEmpty)
+            SliverToBoxAdapter(
+              child: Container(
+                height: viewHeight,
+                child: Center(
+                    child: Text(
+                  'Brak przedmiotów do wyświetlenia',
+                  textAlign: TextAlign.center,
+                )),
+              ),
+            ),
         ],
       ),
     );
