@@ -25,9 +25,8 @@ class Updater {
   Future<void> checkForUpdate(void Function(AppRelease release)? updateAvailableCallback) async {
     // don't perform any action if any of the following is true:
     // - this instance of Updater has already checked for update
-    // - updates are turned off
     // - application was compiled in debug mode
-    if (_checkedForUpdate || !SM.getUseFamilyStore() || kDebugMode) {
+    if (_checkedForUpdate || kDebugMode) {
       return;
     }
     _checkedForUpdate = true;
