@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zakupyapp/core/models/deadline.dart';
 import 'package:zakupyapp/core/models/product.dart';
-import 'package:zakupyapp/core/shopping_list.dart';
+import 'package:zakupyapp/core/shopping_list_manager.dart';
 import 'package:zakupyapp/storage/storage_manager.dart';
 import 'package:zakupyapp/widgets/home/product_card/product_detail_editor_chip.dart';
 import 'package:zakupyapp/widgets/home/product_card/select_quantity_dialog.dart';
 import 'package:zakupyapp/widgets/home/product_card/select_shop_dialog.dart';
 
 class ProductEditor extends StatefulWidget {
-  // null if a new product is being added
+  /// null if a new product is being added
   final Product? product;
+
+  /// not null only if a new product is being added
+  final String? newProductId;
 
   final void Function(Product product) onConfirmEdit;
   final VoidCallback onCancelEdit;
@@ -18,6 +21,7 @@ class ProductEditor extends StatefulWidget {
   const ProductEditor(
       {super.key,
       this.product,
+      this.newProductId,
       required this.onConfirmEdit,
       required this.onCancelEdit});
 
@@ -27,10 +31,11 @@ class ProductEditor extends StatefulWidget {
 
 class _ProductEditorState extends State<ProductEditor> {
   final _formKey = GlobalKey<FormState>();
-  late final ShoppingList _provider;
+  late final ShoppingListManager _provider;
 
   final _productNameFocusNode = FocusNode(canRequestFocus: false);
 
+  String _productId = '';
   String _productName = '';
   String _selectedShop = '';
   DateTime? _selectedDay;
@@ -99,13 +104,10 @@ class _ProductEditorState extends State<ProductEditor> {
 
   void confirmEdit() {
     if (_formKey.currentState!.validate()) {
-      final productId = widget.product == null
-          ? Product.generateProductId()
-          : widget.product!.id;
       final productDateAdded =
           widget.product == null ? DateTime.now() : widget.product!.dateAdded;
       final newProduct = Product(
-        id: productId,
+        id: _productId,
         name: _productName,
         dateAdded: productDateAdded,
         whoAdded: SM.getUsername(),
@@ -127,14 +129,17 @@ class _ProductEditorState extends State<ProductEditor> {
   void initState() {
     super.initState();
     // get shop and quantity units lists
-    _provider = Provider.of<ShoppingList>(context, listen: false);
+    _provider = Provider.of<ShoppingListManager>(context, listen: false);
     // if editing
     if (widget.product != null) {
+      _productId = widget.product!.id;
       _productName = widget.product!.name;
       _selectedShop = widget.product!.shop ?? '';
       _selectedDay = widget.product!.deadline?.deadlineDay;
       _selectedQuantity = widget.product!.quantity;
       _selectedQuantityUnit = widget.product!.quantityUnit;
+    } else {
+      _productId = widget.newProductId!;
     }
   }
 
@@ -156,7 +161,7 @@ class _ProductEditorState extends State<ProductEditor> {
             ),
             style: TextStyle(fontSize: 18),
             validator: productNameValidator,
-            autofocus: true,
+            autofocus: widget.product == null,
             focusNode: _productNameFocusNode,
           ),
 

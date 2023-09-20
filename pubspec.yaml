@@ -17,6 +17,7 @@ dependencies:
   test: ^1.24.3
   url_launcher: ^6.1.14
   provider: ^6.0.5
+  diffutil_sliverlist: ^0.5.1
 
 dev_dependencies:
   flutter_test:
