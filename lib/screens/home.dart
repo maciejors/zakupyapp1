@@ -319,7 +319,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         : Colors.deepOrange[900],
                   ),
                   itemBuilder: (BuildContext context) =>
-                      shoppingListManager.availableShops
+                      shoppingListManager.filterableShops
                           .map((e) => PopupMenuItem(
                                 child: Text(e),
                                 value: e,

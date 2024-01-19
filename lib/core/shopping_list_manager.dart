@@ -10,6 +10,10 @@ class ShoppingListManager {
   bool isDataReady = false;
 
   List<String> availableShops = [];
+
+  /// filterable shops will omit default shops that are not used
+  /// i.e. display only shops that are present in the shopping list
+  List<String> filterableShops = [];
   List<String> availableQuantityUnits = [];
   final String id;
   final String _username = SM.getUsername();
@@ -111,18 +115,23 @@ class ShoppingListManager {
   /// Refreshes available shops and quantity units lists based on the product
   /// data.
   void _refreshLists(List<String> defaultShops) {
-    availableShops = [...defaultShops];
+    Set<String> shopsInList = {};
     availableQuantityUnits = ['szt.', 'kg', 'dag', 'L'];
     for (var product in _allProducts) {
       // add any new shops to the list of available shops
-      if (product.shop != null && !availableShops.contains(product.shop)) {
-        availableShops.add(product.shop!);
+      if (product.shop != null) {
+        shopsInList.add(product.shop!);
       }
       // add any new quantity units to the list of available qus
       if (!availableQuantityUnits.contains(product.quantityUnit)) {
         availableQuantityUnits.add(product.quantityUnit);
       }
     }
+    // filterable shops only requires shops present in the shopping list
+    filterableShops = shopsInList.toList();
+    // add all default shops to availableShops
+    shopsInList.addAll(defaultShops);
+    availableShops = shopsInList.toList();
   }
 
   /// Starts listening for products data. Make sure to set [onProductsUpdated]
@@ -139,7 +148,7 @@ class ShoppingListManager {
     _db.setupListener((newProducts) {
       newProducts.sort((p1, p2) => p2.dateAdded.compareTo(p1.dateAdded));
 
-        isDataReady = true;
+      isDataReady = true;
 
       _allProducts = newProducts;
       // received products may contain new shops

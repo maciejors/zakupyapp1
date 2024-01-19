@@ -15,13 +15,15 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(MaterialApp(
-    routes: {
-      '/': (context) => HomeScreen(),
-      '/settings': (context) => SettingsScreen(),
-    },
-    theme: ThemeData(
-      primarySwatch: Colors.orange,
+  runApp(
+    MaterialApp(
+      routes: {
+        '/': (context) => HomeScreen(),
+        '/settings': (context) => SettingsScreen(),
+      },
+      theme: ThemeData(
+        primarySwatch: Colors.orange,
+        useMaterial3: false,
       ),
     ),
   );
