@@ -344,7 +344,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: getBody(),
       floatingActionButton: Visibility(
-        visible: isFirstLoadDone,
+        visible: isFirstLoadDone && !isAddingProduct,
         child: FloatingActionButton(
           onPressed: addProductFunc,
           child: Icon(
