@@ -30,6 +30,11 @@ class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
   List<String> get _chipValues => [...widget.availableQuantityUnits, '~'];
 
   double _quantityInput = 1;
+
+  /// 1 or -1
+  int _quantityTweakSign = 1;
+  String get _quantityTweakSignText => _quantityTweakSign > 0 ? '+' : '-';
+
   String _selectedUnit = '';
   String _customUnitInput = '';
 
@@ -108,7 +113,8 @@ class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
     final tweakButtonStyle = OutlinedButton.styleFrom(
       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       minimumSize: Size.fromRadius(15),
-      padding: EdgeInsets.zero,
+      padding: EdgeInsets.only(left: 10, right: 10),
+      textStyle: TextStyle(fontFamily: 'monospace')
     );
 
     return AlertDialog(
@@ -119,23 +125,6 @@ class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Quantity tweak
-            Row(
-              children: [
-                OutlinedButton(
-                  onPressed: () => updateQuantity(1),
-                  child: Text('+1'),
-                  style: tweakButtonStyle,
-                ),
-                SizedBox(width: 10),
-                OutlinedButton(
-                  onPressed: () => updateQuantity(-1),
-                  child: Text('-1'),
-                  style: tweakButtonStyle,
-                ),
-              ],
-            ),
-
             // Quantity input
             TextFormField(
               controller: _quantityInputController,
@@ -150,7 +139,44 @@ class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
               },
             ),
 
+            // Quantity tweak
+            SizedBox(height: 10),
+            Row(
+              children: [
+                OutlinedButton(
+                  onPressed: () => updateQuantity(1 * _quantityTweakSign),
+                  child: Text('${_quantityTweakSignText}1'),
+                  style: tweakButtonStyle,
+                ),
+                SizedBox(width: 10),
+                OutlinedButton(
+                  onPressed: () => updateQuantity(10 * _quantityTweakSign),
+                  child: Text('${_quantityTweakSignText}10'),
+                  style: tweakButtonStyle,
+                ),
+                SizedBox(width: 10),
+                OutlinedButton(
+                  onPressed: () => updateQuantity(100 * _quantityTweakSign),
+                  child: Text('${_quantityTweakSignText}100'),
+                  style: tweakButtonStyle,
+                ),
+                SizedBox(width: 10),
+                OutlinedButton(
+                  onPressed: () => setState(() {
+                    _quantityTweakSign = _quantityTweakSign * -1;
+                  }),
+                  child: Text('+/-'),
+                  style: tweakButtonStyle,
+                ),
+              ],
+            ),
+
             // Unit selection
+            SizedBox(height: 25),
+            Text(
+              'Jednostka:',
+              style: TextStyle(fontSize: 18),
+            ),
             Wrap(
               spacing: 5.0,
               children: getChips(),
