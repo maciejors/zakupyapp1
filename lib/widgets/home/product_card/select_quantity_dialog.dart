@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class SelectQuantityDialog extends StatefulWidget {
@@ -21,6 +23,7 @@ class SelectQuantityDialog extends StatefulWidget {
 class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
   final _formKey = GlobalKey<FormState>();
   final _quantityInputFocusNode = FocusNode();
+  final _quantityInputController = TextEditingController();
 
   int? _selectedChip = -1;
   List<String> get _chipLabels => [...widget.availableQuantityUnits, 'Inna:'];
@@ -29,6 +32,19 @@ class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
   double _quantityInput = 1;
   String _selectedUnit = '';
   String _customUnitInput = '';
+
+  /// This is used as a callback to - and + buttons
+  void updateQuantity(int delta) {
+    final newQuantity = _quantityInput + delta;
+    // eliminate rounding errors
+    final tenToTenth = pow(10, 10);
+    double newQuantityRounded =
+        (newQuantity * tenToTenth).roundToDouble() / tenToTenth;
+    if (newQuantityRounded < 0) {
+      newQuantityRounded = 0.0;
+    }
+    setState(() => _quantityInput = newQuantityRounded);
+  }
 
   String? quantityUnitValidator(String? customUnit) {
     if (_selectedUnit != '~') return null;
@@ -83,12 +99,17 @@ class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final String initialQuantityInpValue;
     if (_quantityInput.toInt() == _quantityInput) {
-      initialQuantityInpValue = _quantityInput.toInt().toString();
+      _quantityInputController.text = _quantityInput.toInt().toString();
     } else {
-      initialQuantityInpValue = _quantityInput.toString();
+      _quantityInputController.text = _quantityInput.toString();
     }
+
+    final tweakButtonStyle = OutlinedButton.styleFrom(
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      minimumSize: Size.fromRadius(15),
+      padding: EdgeInsets.zero,
+    );
 
     return AlertDialog(
       scrollable: true,
@@ -98,15 +119,32 @@ class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Quantity tweak
+            Row(
+              children: [
+                OutlinedButton(
+                  onPressed: () => updateQuantity(1),
+                  child: Text('+1'),
+                  style: tweakButtonStyle,
+                ),
+                SizedBox(width: 10),
+                OutlinedButton(
+                  onPressed: () => updateQuantity(-1),
+                  child: Text('-1'),
+                  style: tweakButtonStyle,
+                ),
+              ],
+            ),
+
             // Quantity input
             TextFormField(
-              autofocus: true,
+              controller: _quantityInputController,
               focusNode: _quantityInputFocusNode,
               decoration: InputDecoration(
                 hintText: 'Podaj ilość',
+                counterText: '',
               ),
               keyboardType: TextInputType.number,
-              initialValue: initialQuantityInpValue,
               onChanged: (value) {
                 _quantityInput = double.parse(value);
               },
