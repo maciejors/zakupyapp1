@@ -113,7 +113,7 @@ class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
     final tweakButtonStyle = OutlinedButton.styleFrom(
       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       minimumSize: Size.fromRadius(15),
-      padding: EdgeInsets.only(left: 10, right: 10),
+      padding: EdgeInsets.only(left: 8, right: 8),
       textStyle: TextStyle(fontFamily: 'monospace')
     );
 
@@ -165,6 +165,13 @@ class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
                     _quantityTweakSign = _quantityTweakSign * -1;
                   }),
                   child: Text('+/-'),
+                  style: tweakButtonStyle,
+                ),
+                OutlinedButton(
+                  onPressed: () => setState(() {
+                    _quantityInput = 0;
+                  }),
+                  child: Text('0'),
                   style: tweakButtonStyle,
                 ),
               ],
