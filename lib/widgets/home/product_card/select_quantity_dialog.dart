@@ -141,26 +141,25 @@ class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
 
             // Quantity tweak
             SizedBox(height: 10),
-            Row(
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
               children: [
                 OutlinedButton(
                   onPressed: () => updateQuantity(1 * _quantityTweakSign),
                   child: Text('${_quantityTweakSignText}1'),
                   style: tweakButtonStyle,
                 ),
-                SizedBox(width: 10),
                 OutlinedButton(
                   onPressed: () => updateQuantity(10 * _quantityTweakSign),
                   child: Text('${_quantityTweakSignText}10'),
                   style: tweakButtonStyle,
                 ),
-                SizedBox(width: 10),
                 OutlinedButton(
                   onPressed: () => updateQuantity(100 * _quantityTweakSign),
                   child: Text('${_quantityTweakSignText}100'),
                   style: tweakButtonStyle,
                 ),
-                SizedBox(width: 10),
                 OutlinedButton(
                   onPressed: () => setState(() {
                     _quantityTweakSign = _quantityTweakSign * -1;
