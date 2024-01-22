@@ -177,8 +177,9 @@ class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
               ],
             ),
 
+            Divider(height: 50),
+
             // Unit selection
-            SizedBox(height: 25),
             Text(
               'Jednostka:',
               style: TextStyle(fontSize: 18),
