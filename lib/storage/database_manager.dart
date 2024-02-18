@@ -43,9 +43,13 @@ class DatabaseManager {
         deadline = Deadline.parse(productRawData['deadline']!);
       }
       String? buyer = productRawData['buyer'];
-      // default values for older products
-      double quantity = double.parse(productRawData['quantity'] ?? '1');
-      String quantityUnit = productRawData['quantityUnit'] ?? 'szt.';
+
+      double? quantity;
+      String? quantityUnit;
+      if (productRawData['quantity'] != null) {
+        quantity = double.parse(productRawData['quantity']);
+        quantityUnit = productRawData['quantityUnit']!;
+      }
 
       return Product(
         id: id,

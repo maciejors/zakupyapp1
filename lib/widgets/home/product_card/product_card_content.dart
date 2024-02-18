@@ -72,12 +72,15 @@ class ProductCardContent extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.only(top: 8),
-          child: SimpleTextWithIcon(
-            text: 'Ilość: ${product.quantityLabel}',
-            iconData: Icons.numbers,
-            color: Colors.black,
-            fontStyle: FontStyle.italic,
-            size: 15,
+          child: Visibility(
+            visible: product.quantityLabel != null,
+            child: SimpleTextWithIcon(
+              text: 'Ilość: ${product.quantityLabel}',
+              iconData: Icons.numbers,
+              color: Colors.black,
+              fontStyle: FontStyle.italic,
+              size: 15,
+            ),
           ),
         ),
         Visibility(

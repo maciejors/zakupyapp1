@@ -123,8 +123,9 @@ class ShoppingListManager {
         shopsInList.add(product.shop!);
       }
       // add any new quantity units to the list of available qus
-      if (!availableQuantityUnits.contains(product.quantityUnit)) {
-        availableQuantityUnits.add(product.quantityUnit);
+      if (product.quantityUnit != null &&
+          !availableQuantityUnits.contains(product.quantityUnit)) {
+        availableQuantityUnits.add(product.quantityUnit!);
       }
     }
     // filterable shops only requires shops present in the shopping list

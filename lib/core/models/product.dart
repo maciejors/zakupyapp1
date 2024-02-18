@@ -12,10 +12,10 @@ class Product {
   final String? shop;
   final Deadline? deadline;
   final String? buyer;
-  final double quantity;
-  final String quantityUnit;
+  final double? quantity;
+  final String? quantityUnit;
   
-  String get quantityLabel => formQuantityLabel(quantity, quantityUnit);
+  String? get quantityLabel => formQuantityLabel(quantity, quantityUnit);
 
   Product({
     required this.id,
@@ -42,8 +42,6 @@ class Product {
       'name': name,
       'dateAdded': dateAdded.toString(),
       'whoAdded': whoAdded,
-      'quantity': quantity.toString(),
-      'quantityUnit': quantityUnit,
     };
     if (shop != null) {
       result['shop'] = shop!;
@@ -53,6 +51,10 @@ class Product {
     }
     if (buyer != null) {
       result['buyer'] = buyer!;
+    }
+    if (quantity != null) {
+      result['quantity'] = quantity.toString();
+      result['quantityUnit'] = quantityUnit!;
     }
     return result;
   }
@@ -70,7 +72,10 @@ class Product {
   
   // has to be static because it will be used in Product Editor where
   // there is no access to the Product instance
-  static String formQuantityLabel(double quantity, String quantityUnit) {
+  static String? formQuantityLabel(double? quantity, String? quantityUnit) {
+    if (quantity == null) {
+      return null;
+    }
     final String displayedQuantity;
     final int quantityToInt = quantity.toInt();
     if (quantityToInt == quantity) {

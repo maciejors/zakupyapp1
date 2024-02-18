@@ -34,8 +34,8 @@ class _ProductEditorState extends State<ProductEditor> {
   DateTime? _selectedDay;
   Deadline? get _selectedDeadline =>
       _selectedDay == null ? null : Deadline(_selectedDay!);
-  double _selectedQuantity = 1;
-  String _selectedQuantityUnit = '';
+  double? _selectedQuantity;
+  String? _selectedQuantityUnit;
 
   String? productNameValidator(String? productName) {
     if (productName!.isEmpty) return 'Pole nie może być puste';
@@ -47,14 +47,21 @@ class _ProductEditorState extends State<ProductEditor> {
     await showDialog(
         context: context,
         builder: (ctx) => SelectQuantityDialog(
-              initialSelectedQuantity: _selectedQuantity,
-              initialSelectedQuantityUnit: _selectedQuantityUnit,
+              initialSelectedQuantity: _selectedQuantity ?? 0,
+              initialSelectedQuantityUnit: _selectedQuantityUnit ?? 'szt.',
               availableQuantityUnits: _provider.availableQuantityUnits,
               onConfirmSelection: (quantity, quantityUnit) => setState(() {
                 _selectedQuantity = quantity;
                 _selectedQuantityUnit = quantityUnit;
               }),
             ));
+  }
+
+  void _clearQuantity() {
+    setState(() {
+      _selectedQuantity = null;
+      _selectedQuantityUnit = null;
+    });
   }
 
   Future<void> _selectShop() async {
@@ -153,13 +160,14 @@ class _ProductEditorState extends State<ProductEditor> {
 
           // Quantity picker
           ProductDetailEditorChip(
-            active: true,
+            active: _selectedQuantity != null,
             onPress: _selectQuantity,
+            onDisable: _clearQuantity,
+            inactiveLabel: 'Dodaj ilość',
             activeLabel: 'Ilość: ' +
-                Product.formQuantityLabel(
-                  _selectedQuantity,
-                  _selectedQuantityUnit,
-                ),
+                (Product.formQuantityLabel(
+                        _selectedQuantity, _selectedQuantityUnit) ??
+                    ''),
             icon: Icon(Icons.numbers),
           ),
 
