@@ -37,6 +37,13 @@ class DatabaseManager {
       String whoAdded = productRawData['whoAdded']!;
       DateTime dateAdded = DateTime.parse(productRawData['dateAdded']!);
 
+      String? whoLastEdited;
+      DateTime? dateLastEdited;
+      if (productRawData['dateLastEdited'] != null) {
+        whoLastEdited = productRawData['whoLastEdited']!;
+        dateLastEdited = DateTime.parse(productRawData['dateLastEdited']);
+      }
+
       String? shopName = productRawData['shop'];
       Deadline? deadline;
       if (productRawData['deadline'] != null) {
@@ -57,6 +64,8 @@ class DatabaseManager {
         shop: shopName,
         dateAdded: dateAdded,
         whoAdded: whoAdded,
+        dateLastEdited: dateLastEdited,
+        whoLastEdited: whoLastEdited,
         deadline: deadline,
         buyer: buyer,
         quantity: quantity,

@@ -4,24 +4,34 @@ import 'package:zakupyapp/storage/storage_manager.dart';
 
 /// Represents a product from a shopping list
 class Product {
+  // Whether the product actually exists or is just a dummy with default values
+  final bool isVirtual;
+
   final String id;
   final String name;
+
   final String whoAdded;
   final DateTime dateAdded;
+  final String? whoLastEdited;
+  final DateTime? dateLastEdited;
 
   final String? shop;
   final Deadline? deadline;
   final String? buyer;
+
   final double? quantity;
   final String? quantityUnit;
   
   String? get quantityLabel => formQuantityLabel(quantity, quantityUnit);
 
   Product({
+    this.isVirtual = false,
     required this.id,
     required this.name,
     required this.dateAdded,
     required this.whoAdded,
+    this.dateLastEdited,
+    this.whoLastEdited,
     this.shop,
     this.deadline,
     this.buyer,
@@ -31,7 +41,7 @@ class Product {
 
   bool get isEditable {
     final isDeclaredByOthers = buyer != null && !isDeclaredByUser;
-    return whoAdded == SM.getUsername() && !isDeclaredByOthers;
+    return !isDeclaredByOthers;
   }
 
   bool get isDeclaredByUser => buyer == SM.getUsername();
@@ -55,6 +65,10 @@ class Product {
     if (quantity != null) {
       result['quantity'] = quantity.toString();
       result['quantityUnit'] = quantityUnit!;
+    }
+    if (dateLastEdited != null) {
+      result['dateLastEdited'] = dateLastEdited.toString();
+      result['whoLastEdited'] = whoLastEdited!;
     }
     return result;
   }

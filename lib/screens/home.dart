@@ -136,6 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (isAddingProduct) {
       final defaults = Product(
         // default values for editor
+        isVirtual: true,
         id: Product.generateProductId(),
         name: '',
         dateAdded: DateTime.now(),

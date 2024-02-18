@@ -7,6 +7,8 @@ import 'package:zakupyapp/widgets/home/product_card/product_detail_editor_chip.d
 import 'package:zakupyapp/widgets/home/product_card/select_quantity_dialog.dart';
 import 'package:zakupyapp/widgets/home/product_card/select_shop_dialog.dart';
 
+import '../../../storage/storage_manager.dart';
+
 class ProductEditor extends StatefulWidget {
   final Product product;
 
@@ -109,6 +111,8 @@ class _ProductEditorState extends State<ProductEditor> {
         name: _productName.trim(),
         dateAdded: widget.product.dateAdded,
         whoAdded: widget.product.whoAdded,
+        dateLastEdited: widget.product.isVirtual ? null : DateTime.now(),
+        whoLastEdited: widget.product.isVirtual ? null : SM.getUsername(),
         shop: _selectedShop == '' ? null : _selectedShop,
         deadline: _selectedDeadline,
         buyer: widget.product.buyer,
