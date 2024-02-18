@@ -25,8 +25,8 @@ class Product {
     this.shop,
     this.deadline,
     this.buyer,
-    required this.quantity,
-    required this.quantityUnit,
+    this.quantity,
+    this.quantityUnit,
   });
 
   bool get isEditable {
