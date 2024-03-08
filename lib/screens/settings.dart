@@ -96,11 +96,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (!kDebugMode) {
       return;
     }
-    final latestRelease = await Updater().getLatestRelease();
+    final latestRelease = await Updater().getLatestReleaseId();
     await showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (ctx) => DownloadUpdateDialog(release: latestRelease),
+      builder: (ctx) => DownloadUpdateDialog(newVersionId: latestRelease),
     );
   }
 
@@ -153,25 +153,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               SM.setHideProductsOthersDeclared(newValue);
             }),
           ),
-          SettingsGroupTitle(titleText: 'Aktualizacje'),
-          SwitchListTile(
-            title: Text(
-              'Aktualizuj za pomocą Family Store',
-              style: TextStyle(
-                color: Colors.black,
-              ),
-            ),
-            secondary: Icon(
-              Icons.update,
-              color: Colors.black,
-            ),
-            value: SM.getUseFamilyStore(),
-            onChanged: (value) => setState(() {
-              SM.setUseFamilyStore(value);
-            }),
-          ),
+          SettingsGroupTitle(titleText: 'O aplikacji'),
           ListTile(
-            title: Text('Wersja aplikacji'),
+            title: Text('Wersja'),
             subtitle: Text(AppInfo.getVersion()),
             leading: Icon(
               Icons.info,

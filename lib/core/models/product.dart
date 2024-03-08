@@ -4,34 +4,44 @@ import 'package:zakupyapp/storage/storage_manager.dart';
 
 /// Represents a product from a shopping list
 class Product {
+  // Whether the product actually exists or is just a dummy with default values
+  final bool isVirtual;
+
   final String id;
   final String name;
+
   final String whoAdded;
   final DateTime dateAdded;
+  final String? whoLastEdited;
+  final DateTime? dateLastEdited;
 
   final String? shop;
   final Deadline? deadline;
   final String? buyer;
-  final double quantity;
-  final String quantityUnit;
+
+  final double? quantity;
+  final String? quantityUnit;
   
-  String get quantityLabel => formQuantityLabel(quantity, quantityUnit);
+  String? get quantityLabel => formQuantityLabel(quantity, quantityUnit);
 
   Product({
+    this.isVirtual = false,
     required this.id,
     required this.name,
     required this.dateAdded,
     required this.whoAdded,
+    this.dateLastEdited,
+    this.whoLastEdited,
     this.shop,
     this.deadline,
     this.buyer,
-    required this.quantity,
-    required this.quantityUnit,
+    this.quantity,
+    this.quantityUnit,
   });
 
   bool get isEditable {
     final isDeclaredByOthers = buyer != null && !isDeclaredByUser;
-    return whoAdded == SM.getUsername() && !isDeclaredByOthers;
+    return !isDeclaredByOthers;
   }
 
   bool get isDeclaredByUser => buyer == SM.getUsername();
@@ -42,8 +52,6 @@ class Product {
       'name': name,
       'dateAdded': dateAdded.toString(),
       'whoAdded': whoAdded,
-      'quantity': quantity.toString(),
-      'quantityUnit': quantityUnit,
     };
     if (shop != null) {
       result['shop'] = shop!;
@@ -53,6 +61,14 @@ class Product {
     }
     if (buyer != null) {
       result['buyer'] = buyer!;
+    }
+    if (quantity != null) {
+      result['quantity'] = quantity.toString();
+      result['quantityUnit'] = quantityUnit!;
+    }
+    if (dateLastEdited != null) {
+      result['dateLastEdited'] = dateLastEdited.toString();
+      result['whoLastEdited'] = whoLastEdited!;
     }
     return result;
   }
@@ -70,7 +86,10 @@ class Product {
   
   // has to be static because it will be used in Product Editor where
   // there is no access to the Product instance
-  static String formQuantityLabel(double quantity, String quantityUnit) {
+  static String? formQuantityLabel(double? quantity, String? quantityUnit) {
+    if (quantity == null) {
+      return null;
+    }
     final String displayedQuantity;
     final int quantityToInt = quantity.toInt();
     if (quantityToInt == quantity) {

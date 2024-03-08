@@ -20,7 +20,7 @@ class MainDrawer extends StatelessWidget {
   }
 
   Future<void> viewInFamilyStore() async {
-    Uri uri = Uri.parse(Constants.FAMILY_STORE_URL);
+    Uri uri = Uri.parse(Constants.FAMILY_STORE_APP_URL);
     await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 

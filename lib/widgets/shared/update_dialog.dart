@@ -1,34 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:zakupyapp/constants.dart';
 
-import 'package:zakupyapp/core/models/apprelease.dart';
 import 'package:zakupyapp/utils/app_info.dart';
 
 class DownloadUpdateDialog extends StatelessWidget {
-  final AppRelease release;
+  final String newVersionId;
 
-  const DownloadUpdateDialog({Key? key, required this.release})
+  const DownloadUpdateDialog({Key? key, required this.newVersionId})
       : super(key: key);
+
+  Future<void> _copyDownloadLinkToClipboard() async {
+    await Clipboard.setData(
+        ClipboardData(text: Constants.FAMILY_STORE_APP_URL));
+  }
 
   Future<void> downloadInBrowser(BuildContext context) async {
     Navigator.of(context).pop();
-    Uri uri = Uri.parse(release.downloadUrl);
+    Uri uri = Uri.parse(Constants.FAMILY_STORE_APP_URL);
     bool success = await launchUrl(
       uri,
       mode: LaunchMode.externalApplication,
     );
     if (!success) {
-      Clipboard.setData(ClipboardData(text: release.downloadUrl));
+      await _copyDownloadLinkToClipboard();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           duration: Duration(seconds: 8),
-          content: Text('Nie udało się rozpocząć pobierania. '
-              'Link do pobrania aktualizacji został skopiowany do schowka. '
+          content: Text('Nie udało się otworzyć strony aplikacji w Family '
+              'Store. Link do niej został skopiowany do schowka. '
               'Aby ręcznie pobrać aktualizację, wklej go do przeglądarki'),
         ),
       );
     }
+  }
+
+  Future<void> copyDownloadLink(BuildContext context) async {
+    await _copyDownloadLinkToClipboard();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: Durations.extralong4,
+        content: Text('Link skopiowany do schowka'),
+      ),
+    );
+    Navigator.of(context).pop();
   }
 
   @override
@@ -40,8 +56,7 @@ class DownloadUpdateDialog extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text('Twoja wersja: ${AppInfo.getVersion()}'),
-          Text('Najnowsza wersja: ${release.id} '
-              '(${release.getRoundedSizeMB()}MB)'),
+          Text('Najnowsza wersja: ${newVersionId}'),
         ],
       ),
       actions: <Widget>[
@@ -53,8 +68,7 @@ class DownloadUpdateDialog extends StatelessWidget {
         ),
         TextButton(
           onPressed: () {
-            Clipboard.setData(ClipboardData(text: release.downloadUrl));
-            Navigator.of(context).pop();
+            copyDownloadLink(context);
           },
           child: Text('Skopiuj link'),
         ),

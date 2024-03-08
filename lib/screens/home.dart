@@ -136,6 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (isAddingProduct) {
       final defaults = Product(
         // default values for editor
+        isVirtual: true,
         id: Product.generateProductId(),
         name: '',
         dateAdded: DateTime.now(),
@@ -199,13 +200,14 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     // check for updates
-    SchedulerBinding.instance
-        .addPostFrameCallback((_) => updater.checkForUpdate((release) async =>
+    SchedulerBinding.instance.addPostFrameCallback(
+        (_) => updater.checkForUpdate((newVersionId) async =>
             // show update dialog
             await showDialog(
               context: context,
               barrierDismissible: false,
-              builder: (ctx) => DownloadUpdateDialog(release: release),
+              builder: (ctx) =>
+                  DownloadUpdateDialog(newVersionId: newVersionId),
             )));
 
     // initialise the shopping list
@@ -319,7 +321,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         : Colors.deepOrange[900],
                   ),
                   itemBuilder: (BuildContext context) =>
-                      shoppingListManager.availableShops
+                      shoppingListManager.filterableShops
                           .map((e) => PopupMenuItem(
                                 child: Text(e),
                                 value: e,
@@ -344,7 +346,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: getBody(),
       floatingActionButton: Visibility(
-        visible: isFirstLoadDone,
+        visible: isFirstLoadDone && !isAddingProduct,
         child: FloatingActionButton(
           onPressed: addProductFunc,
           child: Icon(

@@ -44,6 +44,9 @@ class ProductCardContent extends StatelessWidget {
     );
   }
 
+  String get _authorLeadingText =>
+      '${product.dateLastEdited == null ? 'Dodane' : 'Edytowane'} przez: ';
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -72,12 +75,15 @@ class ProductCardContent extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.only(top: 8),
-          child: SimpleTextWithIcon(
-            text: 'Ilość: ${product.quantityLabel}',
-            iconData: Icons.numbers,
-            color: Colors.black,
-            fontStyle: FontStyle.italic,
-            size: 15,
+          child: Visibility(
+            visible: product.quantityLabel != null,
+            child: SimpleTextWithIcon(
+              text: 'Ilość: ${product.quantityLabel}',
+              iconData: Icons.numbers,
+              color: Colors.black,
+              fontStyle: FontStyle.italic,
+              size: 15,
+            ),
           ),
         ),
         Visibility(
@@ -101,20 +107,20 @@ class ProductCardContent extends StatelessWidget {
               style: TextStyle(fontSize: 13, color: Colors.black),
               children: <TextSpan>[
                 TextSpan(
-                  text: 'Dodane przez: ',
+                  text: _authorLeadingText,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 TextSpan(
-                  text: product.whoAdded,
+                  text: product.whoLastEdited ?? product.whoAdded,
                 ),
               ],
             ),
           ),
         ),
         Text(
-          dateTimeToPolishString(product.dateAdded),
+          dateTimeToPolishString(product.dateLastEdited ?? product.dateAdded),
           style: TextStyle(
             fontSize: 13,
           ),
