@@ -1,9 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
-import 'package:zakupyapp/core/models/apprelease.dart';
 import 'package:zakupyapp/core/models/product.dart';
 import 'package:zakupyapp/core/models/deadline.dart';
 
@@ -15,16 +13,11 @@ class DatabaseManager {
   final DatabaseReference _db = FirebaseDatabase.instance.ref();
   DatabaseReference? _shoppingListRef = null;
   DatabaseReference? _defaultShopsRef = null;
-  final Reference _storage = FirebaseStorage.instance.ref();
 
   StreamSubscription? _dataStream = null;
 
   // a private constructor
   DatabaseManager._();
-
-  Reference _getReleaseReference(String releaseId) {
-    return _storage.child('releases').child('zakupyapp-$releaseId.apk');
-  }
 
   /// Creates a new Product object from raw data.
   /// Returns [null] if data format is invalid
@@ -151,23 +144,5 @@ class DatabaseManager {
 
   Future<void> cancelListener() async {
     await _dataStream?.cancel();
-  }
-
-  /// Retrieves the latest release data from the database
-  Future<AppRelease> getLatestRelease() async {
-    ListResult apkNames = await _storage.child('releases').listAll();
-    String latestReleaseId =
-        AppRelease.getMaxVersion(apkNames.items.map((ref) => ref.name));
-    var latestReleaseRef = _getReleaseReference(latestReleaseId);
-
-    var meta = await latestReleaseRef.getMetadata();
-    int size = meta.size!;
-    String downloadUrl = await latestReleaseRef.getDownloadURL();
-
-    return AppRelease(
-      id: latestReleaseId,
-      size: size,
-      downloadUrl: downloadUrl,
-    );
   }
 }

@@ -30,14 +30,6 @@ class SM {
     _storage.setString('username', username.trim());
   }
 
-  static bool getUseFamilyStore() {
-    return _storage.getBool('useFamilyStore') ?? false;
-  }
-
-  static void setUseFamilyStore(bool useFamilyStore) {
-    _storage.setBool('useFamilyStore', useFamilyStore);
-  }
-
   static bool getHideProductsOthersDeclared() {
     return _storage.getBool('hideProductsOthersDeclared') ?? false;
   }

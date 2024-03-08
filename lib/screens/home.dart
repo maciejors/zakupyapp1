@@ -200,13 +200,14 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     // check for updates
-    SchedulerBinding.instance
-        .addPostFrameCallback((_) => updater.checkForUpdate((release) async =>
+    SchedulerBinding.instance.addPostFrameCallback(
+        (_) => updater.checkForUpdate((newVersionId) async =>
             // show update dialog
             await showDialog(
               context: context,
               barrierDismissible: false,
-              builder: (ctx) => DownloadUpdateDialog(release: release),
+              builder: (ctx) =>
+                  DownloadUpdateDialog(newVersionId: newVersionId),
             )));
 
     // initialise the shopping list
