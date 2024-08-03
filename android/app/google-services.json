@@ -15,7 +15,23 @@
       },
       "oauth_client": [
         {
-          "client_id": "791577990847-8e11ai3ajaskakvp217ruqu966vsp4bi.apps.googleusercontent.com",
+          "client_id": "791577990847-5s48dn1jbhs9mqrlr84d2lbu5ffkpgm5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.meagle.zakupyapk",
+            "certificate_hash": "2c82cf23b17fc3d0c1c0455e59dde63ad546c770"
+          }
+        },
+        {
+          "client_id": "791577990847-bj705qgsiokr7tqhs3pg4e2rfr678v0h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.meagle.zakupyapk",
+            "certificate_hash": "2871704497d13447b54a0dc433a461b8b3d8f7f1"
+          }
+        },
+        {
+          "client_id": "791577990847-6o3mhl4hhtr6mvlps648jkjma739ic0c.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -28,7 +44,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "791577990847-8e11ai3ajaskakvp217ruqu966vsp4bi.apps.googleusercontent.com",
+              "client_id": "791577990847-6o3mhl4hhtr6mvlps648jkjma739ic0c.apps.googleusercontent.com",
               "client_type": 3
             },
             {
