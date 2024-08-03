@@ -146,14 +146,14 @@ class _HomeScreenState extends State<HomeScreen> {
         id: Product.generateProductId(),
         name: '',
         dateAdded: DateTime.now(),
-        whoAdded: SM.getUsername(),
+        whoAdded: auth.getUserDisplayName()!,
         // set shop by default if filter active
         shop: shoppingListManager.isShopFilterApplied
             ? shoppingListManager.filteredShop
             : null,
         // set buyer by default if filter active
         buyer: shoppingListManager.showOnlyDeclaredByUser
-            ? SM.getUsername()
+            ? auth.getUserDisplayName()
             : null,
         quantity: SM.getIsAutoQuantityEnabled() ? 1 : null,
         quantityUnit: SM.getIsAutoQuantityEnabled() ? 'szt.' : null,

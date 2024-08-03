@@ -48,8 +48,10 @@ class AuthManager {
     await _authStateStream?.cancel();
   }
 
+  bool get isUserSignedIn => _auth.currentUser != null;
+
   String? getUserDisplayName() {
-    return _auth.currentUser?.displayName!;
+    return _auth.currentUser?.displayName;
   }
 
   Future<void> setUserDisplayName(String newDisplayName) async {
@@ -58,5 +60,9 @@ class AuthManager {
       return;
     }
     await user.updateDisplayName(newDisplayName);
+  }
+
+  String? getUserEmail() {
+    return _auth.currentUser?.email;
   }
 }

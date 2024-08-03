@@ -1,8 +1,10 @@
 import 'package:zakupyapp/core/models/deadline.dart';
-import 'package:zakupyapp/services/storage_manager.dart';
+import 'package:zakupyapp/services/auth_manager.dart';
 
 /// Represents a product from a shopping list
 class Product {
+  static final AuthManager _auth = AuthManager.instance;
+
   // Whether the product actually exists or is just a dummy with default values
   final bool isVirtual;
 
@@ -43,7 +45,7 @@ class Product {
     return !isDeclaredByOthers;
   }
 
-  bool get isDeclaredByUser => buyer == SM.getUsername();
+  bool get isDeclaredByUser => buyer == _auth.getUserDisplayName();
 
   /// Map does not contain ID of the product
   Map<String, String> toMap() {

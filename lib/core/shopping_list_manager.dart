@@ -1,9 +1,13 @@
 import 'package:zakupyapp/core/models/product.dart';
+import 'package:zakupyapp/services/auth_manager.dart';
 import 'package:zakupyapp/services/database_manager.dart';
 import 'package:zakupyapp/services/storage_manager.dart';
 
 /// represents a product list which can be filtered etc
 class ShoppingListManager {
+  final DatabaseManager _db = DatabaseManager.instance;
+  final AuthManager _auth = AuthManager.instance;
+
   List<Product> _allProducts = [];
   List<Product> get filteredProducts => _filterProducts(_allProducts);
   bool isDataReady = false;
@@ -15,8 +19,7 @@ class ShoppingListManager {
   List<String> filterableShops = [];
   List<String> availableQuantityUnits = [];
   final String id;
-  final String _username = SM.getUsername();
-  DatabaseManager _db = DatabaseManager.instance;
+  String get _username => _auth.getUserDisplayName() ?? '';
 
   final bool hideProductsOthersDeclared = SM.getHideProductsOthersDeclared();
 
