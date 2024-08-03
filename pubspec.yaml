@@ -18,6 +18,7 @@ dependencies:
   diffutil_sliverlist: ^0.5.1
   http: ^1.2.0
   firebase_auth: ^4.17.8
+  google_sign_in: ^6.2.1
 
 dev_dependencies:
   flutter_test:
