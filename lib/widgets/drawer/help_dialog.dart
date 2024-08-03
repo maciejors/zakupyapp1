@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zakupyapp/widgets/shared/dismissible_help_dialog.dart';
 
 class HelpDialog extends StatelessWidget {
   const HelpDialog({super.key});
@@ -6,9 +7,7 @@ class HelpDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String sep = '\n\n';
-    return AlertDialog(
-      title: Text('Pomoc'),
-      scrollable: true,
+    return DismissibleHelpDialog(
       content: Text.rich(
         TextSpan(
           style: TextStyle(
@@ -60,13 +59,6 @@ class HelpDialog extends StatelessWidget {
           ],
         ),
       ),
-      actions: <Widget>[
-        TextButton(
-            child: Text('OK'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            }),
-      ],
     );
   }
 }

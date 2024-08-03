@@ -35,7 +35,15 @@ class SM {
   }
 
   static void setHideProductsOthersDeclared(bool hideProductsOthersDeclared) {
-    _storage.setBool(
-        'hideProductsOthersDeclared', hideProductsOthersDeclared);
+    _storage.setBool('hideProductsOthersDeclared', hideProductsOthersDeclared);
+  }
+
+  /// Whether a default quantity is automatically set when adding a product
+  static bool getIsAutoQuantityEnabled() {
+    return _storage.getBool('isAutoQuantityEnabled') ?? false;
+  }
+
+  static void setIsAutoQuantityEnabled(bool isAutoQuantityEnabled) {
+    _storage.setBool('isAutoQuantityEnabled', isAutoQuantityEnabled);
   }
 }

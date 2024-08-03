@@ -5,7 +5,9 @@ import 'package:zakupyapp/core/updater.dart';
 import 'package:zakupyapp/storage/storage_manager.dart';
 import 'package:zakupyapp/utils/app_info.dart';
 import 'package:zakupyapp/widgets/drawer/main_drawer.dart';
+import 'package:zakupyapp/widgets/settings/setting_info_wrapper.dart';
 import 'package:zakupyapp/widgets/settings/settings_group_title.dart';
+import 'package:zakupyapp/widgets/shared/dismissible_help_dialog.dart';
 
 import '../widgets/shared/update_dialog.dart';
 
@@ -104,6 +106,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  /// Show a help dialog for the settings screen
+  Future<void> showGeneralHelpDialog() async {
+    await showDialog(
+      context: context,
+      builder: (ctx) => DismissibleHelpDialog(
+        content: Text(
+          'Kliknij i przytrzymaj wybrane ustawienie, '
+          'aby dowiedzieć się o nim więcej',
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     String shoppingListId = SM.getShoppingListId();
@@ -111,6 +126,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
       drawer: MainDrawer(),
       appBar: AppBar(
         title: Text('Ustawienia'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.help,
+              color: Colors.black,
+            ),
+            onPressed: showGeneralHelpDialog,
+          ),
+        ],
       ),
       body: ListView(
         padding: EdgeInsets.only(top: 8),
@@ -137,21 +161,50 @@ class _SettingsScreenState extends State<SettingsScreen> {
             titleAlignment: ListTileTitleAlignment.center,
             onTap: () => showEditUsernameDialog(context),
           ),
-          SwitchListTile(
-            title: Text(
-              'Ukrywaj produkty zadeklarowane przez innych',
-              style: TextStyle(
+          SettingInfoWrapper(
+            child: SwitchListTile(
+              title: Text(
+                'Ukrywaj produkty zadeklarowane przez innych',
+                style: TextStyle(
+                  color: Colors.black,
+                ),
+              ),
+              secondary: Icon(
+                Icons.shopping_cart_checkout,
                 color: Colors.black,
               ),
+              value: SM.getHideProductsOthersDeclared(),
+              onChanged: (newValue) => setState(() {
+                SM.setHideProductsOthersDeclared(newValue);
+              }),
             ),
-            secondary: Icon(
-              Icons.remove_red_eye,
-              color: Colors.black,
+            infoContent: Text('Jeśli ta opcja jest włączona, to produkty, '
+                'które inni użytkownicy zamierzają kupić, nie będą się '
+                'wyświetlać na liście zakupów. W przeciwnym razie na liście '
+                'zakupów zawsze będą się wyświetlać wszystkie produkty.'),
+          ),
+          SettingInfoWrapper(
+            child: SwitchListTile(
+              title: Text(
+                'Ustawiaj domyślnie ilość przy dodawaniu produktu',
+                style: TextStyle(
+                  color: Colors.black,
+                ),
+              ),
+              secondary: Icon(
+                Icons.numbers,
+                color: Colors.black,
+              ),
+              value: SM.getIsAutoQuantityEnabled(),
+              onChanged: (newValue) => setState(() {
+                SM.setIsAutoQuantityEnabled(newValue);
+              }),
             ),
-            value: SM.getHideProductsOthersDeclared(),
-            onChanged: (newValue) => setState(() {
-              SM.setHideProductsOthersDeclared(newValue);
-            }),
+            infoContent:
+                Text('Jeśli ta opcja jest włączona, to przy dodawaniu nowego '
+                    'produktu ilość będzie domyślnie ustawiona jako "1 szt.". '
+                    'W przeciwnym wypadku, ilość nie będzie w ogóle domyślnie '
+                    'ustawiona.'),
           ),
           SettingsGroupTitle(titleText: 'O aplikacji'),
           ListTile(

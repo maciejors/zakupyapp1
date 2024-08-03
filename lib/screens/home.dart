@@ -149,8 +149,8 @@ class _HomeScreenState extends State<HomeScreen> {
         buyer: shoppingListManager.showOnlyDeclaredByUser
             ? SM.getUsername()
             : null,
-        quantity: 1,
-        quantityUnit: 'szt.',
+        quantity: SM.getIsAutoQuantityEnabled() ? 1 : null,
+        quantityUnit: SM.getIsAutoQuantityEnabled() ? 'szt.' : null,
       );
       final addProductCard = wrapProductWithWidget(defaults, isEditing: true);
       result.insert(0, addProductCard);
