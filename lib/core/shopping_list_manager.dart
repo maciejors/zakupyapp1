@@ -1,7 +1,6 @@
 import 'package:zakupyapp/core/models/product.dart';
-import 'package:zakupyapp/storage/database_manager.dart';
-
-import 'package:zakupyapp/storage/storage_manager.dart';
+import 'package:zakupyapp/services/database_manager.dart';
+import 'package:zakupyapp/services/storage_manager.dart';
 
 /// represents a product list which can be filtered etc
 class ShoppingListManager {

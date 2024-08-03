@@ -1,6 +1,5 @@
 import 'package:zakupyapp/core/models/deadline.dart';
-
-import 'package:zakupyapp/storage/storage_manager.dart';
+import 'package:zakupyapp/services/storage_manager.dart';
 
 /// Represents a product from a shopping list
 class Product {

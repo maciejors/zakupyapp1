@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:zakupyapp/core/models/product.dart';
 import 'package:zakupyapp/core/shopping_list_manager.dart';
 import 'package:zakupyapp/core/updater.dart';
-import 'package:zakupyapp/storage/storage_manager.dart';
+import 'package:zakupyapp/services/storage_manager.dart';
 import 'package:zakupyapp/widgets/drawer/main_drawer.dart';
 import 'package:zakupyapp/widgets/home/product_card/product_card.dart';
 import 'package:zakupyapp/widgets/shared/update_dialog.dart';

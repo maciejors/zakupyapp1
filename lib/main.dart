@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 
-import 'package:zakupyapp/storage/storage_manager.dart';
+import 'firebase_options.dart';
+import 'package:zakupyapp/services/storage_manager.dart';
 import 'package:zakupyapp/utils/app_info.dart';
 import 'package:zakupyapp/screens/home.dart';
 import 'package:zakupyapp/screens/settings.dart';

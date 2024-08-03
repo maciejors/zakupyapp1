@@ -6,8 +6,7 @@ import 'package:zakupyapp/core/shopping_list_manager.dart';
 import 'package:zakupyapp/widgets/home/product_card/product_detail_editor_chip.dart';
 import 'package:zakupyapp/widgets/home/product_card/select_quantity_dialog.dart';
 import 'package:zakupyapp/widgets/home/product_card/select_shop_dialog.dart';
-
-import '../../../storage/storage_manager.dart';
+import 'package:zakupyapp/services/storage_manager.dart';
 
 class ProductEditor extends StatefulWidget {
   final Product product;

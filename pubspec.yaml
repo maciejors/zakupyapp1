@@ -1,6 +1,6 @@
 name: zakupyapp
 description: Lista zakupowa
-version: 1.5.3  # updated 19/01/2024
+version: 1.6.0  # updated 03/08/2024
 
 environment:
   sdk: ">=3.0.0 <4.0.0"

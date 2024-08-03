@@ -2,14 +2,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:zakupyapp/core/updater.dart';
 
-import 'package:zakupyapp/storage/storage_manager.dart';
+import 'package:zakupyapp/services/storage_manager.dart';
 import 'package:zakupyapp/utils/app_info.dart';
 import 'package:zakupyapp/widgets/drawer/main_drawer.dart';
 import 'package:zakupyapp/widgets/settings/setting_info_wrapper.dart';
 import 'package:zakupyapp/widgets/settings/settings_group_title.dart';
 import 'package:zakupyapp/widgets/shared/dismissible_help_dialog.dart';
-
-import '../widgets/shared/update_dialog.dart';
+import 'package:zakupyapp/widgets/shared/update_dialog.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
