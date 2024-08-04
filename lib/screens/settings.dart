@@ -126,7 +126,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       builder: (ctx) => DismissibleHelpDialog(
         content: Text(
           'Kliknij i przytrzymaj wybrane ustawienie, '
-          'aby dowiedzieć się o nim więcej',
+          'aby dowiedzieć się o nim więcej.',
         ),
       ),
     );
@@ -153,27 +153,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
         padding: EdgeInsets.only(top: 8),
         children: <Widget>[
           SettingsGroupTitle(titleText: 'Konto'),
-          ListTile(
-            title: Text('Nazwa użytkownika'),
-            subtitle: Text(auth.getUserDisplayName() ?? 'Nie zalogowano'),
-            leading: Icon(
-              Icons.person,
-              color: Colors.black,
+          SettingInfoWrapper(
+            child: ListTile(
+              title: Text('Nazwa użytkownika'),
+              subtitle: Text(auth.getUserDisplayName() ?? 'Nie zalogowano'),
+              leading: Icon(
+                Icons.person,
+                color: Colors.black,
+              ),
+              titleAlignment: ListTileTitleAlignment.center,
+              onTap: () => showEditUsernameDialog(context),
+              enabled: auth.isUserSignedIn,
             ),
-            titleAlignment: ListTileTitleAlignment.center,
-            onTap: () => showEditUsernameDialog(context),
-            enabled: auth.isUserSignedIn,
+            infoContent: Text('Twoja nazwa, wyświetlana pod dodawanymi i '
+                'edytowanymi przez Ciebie produktami.'),
           ),
-          ListTile(
-            title: Text('Wyloguj'),
-            subtitle: Text(auth.getUserEmail() ?? 'Nie zalogowano'),
-            leading: Icon(
-              Icons.logout,
-              color: Colors.black,
+          SettingInfoWrapper(
+            child: ListTile(
+              title: Text('Wyloguj'),
+              subtitle: Text(auth.getUserEmail() ?? 'Nie zalogowano'),
+              leading: Icon(
+                Icons.logout,
+                color: Colors.black,
+              ),
+              titleAlignment: ListTileTitleAlignment.center,
+              onTap: () => handleSignOut(context),
+              enabled: auth.isUserSignedIn,
             ),
-            titleAlignment: ListTileTitleAlignment.center,
-            onTap: () => handleSignOut(context),
-            enabled: auth.isUserSignedIn,
+            infoContent: Text('Kliknięcie tej opcji spowoduje wylogowanie z '
+                'konta i przekierowanie na stronę główną aplikacji.'),
           ),
           SettingsGroupTitle(titleText: 'Lista zakupów'),
           ListTile(

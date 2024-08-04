@@ -31,7 +31,22 @@ class HelpDialog extends StatelessWidget {
               text: 'dodać lub usunąć deklarację zamiaru kupna danego produktu',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            TextSpan(text: ', kliknij w niego podwójnie.$sep'),
+            TextSpan(
+              text: ', kliknij w niego podwójnie. Dzięki temu inni użytkownicy '
+                  'będą wiedzieć, że planujesz kupić ten produkt.$sep',
+            ),
+            TextSpan(text: 'Aby '),
+            TextSpan(
+              text: 'wyświetlić tylko produkty które chcesz kupić, ',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            TextSpan(text: 'kliknij '),
+            WidgetSpan(
+                child: Icon(
+                  Icons.shopping_cart_checkout,
+                  size: 17,
+                )),
+            TextSpan(text: ' na górze ekranu.$sep'),
             TextSpan(text: 'Aby '),
             TextSpan(
               text: 'filtrować produkty po sklepie, ',
@@ -43,19 +58,6 @@ class HelpDialog extends StatelessWidget {
               Icons.filter_alt,
               size: 17,
             )),
-            TextSpan(text: '.$sep'),
-            TextSpan(text: 'Aby '),
-            TextSpan(
-              text: 'wyświetlić tylko produkty które chcesz kupić, ',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            TextSpan(text: 'kliknij '),
-            WidgetSpan(
-                child: Icon(
-              Icons.shopping_cart_checkout,
-              size: 17,
-            )),
-            TextSpan(text: ' na górze ekranu.'),
           ],
         ),
       ),
