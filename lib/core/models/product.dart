@@ -47,33 +47,6 @@ class Product {
 
   bool get isDeclaredByUser => buyer == _auth.getUserDisplayName();
 
-  /// Map does not contain ID of the product
-  Map<String, String> toMap() {
-    var result = {
-      'name': name,
-      'dateAdded': dateAdded.toString(),
-      'whoAdded': whoAdded,
-    };
-    if (shop != null) {
-      result['shop'] = shop!;
-    }
-    if (deadline != null) {
-      result['deadline'] = deadline.toString();
-    }
-    if (buyer != null) {
-      result['buyer'] = buyer!;
-    }
-    if (quantity != null) {
-      result['quantity'] = quantity.toString();
-      result['quantityUnit'] = quantityUnit!;
-    }
-    if (dateLastEdited != null) {
-      result['dateLastEdited'] = dateLastEdited.toString();
-      result['whoLastEdited'] = whoLastEdited!;
-    }
-    return result;
-  }
-
   static String generateProductId() {
     DateTime now = DateTime.now();
     return '${now.year}'

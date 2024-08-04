@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -10,11 +11,50 @@ class AuthManager {
   static AuthManager get instance => _instance;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final CollectionReference _emailToUidCollection =
+      FirebaseFirestore.instance.collection('emailToUid');
 
   StreamSubscription? _authStateStream = null;
 
+  bool get isUserSignedIn => _auth.currentUser != null;
+
   // a private constructor
   AuthManager._();
+
+  String? getUserDisplayName() {
+    return _auth.currentUser?.displayName;
+  }
+
+  Future<void> setUserDisplayName(String newDisplayName) async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      return;
+    }
+    await user.updateDisplayName(newDisplayName);
+  }
+
+  String? getUserEmail() {
+    return _auth.currentUser?.email;
+  }
+
+  /// Add an entry to an email-to-uid map in the database for the current user
+  Future<void> _bindUserUidToEmail() async {
+    if (!isUserSignedIn) {
+      return;
+    }
+    await _emailToUidCollection
+        .doc(getUserEmail()!)
+        .set({'uid': _auth.currentUser!.uid});
+  }
+
+  /// Read an entry from email-to-uid map (null if it does not exist)
+  Future<String?> getUidFromEmail(String email) async {
+    final doc = await _emailToUidCollection.doc(email).get();
+    if (!doc.exists) {
+      return null;
+    }
+    return doc.get('uid') as String;
+  }
 
   Future<void> signInWithGoogle() async {
     // Trigger the authentication flow
@@ -29,7 +69,12 @@ class AuthManager {
       accessToken: googleAuth?.accessToken,
       idToken: googleAuth?.idToken,
     );
-    await _auth.signInWithCredential(credential);
+    final userCredential = await _auth.signInWithCredential(credential);
+
+    // upon a successful login, update an entry in the email-to-uid map
+    if (userCredential.user != null) {
+      await _bindUserUidToEmail();
+    }
   }
 
   Future<void> signOut() async {
@@ -46,23 +91,5 @@ class AuthManager {
 
   Future<void> cancelAuthStateListener() async {
     await _authStateStream?.cancel();
-  }
-
-  bool get isUserSignedIn => _auth.currentUser != null;
-
-  String? getUserDisplayName() {
-    return _auth.currentUser?.displayName;
-  }
-
-  Future<void> setUserDisplayName(String newDisplayName) async {
-    final user = _auth.currentUser;
-    if (user == null) {
-      return;
-    }
-    await user.updateDisplayName(newDisplayName);
-  }
-
-  String? getUserEmail() {
-    return _auth.currentUser?.email;
   }
 }
