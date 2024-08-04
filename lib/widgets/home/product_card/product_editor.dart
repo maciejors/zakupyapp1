@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:zakupyapp/core/models/deadline.dart';
 import 'package:zakupyapp/core/models/product.dart';
 import 'package:zakupyapp/core/shopping_list_manager.dart';
 import 'package:zakupyapp/widgets/home/product_card/product_detail_editor_chip.dart';
 import 'package:zakupyapp/widgets/home/product_card/select_quantity_dialog.dart';
 import 'package:zakupyapp/widgets/home/product_card/select_shop_dialog.dart';
-
-import '../../../storage/storage_manager.dart';
+import 'package:zakupyapp/services/auth_manager.dart';
 
 class ProductEditor extends StatefulWidget {
   final Product product;
@@ -26,6 +26,8 @@ class ProductEditor extends StatefulWidget {
 }
 
 class _ProductEditorState extends State<ProductEditor> {
+  final AuthManager _auth = AuthManager.instance;
+
   final _formKey = GlobalKey<FormState>();
   late final ShoppingListManager _provider;
 
@@ -112,7 +114,8 @@ class _ProductEditorState extends State<ProductEditor> {
         dateAdded: widget.product.dateAdded,
         whoAdded: widget.product.whoAdded,
         dateLastEdited: widget.product.isVirtual ? null : DateTime.now(),
-        whoLastEdited: widget.product.isVirtual ? null : SM.getUsername(),
+        whoLastEdited:
+            widget.product.isVirtual ? null : _auth.getUserDisplayName(),
         shop: _selectedShop == '' ? null : _selectedShop,
         deadline: _selectedDeadline,
         buyer: widget.product.buyer,

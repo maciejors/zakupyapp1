@@ -6,7 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:zakupyapp/core/models/product.dart';
 import 'package:zakupyapp/core/shopping_list_manager.dart';
 import 'package:zakupyapp/core/updater.dart';
-import 'package:zakupyapp/storage/storage_manager.dart';
+import 'package:zakupyapp/services/storage_manager.dart';
+import 'package:zakupyapp/services/auth_manager.dart';
 import 'package:zakupyapp/widgets/drawer/main_drawer.dart';
 import 'package:zakupyapp/widgets/home/product_card/product_card.dart';
 import 'package:zakupyapp/widgets/shared/update_dialog.dart';
@@ -22,10 +23,15 @@ class _HomeScreenState extends State<HomeScreen> {
   final ShoppingListManager shoppingListManager =
       ShoppingListManager(SM.getShoppingListId());
   final Updater updater = Updater();
+  final AuthManager auth = AuthManager.instance;
+
+  bool? isUserSignedIn = null;
+
+  /// whether the process of logging in is going on
+  bool isCurrentlySigningIn = false;
+  bool isFirstLoadDone = false;
 
   List<Widget> itemsToDisplay = [];
-
-  bool isFirstLoadDone = false;
 
   Product? editedProduct;
   bool isAddingProduct = false;
@@ -140,14 +146,14 @@ class _HomeScreenState extends State<HomeScreen> {
         id: Product.generateProductId(),
         name: '',
         dateAdded: DateTime.now(),
-        whoAdded: SM.getUsername(),
+        whoAdded: auth.getUserDisplayName()!,
         // set shop by default if filter active
         shop: shoppingListManager.isShopFilterApplied
             ? shoppingListManager.filteredShop
             : null,
         // set buyer by default if filter active
         buyer: shoppingListManager.showOnlyDeclaredByUser
-            ? SM.getUsername()
+            ? auth.getUserDisplayName()
             : null,
         quantity: SM.getIsAutoQuantityEnabled() ? 1 : null,
         quantityUnit: SM.getIsAutoQuantityEnabled() ? 'szt.' : null,
@@ -201,28 +207,36 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // check for updates
     SchedulerBinding.instance.addPostFrameCallback(
-        (_) => updater.checkForUpdate((newVersionId) async =>
-            // show update dialog
-            await showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (ctx) =>
-                  DownloadUpdateDialog(newVersionId: newVersionId),
-            )));
+      (_) => updater.checkForUpdate((newVersionId) async =>
+          // show update dialog
+          await showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (ctx) => DownloadUpdateDialog(newVersionId: newVersionId),
+          )),
+    );
 
-    // initialise the shopping list
-    if (shoppingListManager.isInitialised) {
-      shoppingListManager.onProductsUpdated = onProductsUpdated;
-      shoppingListManager.onDefaultShopsReveived = () => setState(() {
-            // empty setState to refresh filters with contents of
-            // shoppingListManager.availableShops
-          });
-      shoppingListManager.subscribe();
-    }
+    // listen to auth state changes
+    auth.setupAuthStateListener((bool isSignedIn) {
+      setState(() => isUserSignedIn = isSignedIn);
+      print(isSignedIn);
+      // initialise the shopping list if a user is signed in
+      if (isSignedIn) {
+        if (shoppingListManager.isInitialised) {
+          shoppingListManager.onProductsUpdated = onProductsUpdated;
+          shoppingListManager.onDefaultShopsReveived = () => setState(() {
+                // empty setState to refresh filters with contents of
+                // shoppingListManager.availableShops
+              });
+          shoppingListManager.subscribe();
+        }
+      }
+    });
   }
 
   @override
   void dispose() {
+    auth.cancelAuthStateListener();
     shoppingListManager.unsubscribe();
     super.dispose();
   }
@@ -236,17 +250,41 @@ class _HomeScreenState extends State<HomeScreen> {
   /// different body depending on [isFirstLoadDone] &
   /// [shoppingListManager.isInitialised] values
   Widget getBody() {
-    // if shoppingListId is not specified, display an info on it
-    if (!shoppingListManager.isInitialised)
+    // if there is no data on whether a user is signed in, or if a user is
+    // in the process of signing in, display a circular progress indicator
+    if (isUserSignedIn == null || isCurrentlySigningIn) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    // if a user is not signed in, let him sign in
+    if (!isUserSignedIn!) {
       return Center(
-          child: Text(
-        'Nie wybrano żadnej listy zakupów. Możesz to zrobić w Ustawieniach',
-        textAlign: TextAlign.center,
-      ));
+        child: ElevatedButton(
+          child: Text('Zaloguj się'),
+          onPressed: () async {
+            setState(() => isCurrentlySigningIn = true);
+            await auth.signInWithGoogle();
+            setState(() => isCurrentlySigningIn = false);
+          },
+        ),
+      );
+    }
+
+    // if shoppingListId is not specified, display an info on it
+    if (!shoppingListManager.isInitialised) {
+      return Center(
+        child: Text(
+          'Nie wybrano żadnej listy zakupów. Możesz to zrobić w Ustawieniach',
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
 
     // if shoppingListId is specified, but the data is loading, display
     // a circular progress indicator
-    if (!isFirstLoadDone) return Center(child: CircularProgressIndicator());
+    if (!isFirstLoadDone) {
+      return Center(child: CircularProgressIndicator());
+    }
 
     // for content shown if itemsToDisplay.isEmpty
     final screenHeight = MediaQuery.of(context).size.height;
@@ -284,10 +322,11 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Container(
                 height: viewHeight,
                 child: Center(
-                    child: Text(
-                  'Brak przedmiotów do wyświetlenia',
-                  textAlign: TextAlign.center,
-                )),
+                  child: Text(
+                    'Brak przedmiotów do wyświetlenia',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ),
             ),
         ],

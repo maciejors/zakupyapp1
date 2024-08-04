@@ -1,15 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:zakupyapp/core/updater.dart';
 
-import 'package:zakupyapp/storage/storage_manager.dart';
+import 'package:zakupyapp/core/updater.dart';
+import 'package:zakupyapp/services/storage_manager.dart';
+import 'package:zakupyapp/services/auth_manager.dart';
 import 'package:zakupyapp/utils/app_info.dart';
 import 'package:zakupyapp/widgets/drawer/main_drawer.dart';
 import 'package:zakupyapp/widgets/settings/setting_info_wrapper.dart';
 import 'package:zakupyapp/widgets/settings/settings_group_title.dart';
 import 'package:zakupyapp/widgets/shared/dismissible_help_dialog.dart';
-
-import '../widgets/shared/update_dialog.dart';
+import 'package:zakupyapp/widgets/shared/update_dialog.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -19,8 +19,10 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  final AuthManager auth = AuthManager.instance;
+
   String _shoppingListIdInput = '';
-  String _usernameInput = '';
+  String _userNameInput = '';
 
   Future<void> showEditShoppingListIdDialog(BuildContext ctx) async {
     _shoppingListIdInput = SM.getShoppingListId();
@@ -58,17 +60,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> showEditUsernameDialog(BuildContext ctx) async {
-    _usernameInput = SM.getUsername();
+    if (!auth.isUserSignedIn) {
+      // no point if not signed in
+      return;
+    }
+    final currentUserName = auth.getUserDisplayName()!;
+    _userNameInput = currentUserName;
     await showDialog(
         context: ctx,
         builder: (ctx) => AlertDialog(
               title: Text('Nazwa użytkownika'),
               content: TextFormField(
-                initialValue: SM.getUsername(),
+                initialValue: currentUserName,
                 decoration: InputDecoration(label: Text('Wpisz nazwę...')),
                 onChanged: (newValue) {
                   setState(() {
-                    _usernameInput = newValue;
+                    _userNameInput = newValue;
                   });
                 },
               ),
@@ -80,16 +87,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 TextButton(
                   child: Text('Zapisz'),
                   onPressed: () {
-                    setState(() {
-                      SM.setUsername(_usernameInput);
-                    });
+                    auth
+                        .setUserDisplayName(_userNameInput)
+                        .then((newUserName) => setState(() {}));
                     Navigator.of(ctx).pop();
                     ScaffoldMessenger.of(ctx).showSnackBar(
-                        SnackBar(content: Text('Zapisano nazwę użytkownika')));
+                      SnackBar(content: Text('Zapisano nazwę użytkownika')),
+                    );
                   },
                 ),
               ],
             ));
+  }
+
+  Future<void> handleSignOut(BuildContext ctx) async {
+    await auth.signOut();
+    Navigator.of(ctx).pushReplacementNamed('/');
   }
 
   /// Clicking the version label in debug model will cause
@@ -139,6 +152,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: EdgeInsets.only(top: 8),
         children: <Widget>[
+          SettingsGroupTitle(titleText: 'Konto'),
+          ListTile(
+            title: Text('Nazwa użytkownika'),
+            subtitle: Text(auth.getUserDisplayName() ?? 'Nie zalogowano'),
+            leading: Icon(
+              Icons.person,
+              color: Colors.black,
+            ),
+            titleAlignment: ListTileTitleAlignment.center,
+            onTap: () => showEditUsernameDialog(context),
+            enabled: auth.isUserSignedIn,
+          ),
+          ListTile(
+            title: Text('Wyloguj'),
+            subtitle: Text(auth.getUserEmail() ?? 'Nie zalogowano'),
+            leading: Icon(
+              Icons.logout,
+              color: Colors.black,
+            ),
+            titleAlignment: ListTileTitleAlignment.center,
+            onTap: () => handleSignOut(context),
+            enabled: auth.isUserSignedIn,
+          ),
           SettingsGroupTitle(titleText: 'Lista zakupów'),
           ListTile(
             title: Text('ID Listy zakupów'),
@@ -150,16 +186,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             titleAlignment: ListTileTitleAlignment.center,
             onTap: () => showEditShoppingListIdDialog(context),
-          ),
-          ListTile(
-            title: Text('Nazwa użytkownika'),
-            subtitle: Text(SM.getUsername()),
-            leading: Icon(
-              Icons.person,
-              color: Colors.black,
-            ),
-            titleAlignment: ListTileTitleAlignment.center,
-            onTap: () => showEditUsernameDialog(context),
           ),
           SettingInfoWrapper(
             child: SwitchListTile(

@@ -3,5 +3,4 @@ class Constants {
       'https://family-store.vercel.app/apps/14';
   static const String FAMILY_STORE_ENDPOINT =
       'https://family-store.vercel.app/api/app-version/14';
-  static const String DEFAULT_USERNAME = 'Użytkownik bez nazwy';
 }

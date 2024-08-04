@@ -18,6 +18,10 @@ class Deadline {
   ///
   /// Old format will also work:<br>
   /// `"${DateTime.toString()}|$bool"`<br>
+  ///
+  /// Since migration to Firestore, this is no longer used and is left
+  /// just in case
+  @deprecated
   static Deadline parse(String s) {
     // split to support old deadline format
     var splitted = s.split('|');
@@ -83,6 +87,9 @@ class Deadline {
   }
 
   @override
+  @deprecated
+  /// Since migration to Firestore, this is no longer used and is left
+  /// just in case
   String toString() {
     return deadlineDay.toString();
   }

@@ -1,5 +1,4 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zakupyapp/constants.dart';
 
 class SM {
   static late SharedPreferences _storage;
@@ -17,17 +16,6 @@ class SM {
     shoppingListId = shoppingListId.replaceAll(RegExp(r'[/#.$\[\]]'), '');
 
     _storage.setString('shoppingListId', shoppingListId.trim());
-  }
-
-  static String getUsername() {
-    return _storage.getString('username') ?? Constants.DEFAULT_USERNAME;
-  }
-
-  static void setUsername(String username) {
-    if (username == '') {
-      username = Constants.DEFAULT_USERNAME;
-    }
-    _storage.setString('username', username.trim());
   }
 
   static bool getHideProductsOthersDeclared() {
