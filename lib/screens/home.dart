@@ -219,7 +219,6 @@ class _HomeScreenState extends State<HomeScreen> {
     // listen to auth state changes
     auth.setupAuthStateListener((bool isSignedIn) {
       setState(() => isUserSignedIn = isSignedIn);
-      print(isSignedIn);
       // initialise the shopping list if a user is signed in
       if (isSignedIn) {
         if (shoppingListManager.isInitialised) {
