@@ -60,6 +60,12 @@ class MainDrawer extends StatelessWidget {
           onTap: () async => await changeShoppingList(context),
         ),
         ListTile(
+          // shopping list
+          leading: Icon(Icons.edit),
+          title: Text('Zarządzaj listami'),
+          onTap: () => switchScreen(context, '/manage-lists'),
+        ),
+        ListTile(
           // settings
           leading: Icon(Icons.settings),
           title: Text('Ustawienia'),

@@ -105,6 +105,26 @@ class DatabaseManager {
     return productData;
   }
 
+  ShoppingList _getShoppingListFromDoc(
+    QueryDocumentSnapshot publicDoc,
+    QueryDocumentSnapshot privateDoc,
+  ) {
+    final publicDocData = publicDoc.data() as Map;
+    final privateDocData = privateDoc.data() as Map;
+    String id = publicDoc.id;
+    String name = privateDocData['name']!;
+    List<String> members = publicDocData['members']!.cast<String>();
+    List<String> defaultShops = privateDocData['defaultShops'] != null
+        ? privateDocData['defaultShops']!.cast<String>()
+        : [];
+    return ShoppingList(
+      id: id,
+      name: name,
+      members: members,
+      defaultShops: defaultShops,
+    );
+  }
+
   DocumentReference _getShoppingListPrivateDocRef(String shoppingListId) {
     return _shoppingListPrivate.doc(shoppingListId);
   }
@@ -184,7 +204,7 @@ class DatabaseManager {
         .toList();
     // 3. paginate the above list to fetch private data of shopping lists
     int totalShoppingLists = shoppingListsIds.length;
-    List<DocumentSnapshot> privateDocsSnapshots = [];
+    List<QueryDocumentSnapshot> privateDocsSnapshots = [];
     final pageSize = 30;
     for (var startIdx = 0;
         startIdx < totalShoppingLists;
@@ -204,13 +224,58 @@ class DatabaseManager {
       final publicDoc = publicDocsSnapshots[i];
       final privateDoc = privateDocsSnapshots[i];
       print('getShoppingListsForUser: ${publicDoc.id} = ${privateDoc.id}');
-      shoppingLists.add(ShoppingList(
-        id: publicDoc.id,
-        name: privateDoc.get('name'),
-        members: publicDoc.get('members').cast<String>(),
-        defaultShops: privateDoc.get('defaultShops').cast<String>(),
-      ));
+      shoppingLists.add(_getShoppingListFromDoc(publicDoc, privateDoc));
     }
     return shoppingLists;
+  }
+
+  /// Adds a new member to the shopping list
+  ///
+  /// Note: to avoid fetching shopping list data for this operation, a check
+  /// whether this user already belogs to the list should be done before
+  /// calling this function, as it will add a new member regardless of whether
+  /// he is in the list which can result in member duplication
+  Future<void> addUserToShoppingList(
+      String shoppingListId, String userEmail) async {
+    await _shoppingListPublic.doc(shoppingListId).update({
+      'members': FieldValue.arrayUnion([userEmail]),
+    });
+  }
+
+  /// Removes a member from the shopping list
+  Future<void> removeUserFromShoppingList(
+      String shoppingListId, String userEmail) async {
+    await _shoppingListPublic.doc(shoppingListId).update({
+      'members': FieldValue.arrayRemove([userEmail]),
+    });
+  }
+
+  Future<String> createShoppingList(String name, String creatorEmail) async {
+    final publicDocData = {
+      'members': [creatorEmail]
+    };
+    final privateDocData = {'name': name};
+    final shoppingListRef = await _shoppingListPublic.add(publicDocData);
+    final shoppingListId = shoppingListRef.id;
+    await _shoppingListPrivate.doc(shoppingListId).set(privateDocData);
+    return shoppingListId;
+  }
+
+  Future<void> renameShoppingList(String shoppingListId, String newName) async {
+    await _shoppingListPrivate.doc(shoppingListId).update({'name': newName});
+  }
+
+  Future<void> updateShoppingListDefaultShops(
+    String shoppingListId,
+    List<String> shopsToRemove,
+    List<String> shopsToAdd,
+  ) async {
+    final shoppingListPrivateDoc = _shoppingListPrivate.doc(shoppingListId);
+    await shoppingListPrivateDoc.update({
+      'defaultShops': FieldValue.arrayUnion(shopsToAdd),
+    });
+    await shoppingListPrivateDoc.update({
+      'defaultShops': FieldValue.arrayRemove(shopsToRemove),
+    });
   }
 }
