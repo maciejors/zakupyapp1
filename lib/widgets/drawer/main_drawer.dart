@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:zakupyapp/constants.dart';
 
+import 'package:zakupyapp/constants.dart';
+import 'package:zakupyapp/widgets/drawer/change_shopping_list_dialog.dart';
 import 'package:zakupyapp/widgets/drawer/help_dialog.dart';
+import 'package:zakupyapp/services/storage_manager.dart';
 
 class MainDrawer extends StatelessWidget {
   const MainDrawer({Key? key}) : super(key: key);
@@ -13,6 +15,17 @@ class MainDrawer extends StatelessWidget {
     } else {
       Navigator.pushReplacementNamed(context, routeName);
     }
+  }
+
+  Future<void> changeShoppingList(BuildContext context) async {
+    String? newShoppingListId = await showDialog<String>(
+        context: context, builder: (ctx) => ChangeShoppingListDialog());
+    if (newShoppingListId == null) {
+      return;
+    }
+    SM.setShoppingListId(newShoppingListId);
+    // reload page to fetch a new shopping list
+    Navigator.pushReplacementNamed(context, '/');
   }
 
   Future<void> showHelpDialog(BuildContext context) async {
@@ -39,17 +52,18 @@ class MainDrawer extends StatelessWidget {
           // shopping list
           leading: Icon(Icons.shopping_cart),
           title: Text('Lista zakupów'),
-          onTap: () {
-            switchScreen(context, '/');
-          },
+          onTap: () => switchScreen(context, '/'),
+        ),
+        ListTile(
+          leading: Icon(Icons.change_circle),
+          title: Text('Zmień listę'),
+          onTap: () async => await changeShoppingList(context),
         ),
         ListTile(
           // settings
           leading: Icon(Icons.settings),
           title: Text('Ustawienia'),
-          onTap: () {
-            switchScreen(context, '/settings');
-          },
+          onTap: () => switchScreen(context, '/settings'),
         ),
         ListTile(
           // settings

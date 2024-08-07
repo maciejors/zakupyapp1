@@ -21,43 +21,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   final AuthManager auth = AuthManager.instance;
 
-  String _shoppingListIdInput = '';
   String _userNameInput = '';
-
-  Future<void> showEditShoppingListIdDialog(BuildContext ctx) async {
-    _shoppingListIdInput = SM.getShoppingListId();
-    await showDialog(
-        context: ctx,
-        builder: (ctx) => AlertDialog(
-              title: Text('ID Listy zakupów'),
-              content: TextFormField(
-                initialValue: SM.getShoppingListId(),
-                decoration: InputDecoration(label: Text('Wpisz ID...')),
-                onChanged: (newValue) {
-                  setState(() {
-                    _shoppingListIdInput = newValue;
-                  });
-                },
-              ),
-              actions: <Widget>[
-                TextButton(
-                  child: Text('Anuluj'),
-                  onPressed: () => Navigator.of(ctx).pop(),
-                ),
-                TextButton(
-                  child: Text('Zapisz'),
-                  onPressed: () {
-                    setState(() {
-                      SM.setShoppingListId(_shoppingListIdInput);
-                    });
-                    Navigator.of(ctx).pop();
-                    ScaffoldMessenger.of(ctx).showSnackBar(
-                        SnackBar(content: Text('Zapisano ID Listy zakupów')));
-                  },
-                ),
-              ],
-            ));
-  }
 
   Future<void> showEditUsernameDialog(BuildContext ctx) async {
     if (!auth.isUserSignedIn) {
@@ -134,7 +98,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String shoppingListId = SM.getShoppingListId();
     return Scaffold(
       drawer: MainDrawer(),
       appBar: AppBar(
@@ -184,17 +147,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 'konta i przekierowanie na stronę główną aplikacji.'),
           ),
           SettingsGroupTitle(titleText: 'Lista zakupów'),
-          ListTile(
-            title: Text('ID Listy zakupów'),
-            subtitle:
-                Text(shoppingListId == '' ? 'Nie ustawione' : shoppingListId),
-            leading: Icon(
-              Icons.shopping_cart,
-              color: Colors.black,
-            ),
-            titleAlignment: ListTileTitleAlignment.center,
-            onTap: () => showEditShoppingListIdDialog(context),
-          ),
           SettingInfoWrapper(
             child: SwitchListTile(
               title: Text(

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:zakupyapp/core/models/product.dart';
 import 'package:zakupyapp/services/auth_manager.dart';
 import 'package:zakupyapp/services/database_manager.dart';
@@ -22,6 +24,8 @@ class ShoppingListManager {
   String get _username => _auth.getUserDisplayName() ?? '';
 
   final bool hideProductsOthersDeclared = SM.getHideProductsOthersDeclared();
+
+  StreamSubscription? _dataStream = null;
 
   // constructor
   ShoppingListManager(this.id);
@@ -66,11 +70,11 @@ class ShoppingListManager {
   }
 
   Future<void> storeProduct(Product product) async {
-    await _db.storeProductFromClass(product);
+    await _db.storeProductFromClass(id, product);
   }
 
   Future<void> removeProduct(Product product) async {
-    await _db.removeProduct(product.id);
+    await _db.removeProduct(id, product.id);
   }
 
   /// Returns [true] if the buyer was added, [false] if the buyer was removed
@@ -79,12 +83,12 @@ class ShoppingListManager {
   Future<bool?> toggleProductBuyer(Product product) async {
     // not delared yet
     if (product.buyer == null) {
-      await _db.setProductBuyer(product.id, _username);
+      await _db.setProductBuyer(id, product.id, _username);
       return true;
     }
     // declared by the user
     else if (product.buyer == _username) {
-      await _db.setProductBuyer(product.id, null);
+      await _db.setProductBuyer(id, product.id, null);
       return false;
     }
     // declared by someone else
@@ -140,15 +144,14 @@ class ShoppingListManager {
   /// Starts listening for products data. Make sure to set [onProductsUpdated]
   /// and [onDefaultShopsReceived] callbacks before calling this method.
   void subscribe() {
-    _db.setShoppingList(id);
     // set default shops
-    _db.getDefaultShops().then((value) {
+    _db.getDefaultShops(id).then((value) {
       _refreshLists(value);
       // callback
       if (onDefaultShopsReveived != null) onDefaultShopsReveived!();
     });
     // setup product listener
-    _db.setupListener((newProducts) {
+    _dataStream = _db.setupListener(id, (newProducts) {
       newProducts.sort((p1, p2) => p2.dateAdded.compareTo(p1.dateAdded));
 
       isDataReady = true;
@@ -162,6 +165,6 @@ class ShoppingListManager {
   }
 
   Future<void> unsubscribe() async {
-    await _db.cancelListener();
+    await _dataStream?.cancel();
   }
 }

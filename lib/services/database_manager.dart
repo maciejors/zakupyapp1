@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:zakupyapp/core/models/product.dart';
 import 'package:zakupyapp/core/models/deadline.dart';
+import 'package:zakupyapp/core/models/shopping_list.dart';
 
 /// A singleton responsible for interactions with the database
 class DatabaseManager {
@@ -11,10 +13,10 @@ class DatabaseManager {
   static DatabaseManager get instance => _instance;
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  DocumentReference? _shoppingListDoc = null;
-  CollectionReference? _productsCollection = null;
-
-  StreamSubscription? _dataStream = null;
+  CollectionReference get _shoppingListPrivate =>
+      _db.collection('shoppingListsPrivate');
+  CollectionReference get _shoppingListPublic =>
+      _db.collection('shoppingListsPublic');
 
   // a private constructor
   DatabaseManager._();
@@ -103,25 +105,18 @@ class DatabaseManager {
     return productData;
   }
 
-  /// Sets up the database reference pointing to the specified
-  /// shopping list
-  void setShoppingList(String shoppingListId) {
-    // second condition is not likely to ever evaluate to true
-    // since invalid ids are not accepted by the local storage manager
-    if (shoppingListId.length == 0 ||
-        shoppingListId.contains(RegExp(r'[/#.$\[\]]'))) return;
-
-    _shoppingListDoc =
-        _db.collection('shoppingListsPrivate').doc(shoppingListId);
-    _productsCollection = _shoppingListDoc!.collection('products');
+  DocumentReference _getShoppingListPrivateDocRef(String shoppingListId) {
+    return _shoppingListPrivate.doc(shoppingListId);
   }
 
-  Future<List<String>> getDefaultShops() async {
-    if (_shoppingListDoc == null) {
-      return [];
-    }
+  CollectionReference _getProductsCollectionRef(String shoppingListId) {
+    return _getShoppingListPrivateDocRef(shoppingListId).collection('products');
+  }
 
-    var shoppingListSnapshot = await _shoppingListDoc!.get();
+  Future<List<String>> getDefaultShops(String shoppingListId) async {
+    final shoppingListDoc = _getShoppingListPrivateDocRef(shoppingListId);
+
+    final shoppingListSnapshot = await shoppingListDoc.get();
     if (!shoppingListSnapshot.exists) {
       // shopping list does not exist
       return [];
@@ -134,26 +129,35 @@ class DatabaseManager {
 
   /// Stores a single product.
   /// Takes a product class object as an argument
-  Future<void> storeProductFromClass(Product product) async {
+  Future<void> storeProductFromClass(
+      String shoppingListId, Product product) async {
     String productId = product.id;
     Map<String, Object> productData = _getMapFromProduct(product);
-    await _productsCollection?.doc(productId).set(productData);
+    final productsCollection = _getProductsCollectionRef(shoppingListId);
+    await productsCollection.doc(productId).set(productData);
   }
 
   /// Sets a buyer attribute on a product.
   /// Set [buyer] to [null] to remove this attribue.
-  Future<void> setProductBuyer(String productId, String? buyer) async {
-    await _productsCollection?.doc(productId).update({'buyer': buyer});
+  Future<void> setProductBuyer(
+      String shoppingListId, String productId, String? buyer) async {
+    final productsCollection = _getProductsCollectionRef(shoppingListId);
+    await productsCollection.doc(productId).update({'buyer': buyer});
   }
 
-  Future<void> removeProduct(String productId) async {
-    await _productsCollection?.doc(productId).delete();
+  Future<void> removeProduct(String shoppingListId, String productId) async {
+    final productsCollection = _getProductsCollectionRef(shoppingListId);
+    await productsCollection.doc(productId).delete();
   }
 
   /// Sets up a live listener on the specified shopping list
-  void setupListener(void Function(List<Product> shoppingList) onUpdate) {
-    _dataStream = _productsCollection
-        ?.orderBy('dateAdded', descending: true)
+  StreamSubscription<QuerySnapshot<Object?>> setupListener(
+    String shoppingListId,
+    void Function(List<Product> shoppingList) onUpdate,
+  ) {
+    final productsCollection = _getProductsCollectionRef(shoppingListId);
+    final dataStream = productsCollection
+        .orderBy('dateAdded', descending: true)
         .snapshots()
         .listen((event) {
       var docs = event.docs;
@@ -164,9 +168,49 @@ class DatabaseManager {
           .toList();
       onUpdate(products);
     });
+    return dataStream;
   }
 
-  Future<void> cancelListener() async {
-    await _dataStream?.cancel();
+  Future<List<ShoppingList>> getShoppingListsForUser(String userEmail) async {
+    // 1. fetch public shopping lists to find the ones that the user belongs to
+    final shoppingListsPublicData = await _shoppingListPublic
+        .where('members', arrayContains: userEmail)
+        .orderBy(FieldPath.documentId)
+        .get();
+    final publicDocsSnapshots = shoppingListsPublicData.docs;
+    // 2. get a list of shopping list ids
+    List<String> shoppingListsIds = publicDocsSnapshots
+        .map((shoppingListPublicDoc) => shoppingListPublicDoc.id)
+        .toList();
+    // 3. paginate the above list to fetch private data of shopping lists
+    int totalShoppingLists = shoppingListsIds.length;
+    List<DocumentSnapshot> privateDocsSnapshots = [];
+    final pageSize = 30;
+    for (var startIdx = 0;
+        startIdx < totalShoppingLists;
+        startIdx += pageSize) {
+      int endIdx = min(totalShoppingLists, startIdx + pageSize);
+      List<String> shoppingListsIdsToFetch =
+          shoppingListsIds.sublist(startIdx, endIdx);
+      final newSnapshots = await _shoppingListPrivate
+          .where(FieldPath.documentId, whereIn: shoppingListsIdsToFetch)
+          .orderBy(FieldPath.documentId)
+          .get();
+      privateDocsSnapshots.addAll(newSnapshots.docs);
+    }
+    // 4. merge private and public docs data
+    List<ShoppingList> shoppingLists = [];
+    for (var i = 0; i < totalShoppingLists; i++) {
+      final publicDoc = publicDocsSnapshots[i];
+      final privateDoc = privateDocsSnapshots[i];
+      print('getShoppingListsForUser: ${publicDoc.id} = ${privateDoc.id}');
+      shoppingLists.add(ShoppingList(
+        id: publicDoc.id,
+        name: privateDoc.get('name'),
+        members: publicDoc.get('members').cast<String>(),
+        defaultShops: privateDoc.get('defaultShops').cast<String>(),
+      ));
+    }
+    return shoppingLists;
   }
 }

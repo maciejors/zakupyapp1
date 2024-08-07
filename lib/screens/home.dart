@@ -272,9 +272,13 @@ class _HomeScreenState extends State<HomeScreen> {
     // if shoppingListId is not specified, display an info on it
     if (!shoppingListManager.isInitialised) {
       return Center(
-        child: Text(
-          'Nie wybrano żadnej listy zakupów. Możesz to zrobić w Ustawieniach',
-          textAlign: TextAlign.center,
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Text(
+            'Nie wybrano żadnej listy zakupów. Możesz to zrobić klikając '
+                'przycisk "Zmień listę" w wysuwanym menu.',
+            textAlign: TextAlign.center,
+          ),
         ),
       );
     }
@@ -321,9 +325,12 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Container(
                 height: viewHeight,
                 child: Center(
-                  child: Text(
-                    'Brak przedmiotów do wyświetlenia',
-                    textAlign: TextAlign.center,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Text(
+                      'Brak przedmiotów do wyświetlenia',
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
               ),
