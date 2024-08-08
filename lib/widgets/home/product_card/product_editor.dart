@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:zakupyapp/core/models/deadline.dart';
 import 'package:zakupyapp/core/models/product.dart';
-import 'package:zakupyapp/core/shopping_list_manager.dart';
+import 'package:zakupyapp/core/shopping_list_controller.dart';
 import 'package:zakupyapp/widgets/home/product_card/product_detail_editor_chip.dart';
 import 'package:zakupyapp/widgets/home/product_card/select_quantity_dialog.dart';
 import 'package:zakupyapp/widgets/home/product_card/select_shop_dialog.dart';
@@ -29,7 +29,7 @@ class _ProductEditorState extends State<ProductEditor> {
   final AuthManager _auth = AuthManager.instance;
 
   final _formKey = GlobalKey<FormState>();
-  late final ShoppingListManager _provider;
+  late final ShoppingListController _provider;
 
   final _productNameFocusNode = FocusNode(canRequestFocus: false);
 
@@ -134,7 +134,7 @@ class _ProductEditorState extends State<ProductEditor> {
   void initState() {
     super.initState();
     // provider for shop and quantity units lists
-    _provider = Provider.of<ShoppingListManager>(context, listen: false);
+    _provider = Provider.of<ShoppingListController>(context, listen: false);
     // default values for editor
     _productName = widget.product.name;
     _selectedShop = widget.product.shop ?? '';

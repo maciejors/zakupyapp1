@@ -4,7 +4,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 
 import 'package:zakupyapp/core/models/product.dart';
-import 'package:zakupyapp/core/shopping_list_manager.dart';
+import 'package:zakupyapp/core/shopping_list_controller.dart';
 import 'package:zakupyapp/core/updater.dart';
 import 'package:zakupyapp/services/storage_manager.dart';
 import 'package:zakupyapp/services/auth_manager.dart';
@@ -20,8 +20,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final ShoppingListManager shoppingListManager =
-      ShoppingListManager(SM.getShoppingListId());
+  final ShoppingListController shoppingListManager =
+      ShoppingListController(SM.getShoppingListId());
   final Updater updater = Updater();
   final AuthManager auth = AuthManager.instance;
 
@@ -295,7 +295,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final viewHeight = screenHeight - padding.top - kToolbarHeight;
 
     // otherwise, display the shopping list
-    return Provider<ShoppingListManager>(
+    return Provider<ShoppingListController>(
       create: (context) => shoppingListManager,
       child: CustomScrollView(
         slivers: [

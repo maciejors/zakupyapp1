@@ -6,7 +6,7 @@ import 'package:zakupyapp/services/database_manager.dart';
 import 'package:zakupyapp/services/storage_manager.dart';
 
 /// represents a product list which can be filtered etc
-class ShoppingListManager {
+class ShoppingListController {
   final DatabaseManager _db = DatabaseManager.instance;
   final AuthManager _auth = AuthManager.instance;
 
@@ -28,7 +28,7 @@ class ShoppingListManager {
   StreamSubscription? _dataStream = null;
 
   // constructor
-  ShoppingListManager(this.id);
+  ShoppingListController(this.id);
 
   // callbacks
   void Function(List<Product>)? onProductsUpdated;
