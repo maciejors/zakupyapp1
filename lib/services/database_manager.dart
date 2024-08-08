@@ -266,16 +266,10 @@ class DatabaseManager {
   }
 
   Future<void> updateShoppingListDefaultShops(
-    String shoppingListId,
-    List<String> shopsToRemove,
-    List<String> shopsToAdd,
-  ) async {
+      String shoppingListId, List<String> newDefaultShops) async {
     final shoppingListPrivateDoc = _shoppingListPrivate.doc(shoppingListId);
     await shoppingListPrivateDoc.update({
-      'defaultShops': FieldValue.arrayUnion(shopsToAdd),
-    });
-    await shoppingListPrivateDoc.update({
-      'defaultShops': FieldValue.arrayRemove(shopsToRemove),
+      'defaultShops': newDefaultShops,
     });
   }
 }
