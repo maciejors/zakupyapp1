@@ -112,10 +112,13 @@ class _ProductEditorState extends State<ProductEditor> {
         id: widget.product.id,
         name: _productName.trim(),
         dateAdded: widget.product.dateAdded,
-        whoAdded: widget.product.whoAdded,
+        authorName: widget.product.authorName,
+        authorEmail: widget.product.authorEmail,
         dateLastEdited: widget.product.isVirtual ? null : DateTime.now(),
-        whoLastEdited:
+        lastEditorName:
             widget.product.isVirtual ? null : _auth.getUserDisplayName(),
+        lastEditorEmail:
+            widget.product.isVirtual ? null : _auth.getUserEmail(),
         shop: _selectedShop == '' ? null : _selectedShop,
         deadline: _selectedDeadline,
         buyer: widget.product.buyer,

@@ -29,13 +29,16 @@ class DatabaseManager {
       String id = docSnapshot.id;
 
       String productName = productRawData['name']!;
-      String whoAdded = productRawData['whoAdded']!;
+      String authorName = productRawData['authorName']!;
+      String authorEmail = productRawData['authorEmail']!;
       DateTime dateAdded = (productRawData['dateAdded']! as Timestamp).toDate();
 
-      String? whoLastEdited;
+      String? lastEditorName;
+      String? lastEditorEmail;
       DateTime? dateLastEdited;
       if (productRawData['dateLastEdited'] != null) {
-        whoLastEdited = productRawData['whoLastEdited']!;
+        lastEditorName = productRawData['lastEditorName']!;
+        lastEditorEmail = productRawData['lastEditorEmail']!;
         dateLastEdited =
             (productRawData['dateLastEdited'] as Timestamp).toDate();
       }
@@ -60,9 +63,11 @@ class DatabaseManager {
         name: productName,
         shop: shopName,
         dateAdded: dateAdded,
-        whoAdded: whoAdded,
+        authorName: authorName,
+        authorEmail: authorEmail,
         dateLastEdited: dateLastEdited,
-        whoLastEdited: whoLastEdited,
+        lastEditorName: lastEditorName,
+        lastEditorEmail: lastEditorEmail,
         deadline: deadline,
         buyer: buyer,
         quantity: quantity,
@@ -80,7 +85,8 @@ class DatabaseManager {
     var productData = {
       'name': product.name,
       'dateAdded': Timestamp.fromDate(product.dateAdded),
-      'whoAdded': product.whoAdded,
+      'authorName': product.authorName,
+      'authorEmail': product.authorEmail,
     };
     if (product.shop != null) {
       productData['shop'] = product.shop!;
@@ -99,9 +105,10 @@ class DatabaseManager {
     if (product.dateLastEdited != null) {
       productData['dateLastEdited'] =
           Timestamp.fromDate(product.dateLastEdited!);
-      productData['whoLastEdited'] = product.whoLastEdited!;
+      productData['lastEditorName'] = product.lastEditorName!;
+      productData['lastEditorEmail'] = product.lastEditorEmail!;
     }
-    productData['modelVersion'] = '2';
+    productData['modelVersion'] = '3';
     return productData;
   }
 

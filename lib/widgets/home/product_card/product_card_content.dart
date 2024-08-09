@@ -113,7 +113,7 @@ class ProductCardContent extends StatelessWidget {
                   ),
                 ),
                 TextSpan(
-                  text: product.whoLastEdited ?? product.whoAdded,
+                  text: product.lastEditorName ?? product.authorName,
                 ),
               ],
             ),

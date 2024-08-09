@@ -11,9 +11,11 @@ class Product {
   final String id;
   final String name;
 
-  final String whoAdded;
+  final String authorName;
+  final String authorEmail;
   final DateTime dateAdded;
-  final String? whoLastEdited;
+  final String? lastEditorName;
+  final String? lastEditorEmail;
   final DateTime? dateLastEdited;
 
   final String? shop;
@@ -30,9 +32,11 @@ class Product {
     required this.id,
     required this.name,
     required this.dateAdded,
-    required this.whoAdded,
+    required this.authorName,
+    required this.authorEmail,
     this.dateLastEdited,
-    this.whoLastEdited,
+    this.lastEditorName,
+    this.lastEditorEmail,
     this.shop,
     this.deadline,
     this.buyer,

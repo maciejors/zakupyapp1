@@ -146,7 +146,8 @@ class _HomeScreenState extends State<HomeScreen> {
         id: Product.generateProductId(),
         name: '',
         dateAdded: DateTime.now(),
-        whoAdded: auth.getUserDisplayName()!,
+        authorName: auth.getUserDisplayName()!,
+        authorEmail: auth.getUserEmail()!,
         // set shop by default if filter active
         shop: shoppingListManager.isShopFilterApplied
             ? shoppingListManager.filteredShop
