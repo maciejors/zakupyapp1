@@ -9,6 +9,7 @@ import 'package:zakupyapp/widgets/drawer/main_drawer.dart';
 import 'package:zakupyapp/widgets/settings/setting_info_wrapper.dart';
 import 'package:zakupyapp/widgets/settings/settings_group_title.dart';
 import 'package:zakupyapp/widgets/shared/dismissible_help_dialog.dart';
+import 'package:zakupyapp/widgets/shared/text_input_dialog.dart';
 import 'package:zakupyapp/widgets/shared/update_dialog.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -21,47 +22,39 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   final AuthManager auth = AuthManager.instance;
 
-  String _userNameInput = '';
-
-  Future<void> showEditUsernameDialog(BuildContext ctx) async {
+  Future<void> handleEditUsername(BuildContext ctx) async {
     if (!auth.isUserSignedIn) {
       // no point if not signed in
       return;
     }
     final currentUserName = auth.getUserDisplayName()!;
-    _userNameInput = currentUserName;
-    await showDialog(
-        context: ctx,
-        builder: (ctx) => AlertDialog(
-              title: Text('Nazwa użytkownika'),
-              content: TextFormField(
-                initialValue: currentUserName,
-                decoration: InputDecoration(label: Text('Wpisz nazwę...')),
-                onChanged: (newValue) {
-                  setState(() {
-                    _userNameInput = newValue;
-                  });
-                },
-              ),
-              actions: <Widget>[
-                TextButton(
-                  child: Text('Anuluj'),
-                  onPressed: () => Navigator.of(ctx).pop(),
-                ),
-                TextButton(
-                  child: Text('Zapisz'),
-                  onPressed: () {
-                    auth
-                        .setUserDisplayName(_userNameInput)
-                        .then((newUserName) => setState(() {}));
-                    Navigator.of(ctx).pop();
-                    ScaffoldMessenger.of(ctx).showSnackBar(
-                      SnackBar(content: Text('Zapisano nazwę użytkownika')),
-                    );
-                  },
-                ),
-              ],
-            ));
+    String? newUserName = await showDialog(
+      context: ctx,
+      builder: (ctx) => TextInputDialog(
+        title: 'Nazwa użytkownika',
+        confirmText: 'Zapisz',
+        initialValue: currentUserName,
+        hintText: 'Wpisz nazwę...',
+        validator: (String? userName) {
+          if (userName == null || userName.length == 0) {
+            return 'Nazwa nie może być pusta';
+          }
+          if (userName.length > 40) {
+            return 'Wybrana nazwa jest za długa';
+          }
+          return null;
+        },
+      ),
+    );
+    // handle cancel
+    if (newUserName == null) {
+      return;
+    }
+    await auth.setUserDisplayName(newUserName);
+    setState(() => newUserName);
+    ScaffoldMessenger.of(ctx).showSnackBar(
+      SnackBar(content: Text('Zapisano nazwę użytkownika')),
+    );
   }
 
   Future<void> handleSignOut(BuildContext ctx) async {
@@ -125,7 +118,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 color: Colors.black,
               ),
               titleAlignment: ListTileTitleAlignment.center,
-              onTap: () => showEditUsernameDialog(context),
+              onTap: () => handleEditUsername(context),
               enabled: auth.isUserSignedIn,
             ),
             infoContent: Text('Twoja nazwa, wyświetlana pod dodawanymi i '
