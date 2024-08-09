@@ -84,8 +84,11 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
               confirmText: 'Dodaj',
               hintText: 'Adres e-mail użytkownika',
               validator: (email) {
-                if (email!.length == 0) {
+                if (email == null || email.length == 0) {
                   return 'Pole nie może być puste';
+                }
+                if (widget.shoppingList.members.contains(email)) {
+                  return 'Ten użytkownik jest już dodany';
                 }
                 return null;
               },
