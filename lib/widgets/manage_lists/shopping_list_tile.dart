@@ -5,6 +5,7 @@ import 'package:zakupyapp/services/auth_manager.dart';
 import 'package:zakupyapp/services/database_manager.dart';
 import 'package:zakupyapp/services/storage_manager.dart';
 import 'package:zakupyapp/widgets/manage_lists/manage_default_shops_dialog.dart';
+import 'package:zakupyapp/widgets/manage_lists/manage_users_dialog.dart';
 import 'package:zakupyapp/widgets/shared/confirmation_dialog.dart';
 import 'package:zakupyapp/widgets/shared/text_input_dialog.dart';
 
@@ -69,7 +70,10 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
   }
 
   Future<void> handleManageUsers() async {
-    //TODO
+    await showDialog(
+      context: context,
+      builder: (ctx) => ManageUsersDialog(shoppingList: widget.shoppingList),
+    );
   }
 
   Future<void> handleAddMember() async {
@@ -111,7 +115,7 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
     if (confirmLeave == null || confirmLeave == false) {
       return;
     }
-    await _db.removeUserFromShoppingList(
+    await _db.removeMemberFromShoppingList(
       widget.shoppingList.id,
       _auth.getUserEmail()!,
     );

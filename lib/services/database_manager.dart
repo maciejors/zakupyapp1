@@ -243,7 +243,7 @@ class DatabaseManager {
   }
 
   /// Removes a member from the shopping list
-  Future<void> removeUserFromShoppingList(
+  Future<void> removeMemberFromShoppingList(
       String shoppingListId, String userEmail) async {
     await _shoppingListPublic.doc(shoppingListId).update({
       'members': FieldValue.arrayRemove([userEmail]),
