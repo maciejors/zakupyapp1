@@ -53,7 +53,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await auth.setUserDisplayName(newUserName);
     setState(() => newUserName);
     ScaffoldMessenger.of(ctx).showSnackBar(
-      SnackBar(content: Text('Zapisano nazwę użytkownika')),
+      SnackBar(content: const Text('Zapisano nazwę użytkownika')),
     );
   }
 
@@ -81,7 +81,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await showDialog(
       context: context,
       builder: (ctx) => DismissibleHelpDialog(
-        content: Text(
+        content: const Text(
           'Kliknij i przytrzymaj wybrane ustawienie, '
           'aby dowiedzieć się o nim więcej.',
         ),
@@ -92,12 +92,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: MainDrawer(),
+      drawer: const MainDrawer(),
       appBar: AppBar(
-        title: Text('Ustawienia'),
+        title: const Text('Ustawienia'),
         actions: <Widget>[
           IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.help,
               color: Colors.black,
             ),
@@ -106,14 +106,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ],
       ),
       body: ListView(
-        padding: EdgeInsets.only(top: 8),
+        padding: const EdgeInsets.only(top: 8),
         children: <Widget>[
-          SettingsGroupTitle(titleText: 'Konto'),
+          const SettingsGroupTitle(titleText: 'Konto'),
           SettingInfoWrapper(
             child: ListTile(
-              title: Text('Nazwa użytkownika'),
+              title: const Text('Nazwa użytkownika'),
               subtitle: Text(auth.getUserDisplayName() ?? 'Nie zalogowano'),
-              leading: Icon(
+              leading: const Icon(
                 Icons.person,
                 color: Colors.black,
               ),
@@ -121,14 +121,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onTap: () => handleEditUsername(context),
               enabled: auth.isUserSignedIn,
             ),
-            infoContent: Text('Twoja nazwa, wyświetlana pod dodawanymi i '
+            infoContent: const Text('Twoja nazwa, wyświetlana pod dodawanymi i '
                 'edytowanymi przez Ciebie produktami.'),
           ),
           SettingInfoWrapper(
             child: ListTile(
-              title: Text('Wyloguj'),
+              title: const Text('Wyloguj'),
               subtitle: Text(auth.getUserEmail() ?? 'Nie zalogowano'),
-              leading: Icon(
+              leading: const Icon(
                 Icons.logout,
                 color: Colors.black,
               ),
@@ -136,19 +136,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onTap: () => handleSignOut(context),
               enabled: auth.isUserSignedIn,
             ),
-            infoContent: Text('Kliknięcie tej opcji spowoduje wylogowanie z '
-                'konta i przekierowanie na stronę główną aplikacji.'),
+            infoContent:
+                const Text('Kliknięcie tej opcji spowoduje wylogowanie z '
+                    'konta i przekierowanie na stronę główną aplikacji.'),
           ),
-          SettingsGroupTitle(titleText: 'Lista zakupów'),
+          const SettingsGroupTitle(titleText: 'Lista zakupów'),
           SettingInfoWrapper(
             child: SwitchListTile(
-              title: Text(
+              title: const Text(
                 'Ukrywaj produkty zadeklarowane przez innych',
-                style: TextStyle(
-                  color: Colors.black,
-                ),
+                style: const TextStyle(color: Colors.black),
               ),
-              secondary: Icon(
+              secondary: const Icon(
                 Icons.shopping_cart_checkout,
                 color: Colors.black,
               ),
@@ -157,20 +156,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 SM.setHideProductsOthersDeclared(newValue);
               }),
             ),
-            infoContent: Text('Jeśli ta opcja jest włączona, to produkty, '
+            infoContent: const Text(
+                'Jeśli ta opcja jest włączona, to produkty, '
                 'które inni użytkownicy zamierzają kupić, nie będą się '
                 'wyświetlać na liście zakupów. W przeciwnym razie na liście '
                 'zakupów zawsze będą się wyświetlać wszystkie produkty.'),
           ),
           SettingInfoWrapper(
             child: SwitchListTile(
-              title: Text(
+              title: const Text(
                 'Ustawiaj domyślnie ilość przy dodawaniu produktu',
-                style: TextStyle(
-                  color: Colors.black,
-                ),
+                style: TextStyle(color: Colors.black),
               ),
-              secondary: Icon(
+              secondary: const Icon(
                 Icons.numbers,
                 color: Colors.black,
               ),
@@ -179,17 +177,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 SM.setIsAutoQuantityEnabled(newValue);
               }),
             ),
-            infoContent:
-                Text('Jeśli ta opcja jest włączona, to przy dodawaniu nowego '
-                    'produktu ilość będzie domyślnie ustawiona jako "1 szt.". '
-                    'W przeciwnym wypadku, ilość nie będzie w ogóle domyślnie '
-                    'ustawiona.'),
+            infoContent: const Text(
+                'Jeśli ta opcja jest włączona, to przy dodawaniu nowego '
+                'produktu ilość będzie domyślnie ustawiona jako "1 szt.". '
+                'W przeciwnym wypadku, ilość nie będzie w ogóle domyślnie '
+                'ustawiona.'),
           ),
-          SettingsGroupTitle(titleText: 'O aplikacji'),
+          const SettingsGroupTitle(titleText: 'O aplikacji'),
           ListTile(
-            title: Text('Wersja'),
+            title: const Text('Wersja'),
             subtitle: Text(AppInfo.getVersion()),
-            leading: Icon(
+            leading: const Icon(
               Icons.info,
               color: Colors.black,
             ),

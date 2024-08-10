@@ -24,22 +24,23 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
 
   Future<void> handleRename() async {
     String? newName = await showDialog(
-        context: context,
-        builder: (ctx) => TextInputDialog(
-              title: 'Zmień nazwę',
-              confirmText: 'Zapisz',
-              initialValue: widget.shoppingList.name,
-              hintText: 'Nowa nazwa',
-              validator: (name) {
-                if (name!.length == 0) {
-                  return 'Nazwa listy jest za krótka';
-                }
-                if (name.length > 40) {
-                  return 'Nazwa listy jest za długa';
-                }
-                return null;
-              },
-            ));
+      context: context,
+      builder: (ctx) => TextInputDialog(
+        title: 'Zmień nazwę',
+        confirmText: 'Zapisz',
+        initialValue: widget.shoppingList.name,
+        hintText: 'Nowa nazwa',
+        validator: (name) {
+          if (name!.length == 0) {
+            return 'Nazwa listy jest za krótka';
+          }
+          if (name.length > 40) {
+            return 'Nazwa listy jest za długa';
+          }
+          return null;
+        },
+      ),
+    );
     // handle cancel
     if (newName == null) {
       return;
@@ -78,21 +79,22 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
 
   Future<void> handleAddMember() async {
     String? newUserEmail = await showDialog(
-        context: context,
-        builder: (ctx) => TextInputDialog(
-              title: 'Dodaj użytkownika do listy ${widget.shoppingList.name}',
-              confirmText: 'Dodaj',
-              hintText: 'Adres e-mail użytkownika',
-              validator: (email) {
-                if (email == null || email.length == 0) {
-                  return 'Pole nie może być puste';
-                }
-                if (widget.shoppingList.members.contains(email)) {
-                  return 'Ten użytkownik jest już dodany';
-                }
-                return null;
-              },
-            ));
+      context: context,
+      builder: (ctx) => TextInputDialog(
+        title: 'Dodaj użytkownika do listy ${widget.shoppingList.name}',
+        confirmText: 'Dodaj',
+        hintText: 'Adres e-mail użytkownika',
+        validator: (email) {
+          if (email == null || email.length == 0) {
+            return 'Pole nie może być puste';
+          }
+          if (widget.shoppingList.members.contains(email)) {
+            return 'Ten użytkownik jest już dodany';
+          }
+          return null;
+        },
+      ),
+    );
     // handle cancel
     if (newUserEmail == null) {
       return;
@@ -108,12 +110,13 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
 
   Future<void> handleLeaveShoppingList() async {
     bool? confirmLeave = await showDialog(
-        context: context,
-        builder: (ctx) => ConfirmationDialog(
-              title: 'Opuść listę zakupów',
-              text:
-                  'Czy na pewno chcesz opuścić listę zakupów ${widget.shoppingList.name}?',
-            ));
+      context: context,
+      builder: (ctx) => ConfirmationDialog(
+        title: 'Opuść listę zakupów',
+        text:
+            'Czy na pewno chcesz opuścić listę zakupów ${widget.shoppingList.name}?',
+      ),
+    );
     // handle cancel
     if (confirmLeave == null || confirmLeave == false) {
       return;

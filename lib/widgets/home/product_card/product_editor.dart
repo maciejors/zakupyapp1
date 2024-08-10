@@ -209,12 +209,12 @@ class _ProductEditorState extends State<ProductEditor> {
             children: <Widget>[
               TextButton(
                 onPressed: cancelEdit,
-                child: Text('Anuluj'),
+                child: const Text('Anuluj'),
                 style: TextButton.styleFrom(foregroundColor: Colors.black),
               ),
               TextButton(
                 onPressed: confirmEdit,
-                child: Text('Zapisz'),
+                child: const Text('Zapisz'),
                 style: TextButton.styleFrom(foregroundColor: Colors.black),
               ),
             ],

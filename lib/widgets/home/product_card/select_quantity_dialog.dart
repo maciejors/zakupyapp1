@@ -111,15 +111,14 @@ class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
     }
 
     final tweakButtonStyle = OutlinedButton.styleFrom(
-      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      minimumSize: Size.fromRadius(15),
-      padding: EdgeInsets.only(left: 8, right: 8),
-      textStyle: TextStyle(fontFamily: 'monospace')
-    );
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        minimumSize: const Size.fromRadius(15),
+        padding: const EdgeInsets.only(left: 8, right: 8),
+        textStyle: const TextStyle(fontFamily: 'monospace'));
 
     return AlertDialog(
       scrollable: true,
-      title: Text('Podaj ilość'),
+      title: const Text('Podaj ilość'),
       content: Form(
         key: _formKey,
         child: Column(
@@ -129,7 +128,7 @@ class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
             TextFormField(
               controller: _quantityInputController,
               focusNode: _quantityInputFocusNode,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Podaj ilość',
                 counterText: '',
               ),
@@ -140,7 +139,7 @@ class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
             ),
 
             // Quantity tweak
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Wrap(
               spacing: 10,
               runSpacing: 10,
@@ -177,10 +176,10 @@ class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
               ],
             ),
 
-            Divider(height: 50),
+            const Divider(height: 50),
 
             // Unit selection
-            Text(
+            const Text(
               'Jednostka:',
               style: TextStyle(fontSize: 18),
             ),
@@ -194,9 +193,7 @@ class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
               visible: _selectedUnit == '~',
               child: TextFormField(
                 autofocus: true,
-                decoration: InputDecoration(
-                  hintText: 'Podaj jednostkę',
-                ),
+                decoration: const InputDecoration(hintText: 'Podaj jednostkę'),
                 onChanged: (value) {
                   _customUnitInput = value;
                 },
@@ -208,10 +205,10 @@ class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
       ),
       actions: <Widget>[
         TextButton(
-            child: Text('Anuluj'),
+            child: const Text('Anuluj'),
             onPressed: () => Navigator.of(context).pop()),
         TextButton(
-          child: Text('OK'),
+          child: const Text('OK'),
           onPressed: onConfirm,
         ),
       ],

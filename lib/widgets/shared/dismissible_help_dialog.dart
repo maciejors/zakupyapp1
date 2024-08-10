@@ -8,12 +8,12 @@ class DismissibleHelpDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Pomoc'),
+      title: const Text('Pomoc'),
       scrollable: true,
       content: content,
       actions: <Widget>[
         TextButton(
-          child: Text('OK'),
+          child: const Text('OK'),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ],

@@ -51,17 +51,15 @@ class ProductCard extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Usuń produkt'),
+          title: const Text('Usuń produkt'),
           content: Text('Czy na pewno chcesz usunąć: ${product.name}?'),
           actions: <Widget>[
             TextButton(
-              child: Text('Anuluj'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              child: const Text('Anuluj'),
+              onPressed: () => Navigator.of(context).pop(),
             ),
             TextButton(
-              child: Text('Tak'),
+              child: const Text('Tak'),
               onPressed: () {
                 Navigator.of(context).pop();
                 deleteFunc(product);

@@ -72,7 +72,10 @@ class _ManageUsersDialogState extends State<ManageUsersDialog> {
             return GestureDetector(
               child: Padding(
                 padding: const EdgeInsets.only(top: 16.0),
-                child: Text(memberEmail, style: TextStyle(fontWeight: FontWeight.bold),),
+                child: Text(
+                  memberEmail,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
               onLongPress: () => handleDeleteMember(memberEmail),
             );

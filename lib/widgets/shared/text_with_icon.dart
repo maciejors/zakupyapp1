@@ -31,11 +31,12 @@ class SimpleTextWithIcon extends StatelessWidget {
     double commonSize = size ?? 14;
     List<InlineSpan> children = [
       WidgetSpan(
-          child: Icon(
-        iconData,
-        size: commonSize * 1.3,
-        color: color,
-      )),
+        child: Icon(
+          iconData,
+          size: commonSize * 1.3,
+          color: color,
+        ),
+      ),
       TextSpan(text: ' $text')
     ];
     if (!iconFirst) {

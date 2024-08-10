@@ -30,9 +30,7 @@ class ProductDetailEditorChip extends StatelessWidget {
                 avatar: icon,
                 label: Text(
                   activeLabel,
-                  style: TextStyle(
-                    fontSize: 15,
-                  ),
+                  style: TextStyle(fontSize: 15),
                 ),
                 backgroundColor: activeChipColor,
                 onPressed: onPress,
@@ -50,9 +48,7 @@ class ProductDetailEditorChip extends StatelessWidget {
             avatar: icon,
             label: Text(
               inactiveLabel,
-              style: TextStyle(
-                fontSize: 15,
-              ),
+              style: TextStyle(fontSize: 15),
             ),
             backgroundColor: inactiveChipColor,
             onPressed: onPress,

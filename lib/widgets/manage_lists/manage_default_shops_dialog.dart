@@ -51,7 +51,7 @@ class _ManageDefaultShopsDialogState extends State<ManageDefaultShopsDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Domyślne sklepy'),
+      title: const Text('Domyślne sklepy'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,14 +77,14 @@ class _ManageDefaultShopsDialogState extends State<ManageDefaultShopsDialog> {
                 Expanded(
                   child: TextFormField(
                     controller: _newShopInput,
-                    decoration: InputDecoration(hintText: 'Nowy sklep'),
+                    decoration: const InputDecoration(hintText: 'Nowy sklep'),
                     validator: newShopValidator,
                   ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.add_circle),
                   onPressed: onShopAdded,
-                  constraints: BoxConstraints(),
+                  constraints: const BoxConstraints(),
                 ),
               ],
             ),

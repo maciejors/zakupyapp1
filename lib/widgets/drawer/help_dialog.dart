@@ -14,20 +14,20 @@ class HelpDialog extends StatelessWidget {
             color: Colors.black,
           ),
           children: <InlineSpan>[
-            TextSpan(text: 'Aby '),
-            TextSpan(
+            const TextSpan(text: 'Aby '),
+            const TextSpan(
               text: 'usunąć produkt',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             TextSpan(text: ', kliknij w niego raz.$sep'),
-            TextSpan(text: 'Aby '),
-            TextSpan(
+            const TextSpan(text: 'Aby '),
+            const TextSpan(
               text: 'edytować dodany przez siebie produkt',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             TextSpan(text: ', kliknij w niego i przytrzymaj.$sep'),
-            TextSpan(text: 'Aby '),
-            TextSpan(
+            const TextSpan(text: 'Aby '),
+            const TextSpan(
               text: 'dodać lub usunąć deklarację zamiaru kupna danego produktu',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
@@ -35,25 +35,25 @@ class HelpDialog extends StatelessWidget {
               text: ', kliknij w niego podwójnie. Dzięki temu inni użytkownicy '
                   'będą wiedzieć, że planujesz kupić ten produkt.$sep',
             ),
-            TextSpan(text: 'Aby '),
-            TextSpan(
+            const TextSpan(text: 'Aby '),
+            const TextSpan(
               text: 'wyświetlić tylko produkty które chcesz kupić, ',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            TextSpan(text: 'kliknij '),
-            WidgetSpan(
+            const TextSpan(text: 'kliknij '),
+            const WidgetSpan(
                 child: Icon(
-                  Icons.shopping_cart_checkout,
-                  size: 17,
-                )),
+              Icons.shopping_cart_checkout,
+              size: 17,
+            )),
             TextSpan(text: ' na górze ekranu.$sep'),
-            TextSpan(text: 'Aby '),
-            TextSpan(
+            const TextSpan(text: 'Aby '),
+            const TextSpan(
               text: 'filtrować produkty po sklepie, ',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            TextSpan(text: 'kliknij '),
-            WidgetSpan(
+            const TextSpan(text: 'kliknij '),
+            const WidgetSpan(
                 child: Icon(
               Icons.filter_alt,
               size: 17,

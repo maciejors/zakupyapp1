@@ -40,7 +40,7 @@ class _ShoppingListBrowserState extends State<ShoppingListBrowser> {
             content: const Text('Kod błędu: 2'),
           );
         } else {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: const CircularProgressIndicator());
         }
       },
     );

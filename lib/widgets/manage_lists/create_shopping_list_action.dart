@@ -8,7 +8,8 @@ class CreateShoppingListAction extends StatefulWidget {
   const CreateShoppingListAction({super.key});
 
   @override
-  State<CreateShoppingListAction> createState() => _CreateShoppingListActionState();
+  State<CreateShoppingListAction> createState() =>
+      _CreateShoppingListActionState();
 }
 
 class _CreateShoppingListActionState extends State<CreateShoppingListAction> {
@@ -17,21 +18,22 @@ class _CreateShoppingListActionState extends State<CreateShoppingListAction> {
 
   Future<void> handleAddList() async {
     String? newName = await showDialog(
-        context: context,
-        builder: (ctx) => TextInputDialog(
-          title: 'Nowa lista zakupów',
-          confirmText: 'Stwórz',
-          hintText: 'Nazwa listy',
-          validator: (name) {
-            if (name!.length == 0) {
-              return 'Nazwa listy jest za krótka';
-            }
-            if (name.length > 40) {
-              return 'Nazwa listy jest za długa';
-            }
-            return null;
-          },
-        ));
+      context: context,
+      builder: (ctx) => TextInputDialog(
+        title: 'Nowa lista zakupów',
+        confirmText: 'Stwórz',
+        hintText: 'Nazwa listy',
+        validator: (name) {
+          if (name!.length == 0) {
+            return 'Nazwa listy jest za krótka';
+          }
+          if (name.length > 40) {
+            return 'Nazwa listy jest za długa';
+          }
+          return null;
+        },
+      ),
+    );
     // handle cancel
     if (newName == null) {
       return;

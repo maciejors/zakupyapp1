@@ -72,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> deleteProductFunc(Product product) async {
     await shoppingListManager.removeProduct(product);
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('Usunięto wybrany produkt'),
+      content: const Text('Usunięto wybrany produkt'),
     ));
   }
 
@@ -85,13 +85,13 @@ class _HomeScreenState extends State<HomeScreen> {
     // buyer added
     if (actionResult) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Dodano deklarację kupna'),
+        content: const Text('Dodano deklarację kupna'),
       ));
     }
     // buyer removed
     else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Usunięto deklarację kupna'),
+        content: const Text('Usunięto deklarację kupna'),
       ));
     }
   }
@@ -253,14 +253,14 @@ class _HomeScreenState extends State<HomeScreen> {
     // if there is no data on whether a user is signed in, or if a user is
     // in the process of signing in, display a circular progress indicator
     if (isUserSignedIn == null || isCurrentlySigningIn) {
-      return Center(child: CircularProgressIndicator());
+      return const Center(child: const CircularProgressIndicator());
     }
 
     // if a user is not signed in, let him sign in
     if (!isUserSignedIn!) {
       return Center(
         child: ElevatedButton(
-          child: Text('Zaloguj się'),
+          child: const Text('Zaloguj się'),
           onPressed: () async {
             setState(() => isCurrentlySigningIn = true);
             await auth.signInWithGoogle();
@@ -272,12 +272,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // if shoppingListId is not specified, display an info on it
     if (!shoppingListManager.isInitialised) {
-      return Center(
-        child: Padding(
+      return const Center(
+        child: const Padding(
           padding: const EdgeInsets.all(10.0),
-          child: Text(
+          child: const Text(
             'Nie wybrano żadnej listy zakupów. Możesz to zrobić klikając '
-                'przycisk "Zmień listę" w wysuwanym menu.',
+            'przycisk "Zmień listę" w wysuwanym menu.',
             textAlign: TextAlign.center,
           ),
         ),
@@ -287,7 +287,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // if shoppingListId is specified, but the data is loading, display
     // a circular progress indicator
     if (!isFirstLoadDone) {
-      return Center(child: CircularProgressIndicator());
+      return const Center(child: const CircularProgressIndicator());
     }
 
     // for content shown if itemsToDisplay.isEmpty
@@ -325,10 +325,10 @@ class _HomeScreenState extends State<HomeScreen> {
             SliverToBoxAdapter(
               child: Container(
                 height: viewHeight,
-                child: Center(
-                  child: Padding(
+                child: const Center(
+                  child: const Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: Text(
+                    child: const Text(
                       'Brak przedmiotów do wyświetlenia',
                       textAlign: TextAlign.center,
                     ),
@@ -344,9 +344,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: MainDrawer(),
+      drawer: const MainDrawer(),
       appBar: AppBar(
-        title: Text('Lista zakupów'),
+        title: const Text('Lista zakupów'),
         actions: !isFirstLoadDone
             ? []
             : <Widget>[
@@ -375,14 +375,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           .toList()
                         ..insert(
                             0,
-                            PopupMenuItem(
-                              child: Text('Wszystkie'),
+                            const PopupMenuItem(
+                              child: const Text('Wszystkie'),
                               value: '',
                             ))
                         ..insert(
                             1,
-                            PopupMenuItem(
-                              child: Text('Nieokreślone'),
+                            const PopupMenuItem(
+                              child: const Text('Nieokreślone'),
                               value: '~',
                             )),
                   onSelected: setShopFilter,
@@ -395,9 +395,7 @@ class _HomeScreenState extends State<HomeScreen> {
         visible: isFirstLoadDone && !isAddingProduct,
         child: FloatingActionButton(
           onPressed: addProductFunc,
-          child: Icon(
-            Icons.add_shopping_cart,
-          ),
+          child: Icon(Icons.add_shopping_cart),
         ),
       ),
     );

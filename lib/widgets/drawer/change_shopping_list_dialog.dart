@@ -49,7 +49,7 @@ class _ChangeShoppingListDialogState extends State<ChangeShoppingListDialog> {
             content: const Text('Kod błędu: 1'),
           );
         } else {
-          return Center(child: CircularProgressIndicator());
+          return Center(child: const CircularProgressIndicator());
         }
       },
     );

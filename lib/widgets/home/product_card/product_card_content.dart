@@ -53,7 +53,7 @@ class ProductCardContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         AnimatedSwitcher(
-          duration: Duration(milliseconds: 150),
+          duration: const Duration(milliseconds: 150),
           child: product.buyer != null
               ? Padding(
                   padding: const EdgeInsets.only(bottom: 4),
@@ -67,11 +67,11 @@ class ProductCardContent extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 )
-              : SizedBox.shrink(),
+              : const SizedBox.shrink(),
         ),
         Text(
           product.name,
-          style: TextStyle(fontSize: 19),
+          style: const TextStyle(fontSize: 19),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 8),
@@ -104,7 +104,7 @@ class ProductCardContent extends StatelessWidget {
           padding: const EdgeInsets.only(top: 8),
           child: Text.rich(
             TextSpan(
-              style: TextStyle(fontSize: 13, color: Colors.black),
+              style: const TextStyle(fontSize: 13, color: Colors.black),
               children: <TextSpan>[
                 TextSpan(
                   text: _authorLeadingText,
@@ -121,9 +121,7 @@ class ProductCardContent extends StatelessWidget {
         ),
         Text(
           dateTimeToPolishString(product.dateLastEdited ?? product.dateAdded),
-          style: TextStyle(
-            fontSize: 13,
-          ),
+          style: const TextStyle(fontSize: 13),
         ),
       ],
     );

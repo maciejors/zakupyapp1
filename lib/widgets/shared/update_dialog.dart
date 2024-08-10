@@ -27,9 +27,9 @@ class DownloadUpdateDialog extends StatelessWidget {
       await _copyDownloadLinkToClipboard();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          duration: Duration(seconds: 8),
-          content: Text('Nie udało się otworzyć strony aplikacji w Family '
-              'Store. Link do niej został skopiowany do schowka. '
+          duration: const Duration(seconds: 8),
+          content: const Text('Nie udało się otworzyć strony aplikacji w '
+              'Family Store. Link do niej został skopiowany do schowka. '
               'Aby ręcznie pobrać aktualizację, wklej go do przeglądarki'),
         ),
       );
@@ -41,7 +41,7 @@ class DownloadUpdateDialog extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         duration: Durations.extralong4,
-        content: Text('Link skopiowany do schowka'),
+        content: const Text('Link skopiowany do schowka'),
       ),
     );
     Navigator.of(context).pop();
@@ -50,7 +50,7 @@ class DownloadUpdateDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Dostępna aktualizacja'),
+      title: const Text('Dostępna aktualizacja'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,22 +61,16 @@ class DownloadUpdateDialog extends StatelessWidget {
       ),
       actions: <Widget>[
         TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: Text('Później'),
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Później'),
         ),
         TextButton(
-          onPressed: () {
-            copyDownloadLink(context);
-          },
-          child: Text('Skopiuj link'),
+          onPressed: () => copyDownloadLink(context),
+          child: const Text('Skopiuj link'),
         ),
         TextButton(
-          onPressed: () {
-            downloadInBrowser(context);
-          },
-          child: Text('Pobierz'),
+          onPressed: () => downloadInBrowser(context),
+          child: const Text('Pobierz'),
         ),
       ],
     );
