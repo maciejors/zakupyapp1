@@ -94,7 +94,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const MainDrawer(),
+      drawer: MainDrawer(isUserSignedIn: auth.isUserSignedIn),
       appBar: AppBar(
         title: const Text('Ustawienia'),
         actions: <Widget>[

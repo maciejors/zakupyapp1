@@ -10,7 +10,8 @@ class ManageListsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const MainDrawer(),
+      // this screen is accessible only to authenticated users
+      drawer: const MainDrawer(isUserSignedIn: true),
       appBar: AppBar(
         title: const Text('Zarządzanie listami'),
         actions: <Widget>[

@@ -344,7 +344,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const MainDrawer(),
+      drawer: MainDrawer(isUserSignedIn: auth.isUserSignedIn),
       appBar: AppBar(
         title: const Text('Lista zakupów'),
         actions: !isFirstLoadDone

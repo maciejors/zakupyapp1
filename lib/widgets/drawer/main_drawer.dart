@@ -7,7 +7,9 @@ import 'package:zakupyapp/widgets/drawer/help_dialog.dart';
 import 'package:zakupyapp/services/storage_manager.dart';
 
 class MainDrawer extends StatelessWidget {
-  const MainDrawer({Key? key}) : super(key: key);
+  final bool isUserSignedIn;
+
+  const MainDrawer({Key? key, this.isUserSignedIn = false}) : super(key: key);
 
   void switchScreen(BuildContext context, String routeName) {
     if (ModalRoute.of(context)!.settings.name == routeName) {
@@ -19,7 +21,9 @@ class MainDrawer extends StatelessWidget {
 
   Future<void> changeShoppingList(BuildContext context) async {
     String? newShoppingListId = await showDialog<String>(
-        context: context, builder: (ctx) => const ChangeShoppingListDialog());
+      context: context,
+      builder: (ctx) => const ChangeShoppingListDialog(),
+    );
     if (newShoppingListId == null) {
       return;
     }
@@ -29,7 +33,10 @@ class MainDrawer extends StatelessWidget {
   }
 
   Future<void> showHelpDialog(BuildContext context) async {
-    await showDialog(context: context, builder: (ctx) => const HelpDialog());
+    await showDialog(
+      context: context,
+      builder: (ctx) => const HelpDialog(),
+    );
   }
 
   Future<void> viewInFamilyStore() async {
@@ -54,16 +61,22 @@ class MainDrawer extends StatelessWidget {
             title: const Text('Lista zakupów'),
             onTap: () => switchScreen(context, '/'),
           ),
-          ListTile(
-            leading: const Icon(Icons.change_circle),
-            title: const Text('Zmień listę'),
-            onTap: () async => await changeShoppingList(context),
+          Visibility(
+            visible: isUserSignedIn,
+            child: ListTile(
+              leading: const Icon(Icons.change_circle),
+              title: const Text('Zmień listę'),
+              onTap: () async => await changeShoppingList(context),
+            ),
           ),
-          ListTile(
-            // shopping list
-            leading: const Icon(Icons.edit),
-            title: const Text('Zarządzaj listami'),
-            onTap: () => switchScreen(context, '/manage-lists'),
+          Visibility(
+            visible: isUserSignedIn,
+            child: ListTile(
+              // shopping list
+              leading: const Icon(Icons.edit),
+              title: const Text('Zarządzaj listami'),
+              onTap: () => switchScreen(context, '/manage-lists'),
+            ),
           ),
           ListTile(
             // settings
