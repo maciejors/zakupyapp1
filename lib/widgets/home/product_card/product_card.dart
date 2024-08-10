@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:zakupyapp/core/models/product.dart';
 import 'package:zakupyapp/widgets/home/product_card/product_card_content.dart';
 import 'package:zakupyapp/widgets/home/product_card/product_editor.dart';
+import 'package:zakupyapp/widgets/shared/confirmation_dialog.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -46,29 +47,19 @@ class ProductCard extends StatelessWidget {
     return Colors.orange[50];
   }
 
-  Future<void> showDeleteDialog(BuildContext context) async {
-    await showDialog(
+  Future<void> handleDelete(BuildContext context) async {
+    bool? confirmation = await showDialog(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Usuń produkt'),
-          content: Text('Czy na pewno chcesz usunąć: ${product.name}?'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Anuluj'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            TextButton(
-              child: const Text('Tak'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                deleteFunc(product);
-              },
-            ),
-          ],
-        );
-      },
+      builder: (context) => ConfirmationDialog(
+        title: const Text('Usuń produkt'),
+        content: Text('Czy na pewno chcesz usunąć: ${product.name}?'),
+      ),
     );
+    // handle cancel
+    if (confirmation == null || !confirmation) {
+      return;
+    }
+    deleteFunc(product);
   }
 
   @override
@@ -78,7 +69,7 @@ class ProductCard extends StatelessWidget {
       child: Card(
         color: cardColor,
         child: InkWell(
-          onTap: isEditing ? null : () => showDeleteDialog(context),
+          onTap: isEditing ? null : () => handleDelete(context),
           onDoubleTap: isEditing ? null : addBuyerFunc,
           onLongPress: isEditing ? null : editFunc,
           child: AnimatedSize(
