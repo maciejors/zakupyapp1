@@ -113,8 +113,8 @@ class DatabaseManager {
   }
 
   ShoppingList _getShoppingListFromDoc(
-    QueryDocumentSnapshot publicDoc,
-    QueryDocumentSnapshot privateDoc,
+    DocumentSnapshot publicDoc,
+    DocumentSnapshot privateDoc,
   ) {
     final publicDocData = publicDoc.data() as Map;
     final privateDocData = privateDoc.data() as Map;
@@ -178,7 +178,7 @@ class DatabaseManager {
   }
 
   /// Sets up a live listener on the specified shopping list
-  StreamSubscription<QuerySnapshot<Object?>> setupListener(
+  StreamSubscription subscribeToProducts(
     String shoppingListId,
     void Function(List<Product> shoppingList) onUpdate,
   ) {
@@ -198,20 +198,18 @@ class DatabaseManager {
     return dataStream;
   }
 
-  Future<List<ShoppingList>> getShoppingListsForUser(String userEmail) async {
-    // 1. fetch public shopping lists to find the ones that the user belongs to
-    final shoppingListsPublicData = await _shoppingListPublic
-        .where('members', arrayContains: userEmail)
-        .orderBy(FieldPath.documentId)
-        .get();
-    final publicDocsSnapshots = shoppingListsPublicData.docs;
-    // 2. get a list of shopping list ids
-    List<String> shoppingListsIds = publicDocsSnapshots
+  /// Fetch private docs for the shopping lists and
+  /// merge with the public docs
+  Future<List<ShoppingList>> _getShoppingListsFullData(
+    List<DocumentSnapshot> publicDocs,
+  ) async {
+    List<String> shoppingListsIds = publicDocs
         .map((shoppingListPublicDoc) => shoppingListPublicDoc.id)
         .toList();
-    // 3. paginate the above list to fetch private data of shopping lists
+    // paginate the list of IDs to fetch private data of shopping lists
+    // this is to overcome firestore's limit of 30 in the filtered array
     int totalShoppingLists = shoppingListsIds.length;
-    List<QueryDocumentSnapshot> privateDocsSnapshots = [];
+    List<DocumentSnapshot> privateDocs = [];
     final pageSize = 30;
     for (var startIdx = 0;
         startIdx < totalShoppingLists;
@@ -223,17 +221,59 @@ class DatabaseManager {
           .where(FieldPath.documentId, whereIn: shoppingListsIdsToFetch)
           .orderBy(FieldPath.documentId)
           .get();
-      privateDocsSnapshots.addAll(newSnapshots.docs);
+      privateDocs.addAll(newSnapshots.docs);
     }
-    // 4. merge private and public docs data
+    // Merge data from public and private documents to create
+    // ShoppingList objects
     List<ShoppingList> shoppingLists = [];
     for (var i = 0; i < totalShoppingLists; i++) {
-      final publicDoc = publicDocsSnapshots[i];
-      final privateDoc = privateDocsSnapshots[i];
+      final publicDoc = publicDocs[i];
+      final privateDoc = privateDocs[i];
       print('getShoppingListsForUser: ${publicDoc.id} = ${privateDoc.id}');
       shoppingLists.add(_getShoppingListFromDoc(publicDoc, privateDoc));
     }
     return shoppingLists;
+  }
+
+  Future<List<ShoppingList>> getShoppingListsForUser(String userEmail) async {
+    // 1. fetch public shopping lists to find the ones that the user belongs to
+    final shoppingListsPublicData = await _shoppingListPublic
+        .where('members', arrayContains: userEmail)
+        .orderBy(FieldPath.documentId)
+        .get();
+    final publicDocsSnapshots = shoppingListsPublicData.docs;
+    // 2. fetch remaining data to get full shopping lists data
+    List<ShoppingList> shoppingLists =
+        await _getShoppingListsFullData(publicDocsSnapshots);
+    return shoppingLists;
+  }
+
+  /// Listen to changes in user's shopping lists
+  StreamSubscription subscribeToShoppingLists(
+    String userEmail,
+    void Function(List<ShoppingList> shoppingLists) onUpdate,
+  ) {
+    final dataStream = _shoppingListPublic
+        .where('members', arrayContains: userEmail)
+        .orderBy(FieldPath.documentId)
+        .snapshots()
+        .listen((event) async {
+      var publicDocs = event.docs;
+      // fetch full data
+      List<ShoppingList> shoppingLists =
+          await _getShoppingListsFullData(publicDocs);
+      onUpdate(shoppingLists);
+    });
+    return dataStream;
+  }
+
+  /// Updates the "lastUpdated" field in the public document of the
+  /// specified shopping list. This should be called after any update to
+  /// the private document of a shopping list that should trigger a listener
+  Future<void> touchShoppingListPublicDoc(String shoppingListId) async {
+    await _shoppingListPublic.doc(shoppingListId).update({
+      'lastUpdated': Timestamp.now(),
+    });
   }
 
   /// Adds a new member to the shopping list
@@ -247,6 +287,7 @@ class DatabaseManager {
     await _shoppingListPublic.doc(shoppingListId).update({
       'members': FieldValue.arrayUnion([userEmail]),
     });
+    await touchShoppingListPublicDoc(shoppingListId);
   }
 
   /// Removes a member from the shopping list
@@ -255,6 +296,7 @@ class DatabaseManager {
     await _shoppingListPublic.doc(shoppingListId).update({
       'members': FieldValue.arrayRemove([userEmail]),
     });
+    await touchShoppingListPublicDoc(shoppingListId);
   }
 
   Future<String> createShoppingList(String name, String creatorEmail) async {
@@ -270,6 +312,7 @@ class DatabaseManager {
 
   Future<void> renameShoppingList(String shoppingListId, String newName) async {
     await _shoppingListPrivate.doc(shoppingListId).update({'name': newName});
+    await touchShoppingListPublicDoc(shoppingListId);
   }
 
   Future<void> updateShoppingListDefaultShops(
@@ -278,5 +321,6 @@ class DatabaseManager {
     await shoppingListPrivateDoc.update({
       'defaultShops': newDefaultShops,
     });
+    await touchShoppingListPublicDoc(shoppingListId);
   }
 }

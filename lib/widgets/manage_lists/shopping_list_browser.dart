@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'package:zakupyapp/core/models/shopping_list.dart';
@@ -17,33 +19,41 @@ class _ShoppingListBrowserState extends State<ShoppingListBrowser> {
   final _db = DatabaseManager.instance;
   final _auth = AuthManager.instance;
 
+  List<ShoppingList>? shoppingLists;
+  StreamSubscription? shoppingListsDataSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    String userEmail = _auth.getUserEmail()!;
+    shoppingListsDataSubscription = _db.subscribeToShoppingLists(
+      userEmail,
+      (shoppingLists) => setState(() => this.shoppingLists = shoppingLists),
+    );
+  }
+
+  @override
+  void dispose() {
+    shoppingListsDataSubscription?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    String userEmail = _auth.getUserEmail()!;
-
-    return FutureBuilder(
-      future: _db.getShoppingListsForUser(userEmail),
-      builder: (BuildContext context,
-          AsyncSnapshot<List<ShoppingList>> shoppingListsSnapshot) {
-        if (shoppingListsSnapshot.hasData) {
-          return ListView(
-            children: shoppingListsSnapshot.data!
-                .map(
-                  (shoppingList) => ShoppingListTile(
-                    shoppingList: shoppingList,
-                  ),
-                )
-                .toList(),
-          );
-        } else if (shoppingListsSnapshot.hasError) {
-          return const AlertDialog(
-            title: const Text('Wystąpił błąd'),
-            content: const Text('Kod błędu: 2'),
-          );
-        } else {
-          return const Loading();
-        }
-      },
-    );
+    return shoppingLists == null
+        ? const Loading()
+        : shoppingLists!.length == 0
+            ? const Center(
+                child:
+                    const Text('Nie jesteś członkiem żadnej listy zakupowej.'),
+              )
+            : ListView(
+                children: shoppingLists!
+                    .map(
+                      (shoppingList) => ShoppingListTile(
+                        shoppingList: shoppingList,
+                      ),
+                    )
+                    .toList());
   }
 }

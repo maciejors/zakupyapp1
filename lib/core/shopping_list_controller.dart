@@ -151,7 +151,7 @@ class ShoppingListController {
       if (onDefaultShopsReveived != null) onDefaultShopsReveived!();
     });
     // setup product listener
-    _dataStream = _db.setupListener(id, (newProducts) {
+    _dataStream = _db.subscribeToProducts(id, (newProducts) {
       newProducts.sort((p1, p2) => p2.dateAdded.compareTo(p1.dateAdded));
 
       isDataReady = true;
