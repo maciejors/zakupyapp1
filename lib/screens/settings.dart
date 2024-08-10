@@ -5,6 +5,7 @@ import 'package:zakupyapp/core/updater.dart';
 import 'package:zakupyapp/services/storage_manager.dart';
 import 'package:zakupyapp/services/auth_manager.dart';
 import 'package:zakupyapp/utils/app_info.dart';
+import 'package:zakupyapp/utils/snackbars.dart';
 import 'package:zakupyapp/widgets/drawer/main_drawer.dart';
 import 'package:zakupyapp/widgets/settings/setting_info_wrapper.dart';
 import 'package:zakupyapp/widgets/settings/settings_group_title.dart';
@@ -52,8 +53,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
     await auth.setUserDisplayName(newUserName);
     setState(() => newUserName);
-    ScaffoldMessenger.of(ctx).showSnackBar(
-      SnackBar(content: const Text('Zapisano nazwę użytkownika')),
+    showSnackBar(
+      context: context,
+      content: const Text('Zapisano nazwę użytkownika'),
     );
   }
 

@@ -8,6 +8,7 @@ import 'package:zakupyapp/core/shopping_list_controller.dart';
 import 'package:zakupyapp/core/updater.dart';
 import 'package:zakupyapp/services/storage_manager.dart';
 import 'package:zakupyapp/services/auth_manager.dart';
+import 'package:zakupyapp/utils/snackbars.dart';
 import 'package:zakupyapp/widgets/drawer/main_drawer.dart';
 import 'package:zakupyapp/widgets/home/product_card/product_card.dart';
 import 'package:zakupyapp/widgets/shared/loading.dart';
@@ -72,9 +73,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> deleteProductFunc(Product product) async {
     await shoppingListManager.removeProduct(product);
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    showSnackBar(
+      context: context,
       content: const Text('Usunięto wybrany produkt'),
-    ));
+    );
   }
 
   Future<void> addBuyerFunc(Product product) async {
@@ -85,15 +87,17 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     // buyer added
     if (actionResult) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      showSnackBar(
+        context: context,
         content: const Text('Dodano deklarację kupna'),
-      ));
+      );
     }
     // buyer removed
     else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      showSnackBar(
+        context: context,
         content: const Text('Usunięto deklarację kupna'),
-      ));
+      );
     }
   }
 

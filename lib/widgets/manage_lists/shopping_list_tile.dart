@@ -4,6 +4,7 @@ import 'package:zakupyapp/core/models/shopping_list.dart';
 import 'package:zakupyapp/services/auth_manager.dart';
 import 'package:zakupyapp/services/database_manager.dart';
 import 'package:zakupyapp/services/storage_manager.dart';
+import 'package:zakupyapp/utils/snackbars.dart';
 import 'package:zakupyapp/widgets/manage_lists/manage_default_shops_dialog.dart';
 import 'package:zakupyapp/widgets/manage_lists/manage_users_dialog.dart';
 import 'package:zakupyapp/widgets/shared/confirmation_dialog.dart';
@@ -46,8 +47,9 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
       return;
     }
     await _db.renameShoppingList(widget.shoppingList.id, newName);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: const Text('Zapisano nową nazwę')),
+    showSnackBar(
+      context: context,
+      content: const Text('Zapisano nową nazwę'),
     );
   }
 
@@ -65,8 +67,9 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
       widget.shoppingList.id,
       newDefaultShops,
     );
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: const Text('Zaaktualizowano listę domyślnych sklepów')),
+    showSnackBar(
+      context: context,
+      content: const Text('Zaaktualizowano listę domyślnych sklepów'),
     );
   }
 
@@ -100,11 +103,11 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
       return;
     }
     await _db.addUserToShoppingList(widget.shoppingList.id, newUserEmail);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-          content: Text(
+    showSnackBar(
+      context: context,
+      content: Text(
         'Dodano użytkownika $newUserEmail do listy ${widget.shoppingList.name}',
-      )),
+      ),
     );
   }
 
@@ -130,11 +133,9 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
     if (SM.getShoppingListId() == widget.shoppingList.id) {
       SM.setShoppingListId('');
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-          content: Text(
-        'Opuszczono listę ${widget.shoppingList.name}',
-      )),
+    showSnackBar(
+      context: context,
+      content: Text('Opuszczono listę ${widget.shoppingList.name}'),
     );
   }
 

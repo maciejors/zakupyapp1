@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:zakupyapp/constants.dart';
 import 'package:zakupyapp/utils/app_info.dart';
+import 'package:zakupyapp/utils/snackbars.dart';
 
 class DownloadUpdateDialog extends StatelessWidget {
   final String newVersionId;
@@ -25,24 +26,22 @@ class DownloadUpdateDialog extends StatelessWidget {
     );
     if (!success) {
       await _copyDownloadLinkToClipboard();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          duration: const Duration(seconds: 8),
-          content: const Text('Nie udało się otworzyć strony aplikacji w '
-              'Family Store. Link do niej został skopiowany do schowka. '
-              'Aby ręcznie pobrać aktualizację, wklej go do przeglądarki'),
-        ),
+      showSnackBar(
+        context: context,
+        duration: const Duration(seconds: 8),
+        content: const Text('Nie udało się otworzyć strony aplikacji w '
+            'Family Store. Link do niej został skopiowany do schowka. '
+            'Aby ręcznie pobrać aktualizację, wklej go do przeglądarki'),
       );
     }
   }
 
   Future<void> copyDownloadLink(BuildContext context) async {
     await _copyDownloadLinkToClipboard();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        duration: Durations.extralong4,
-        content: const Text('Link skopiowany do schowka'),
-      ),
+    showSnackBar(
+      context: context,
+      duration: Duration(seconds: 1),
+      content: const Text('Link skopiowany do schowka'),
     );
     Navigator.of(context).pop();
   }

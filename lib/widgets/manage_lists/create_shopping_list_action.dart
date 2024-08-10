@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:zakupyapp/services/database_manager.dart';
 import 'package:zakupyapp/services/auth_manager.dart';
+import 'package:zakupyapp/utils/snackbars.dart';
 import 'package:zakupyapp/widgets/shared/text_input_dialog.dart';
 
 class CreateShoppingListAction extends StatefulWidget {
@@ -39,8 +40,9 @@ class _CreateShoppingListActionState extends State<CreateShoppingListAction> {
       return;
     }
     await _db.createShoppingList(newName, _auth.getUserEmail()!);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: const Text('Utworzono nową listę')),
+    showSnackBar(
+      context: context,
+      content: const Text('Utworzono nową listę'),
     );
   }
 

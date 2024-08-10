@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:zakupyapp/core/models/shopping_list.dart';
 import 'package:zakupyapp/services/database_manager.dart';
+import 'package:zakupyapp/utils/snackbars.dart';
 import 'package:zakupyapp/widgets/shared/confirmation_dialog.dart';
 
 class ManageUsersDialog extends StatefulWidget {
@@ -43,12 +44,13 @@ class _ManageUsersDialogState extends State<ManageUsersDialog> {
       widget.shoppingList.id,
       memberEmail,
     );
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    showSnackBar(
+      context: context,
       content: Text(
         'Usunięto użytkownika $memberEmail '
         'z listy ${widget.shoppingList.name}',
       ),
-    ));
+    );
   }
 
   @override
