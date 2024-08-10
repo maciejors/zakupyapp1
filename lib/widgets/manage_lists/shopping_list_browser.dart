@@ -4,6 +4,7 @@ import 'package:zakupyapp/core/models/shopping_list.dart';
 import 'package:zakupyapp/services/database_manager.dart';
 import 'package:zakupyapp/services/auth_manager.dart';
 import 'package:zakupyapp/widgets/manage_lists/shopping_list_tile.dart';
+import 'package:zakupyapp/widgets/shared/loading.dart';
 
 class ShoppingListBrowser extends StatefulWidget {
   const ShoppingListBrowser({super.key});
@@ -40,7 +41,7 @@ class _ShoppingListBrowserState extends State<ShoppingListBrowser> {
             content: const Text('Kod błędu: 2'),
           );
         } else {
-          return const Center(child: const CircularProgressIndicator());
+          return const Loading();
         }
       },
     );

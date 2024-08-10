@@ -10,6 +10,7 @@ import 'package:zakupyapp/services/storage_manager.dart';
 import 'package:zakupyapp/services/auth_manager.dart';
 import 'package:zakupyapp/widgets/drawer/main_drawer.dart';
 import 'package:zakupyapp/widgets/home/product_card/product_card.dart';
+import 'package:zakupyapp/widgets/shared/loading.dart';
 import 'package:zakupyapp/widgets/shared/update_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -253,7 +254,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // if there is no data on whether a user is signed in, or if a user is
     // in the process of signing in, display a circular progress indicator
     if (isUserSignedIn == null || isCurrentlySigningIn) {
-      return const Center(child: const CircularProgressIndicator());
+      return const Loading();
     }
 
     // if a user is not signed in, let him sign in
@@ -287,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // if shoppingListId is specified, but the data is loading, display
     // a circular progress indicator
     if (!isFirstLoadDone) {
-      return const Center(child: const CircularProgressIndicator());
+      return const Loading();
     }
 
     // for content shown if itemsToDisplay.isEmpty

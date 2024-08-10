@@ -4,6 +4,7 @@ import 'package:zakupyapp/services/auth_manager.dart';
 import 'package:zakupyapp/services/database_manager.dart';
 import 'package:zakupyapp/services/storage_manager.dart';
 import 'package:zakupyapp/core/models/shopping_list.dart';
+import 'package:zakupyapp/widgets/shared/loading.dart';
 
 class ChangeShoppingListDialog extends StatefulWidget {
   const ChangeShoppingListDialog({super.key});
@@ -49,7 +50,7 @@ class _ChangeShoppingListDialogState extends State<ChangeShoppingListDialog> {
             content: const Text('Kod błędu: 1'),
           );
         } else {
-          return Center(child: const CircularProgressIndicator());
+          return const Loading();
         }
       },
     );
