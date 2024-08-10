@@ -25,9 +25,9 @@ class _ManageUsersDialogState extends State<ManageUsersDialog> {
     bool? confirmation = await showDialog(
       context: context,
       builder: (ctx) => ConfirmationDialog(
-        title: 'Uwaga',
-        text: 'Czy na pewno chcesz usunąć użytkownika '
-            '$memberEmail z listy ${widget.shoppingList.name}?',
+        title: const Text('Uwaga'),
+        content: Text('Czy na pewno chcesz usunąć użytkownika '
+            '$memberEmail z listy ${widget.shoppingList.name}?'),
       ),
     );
     // handle cancel

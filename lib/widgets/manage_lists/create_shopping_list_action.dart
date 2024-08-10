@@ -20,8 +20,8 @@ class _CreateShoppingListActionState extends State<CreateShoppingListAction> {
     String? newName = await showDialog(
       context: context,
       builder: (ctx) => TextInputDialog(
-        title: 'Nowa lista zakupów',
-        confirmText: 'Stwórz',
+        title: const Text('Nowa lista zakupów'),
+        confirmButtonChild: const Text('Stwórz'),
         hintText: 'Nazwa listy',
         validator: (name) {
           if (name!.length == 0) {

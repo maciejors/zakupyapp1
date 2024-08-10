@@ -108,7 +108,7 @@ class ProductCardContent extends StatelessWidget {
               children: <TextSpan>[
                 TextSpan(
                   text: _authorLeadingText,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
                 ),

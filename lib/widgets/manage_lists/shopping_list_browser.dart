@@ -35,7 +35,7 @@ class _ShoppingListBrowserState extends State<ShoppingListBrowser> {
                 .toList(),
           );
         } else if (shoppingListsSnapshot.hasError) {
-          return AlertDialog(
+          return const AlertDialog(
             title: const Text('Wystąpił błąd'),
             content: const Text('Kod błędu: 2'),
           );

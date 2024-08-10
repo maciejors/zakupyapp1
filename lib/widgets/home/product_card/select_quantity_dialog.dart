@@ -133,9 +133,7 @@ class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
                 counterText: '',
               ),
               keyboardType: TextInputType.number,
-              onChanged: (value) {
-                _quantityInput = double.parse(value);
-              },
+              onChanged: (value) => _quantityInput = double.parse(value),
             ),
 
             // Quantity tweak
@@ -163,14 +161,14 @@ class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
                   onPressed: () => setState(() {
                     _quantityTweakSign = _quantityTweakSign * -1;
                   }),
-                  child: Text('+/-'),
+                  child: const Text('+/-'),
                   style: tweakButtonStyle,
                 ),
                 OutlinedButton(
                   onPressed: () => setState(() {
                     _quantityInput = 0;
                   }),
-                  child: Text('0'),
+                  child: const Text('0'),
                   style: tweakButtonStyle,
                 ),
               ],
@@ -181,7 +179,7 @@ class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
             // Unit selection
             const Text(
               'Jednostka:',
-              style: TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: 18),
             ),
             Wrap(
               spacing: 5.0,
@@ -194,9 +192,7 @@ class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
               child: TextFormField(
                 autofocus: true,
                 decoration: const InputDecoration(hintText: 'Podaj jednostkę'),
-                onChanged: (value) {
-                  _customUnitInput = value;
-                },
+                onChanged: (value) => _customUnitInput = value,
                 validator: quantityUnitValidator,
               ),
             ),

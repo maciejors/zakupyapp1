@@ -159,10 +159,10 @@ class _ProductEditorState extends State<ProductEditor> {
             onChanged: (value) => _productName = value,
             decoration: InputDecoration(
               isDense: true,
-              contentPadding: EdgeInsets.only(bottom: 8),
+              contentPadding: const EdgeInsets.only(bottom: 8),
               hintText: 'Nazwa produktu...',
             ),
-            style: TextStyle(fontSize: 18),
+            style: const TextStyle(fontSize: 18),
             validator: productNameValidator,
             autofocus: widget.product.name == '',
             focusNode: _productNameFocusNode,
@@ -178,7 +178,7 @@ class _ProductEditorState extends State<ProductEditor> {
                 (Product.formQuantityLabel(
                         _selectedQuantity, _selectedQuantityUnit) ??
                     ''),
-            icon: Icon(Icons.numbers),
+            icon: const Icon(Icons.numbers),
           ),
 
           // Shop picker
@@ -188,7 +188,7 @@ class _ProductEditorState extends State<ProductEditor> {
             onDisable: _clearShop,
             inactiveLabel: 'Dodaj sklep',
             activeLabel: 'Sklep: $_selectedShop',
-            icon: Icon(Icons.shopping_cart),
+            icon: const Icon(Icons.shopping_cart),
           ),
 
           // Deadline picker
@@ -199,7 +199,7 @@ class _ProductEditorState extends State<ProductEditor> {
             inactiveLabel: 'Dodaj deadline',
             activeLabel:
                 'Potrzebne na: ${_selectedDeadline?.getPolishDescription()}',
-            icon: Icon(Icons.access_time),
+            icon: const Icon(Icons.access_time),
           ),
 
           // Save/cancel buttons

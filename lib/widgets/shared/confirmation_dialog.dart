@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 class ConfirmationDialog extends StatefulWidget {
-  final String title;
-  final String text;
+  final Widget title;
+  final Widget content;
 
   const ConfirmationDialog({
     super.key,
     required this.title,
-    required this.text,
+    required this.content,
   });
 
   @override
@@ -18,8 +18,8 @@ class _ConfirmationDialogState extends State<ConfirmationDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.title),
-      content: Text(widget.text),
+      title: widget.title,
+      content: widget.content,
       actions: [
         TextButton(
           child: const Text('Anuluj'),

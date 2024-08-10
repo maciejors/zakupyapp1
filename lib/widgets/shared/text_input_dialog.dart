@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
 class TextInputDialog extends StatefulWidget {
-  final String title;
+  final Widget title;
+  final Widget confirmButtonChild;
   final String? initialValue;
-  final String confirmText;
   final String? Function(String?)? validator;
   final String? hintText;
 
   const TextInputDialog({
     super.key,
     required this.title,
+    required this.confirmButtonChild,
     this.initialValue,
-    required this.confirmText,
     this.validator,
     this.hintText,
   });
@@ -28,7 +28,7 @@ class _TextInputDialogState extends State<TextInputDialog> {
   Widget build(BuildContext context) {
     _input.text = widget.initialValue ?? '';
     return AlertDialog(
-      title: Text(widget.title),
+      title: widget.title,
       content: Form(
         key: _formKey,
         child: TextFormField(
@@ -43,7 +43,7 @@ class _TextInputDialogState extends State<TextInputDialog> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         TextButton(
-          child: Text(widget.confirmText),
+          child: widget.confirmButtonChild,
           onPressed: () {
             if (_formKey.currentState!.validate()) {
               Navigator.of(context).pop(_input.text);

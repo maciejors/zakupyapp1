@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class SettingsGroupTitle extends StatelessWidget {
-  final String titleText;
+  final Widget title;
 
-  const SettingsGroupTitle({super.key, required this.titleText});
+  const SettingsGroupTitle({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(titleText),
+      title: title,
       titleTextStyle: TextStyle(
         color: Theme.of(context).primaryColor,
         fontWeight: FontWeight.bold,
@@ -16,7 +16,7 @@ class SettingsGroupTitle extends StatelessWidget {
       ),
       leading: const SizedBox(width: 0, height: 0),
       dense: true,
-      contentPadding: EdgeInsets.fromLTRB(16, 4, 16, 0),
+      contentPadding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
       onTap: null,
     );
   }

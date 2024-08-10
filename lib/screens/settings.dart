@@ -31,8 +31,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     String? newUserName = await showDialog(
       context: ctx,
       builder: (ctx) => TextInputDialog(
-        title: 'Nazwa użytkownika',
-        confirmText: 'Zapisz',
+        title: const Text('Nazwa użytkownika'),
+        confirmButtonChild: const Text('Zapisz'),
         initialValue: currentUserName,
         hintText: 'Wpisz nazwę...',
         validator: (String? userName) {
@@ -108,7 +108,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.only(top: 8),
         children: <Widget>[
-          const SettingsGroupTitle(titleText: 'Konto'),
+          const SettingsGroupTitle(title: const Text('Konto')),
           SettingInfoWrapper(
             child: ListTile(
               title: const Text('Nazwa użytkownika'),
@@ -140,7 +140,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 const Text('Kliknięcie tej opcji spowoduje wylogowanie z '
                     'konta i przekierowanie na stronę główną aplikacji.'),
           ),
-          const SettingsGroupTitle(titleText: 'Lista zakupów'),
+          const SettingsGroupTitle(title: const Text('Lista zakupów')),
           SettingInfoWrapper(
             child: SwitchListTile(
               title: const Text(
@@ -183,7 +183,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 'W przeciwnym wypadku, ilość nie będzie w ogóle domyślnie '
                 'ustawiona.'),
           ),
-          const SettingsGroupTitle(titleText: 'O aplikacji'),
+          const SettingsGroupTitle(title: const Text('O aplikacji')),
           ListTile(
             title: const Text('Wersja'),
             subtitle: Text(AppInfo.getVersion()),

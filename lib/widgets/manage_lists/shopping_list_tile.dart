@@ -26,8 +26,8 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
     String? newName = await showDialog(
       context: context,
       builder: (ctx) => TextInputDialog(
-        title: 'Zmień nazwę',
-        confirmText: 'Zapisz',
+        title: const Text('Zmień nazwę'),
+        confirmButtonChild: const Text('Zapisz'),
         initialValue: widget.shoppingList.name,
         hintText: 'Nowa nazwa',
         validator: (name) {
@@ -81,8 +81,8 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
     String? newUserEmail = await showDialog(
       context: context,
       builder: (ctx) => TextInputDialog(
-        title: 'Dodaj użytkownika do listy ${widget.shoppingList.name}',
-        confirmText: 'Dodaj',
+        title: Text('Dodaj użytkownika do listy ${widget.shoppingList.name}'),
+        confirmButtonChild: Text('Dodaj'),
         hintText: 'Adres e-mail użytkownika',
         validator: (email) {
           if (email == null || email.length == 0) {
@@ -112,9 +112,11 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
     bool? confirmLeave = await showDialog(
       context: context,
       builder: (ctx) => ConfirmationDialog(
-        title: 'Opuść listę zakupów',
-        text:
-            'Czy na pewno chcesz opuścić listę zakupów ${widget.shoppingList.name}?',
+        title: const Text('Opuść listę zakupów'),
+        content: Text(
+          'Czy na pewno chcesz opuścić listę zakupów '
+          '${widget.shoppingList.name}?',
+        ),
       ),
     );
     // handle cancel
