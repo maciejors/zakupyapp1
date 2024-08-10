@@ -6,6 +6,7 @@ import 'package:zakupyapp/core/models/shopping_list.dart';
 import 'package:zakupyapp/services/database_manager.dart';
 import 'package:zakupyapp/services/auth_manager.dart';
 import 'package:zakupyapp/widgets/manage_lists/shopping_list_tile.dart';
+import 'package:zakupyapp/widgets/shared/full_screen_info.dart';
 import 'package:zakupyapp/widgets/shared/loading.dart';
 
 class ShoppingListBrowser extends StatefulWidget {
@@ -43,9 +44,11 @@ class _ShoppingListBrowserState extends State<ShoppingListBrowser> {
     return shoppingLists == null
         ? const Loading()
         : shoppingLists!.length == 0
-            ? const Center(
-                child:
-                    const Text('Nie jesteś członkiem żadnej listy zakupowej.'),
+            ? const FullScreenInfo(
+                child: const Text(
+                  'Nie jesteś członkiem żadnej listy zakupowej.',
+                  textAlign: TextAlign.center,
+                ),
               )
             : ListView(
                 children: shoppingLists!

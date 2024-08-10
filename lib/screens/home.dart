@@ -11,6 +11,7 @@ import 'package:zakupyapp/services/auth_manager.dart';
 import 'package:zakupyapp/utils/snackbars.dart';
 import 'package:zakupyapp/widgets/drawer/main_drawer.dart';
 import 'package:zakupyapp/widgets/home/product_card/product_card.dart';
+import 'package:zakupyapp/widgets/shared/full_screen_info.dart';
 import 'package:zakupyapp/widgets/shared/loading.dart';
 import 'package:zakupyapp/widgets/shared/update_dialog.dart';
 
@@ -277,14 +278,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // if shoppingListId is not specified, display an info on it
     if (!shoppingListManager.isInitialised) {
-      return const Center(
-        child: const Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: const Text(
-            'Nie wybrano żadnej listy zakupów. Możesz to zrobić klikając '
-            'przycisk "Zmień listę" w wysuwanym menu.',
-            textAlign: TextAlign.center,
-          ),
+      return const FullScreenInfo(
+        child: const Text(
+          'Nie wybrano żadnej listy zakupów. Możesz to zrobić klikając '
+          'przycisk "Zmień listę" w wysuwanym menu.',
+          textAlign: TextAlign.center,
         ),
       );
     }
@@ -330,13 +328,10 @@ class _HomeScreenState extends State<HomeScreen> {
             SliverToBoxAdapter(
               child: Container(
                 height: viewHeight,
-                child: const Center(
-                  child: const Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: const Text(
-                      'Brak przedmiotów do wyświetlenia',
-                      textAlign: TextAlign.center,
-                    ),
+                child: const FullScreenInfo(
+                  child: const Text(
+                    'Brak przedmiotów do wyświetlenia',
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
