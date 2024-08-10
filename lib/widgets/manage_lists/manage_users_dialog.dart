@@ -74,11 +74,14 @@ class _ManageUsersDialogState extends State<ManageUsersDialog> {
               'przytrzymaj jego nazwę. Lista użytkowników:'),
           ...currentUsers.map((memberEmail) {
             return GestureDetector(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: Text(
-                  memberEmail,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+              child: Container(
+                width: double.infinity,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: Text(
+                    memberEmail,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
               onLongPress: _auth.getUserEmail()! == memberEmail
