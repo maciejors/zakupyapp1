@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:zakupyapp/core/models/product.dart';
 import 'package:zakupyapp/core/models/deadline.dart';
 import 'package:zakupyapp/core/models/shopping_list.dart';
+import 'package:zakupyapp/utils/errors.dart';
 
 /// A singleton responsible for interactions with the database
 class DatabaseManager {
@@ -143,15 +144,22 @@ class DatabaseManager {
   Future<List<String>> getDefaultShops(String shoppingListId) async {
     final shoppingListDoc = _getShoppingListPrivateDocRef(shoppingListId);
 
-    final shoppingListSnapshot = await shoppingListDoc.get();
+    late DocumentSnapshot shoppingListSnapshot;
+    try {
+      shoppingListSnapshot = await shoppingListDoc.get();
+    } on FirebaseException catch (e) {
+      // handle permission denied
+      if (e.code == 'permission-denied') {
+        throw PermissionDeniedException();
+      }
+    }
     if (!shoppingListSnapshot.exists) {
       // shopping list does not exist
       return [];
     }
-
-    List<String> defaultShops =
-        await shoppingListSnapshot.get('defaultShops').cast<String>();
-    return defaultShops;
+    final shoppingListData = shoppingListSnapshot.data() as Map;
+    List<dynamic> defaultShops = shoppingListData['defaultShops'] ?? [];
+    return defaultShops.cast<String>();
   }
 
   /// Stores a single product.

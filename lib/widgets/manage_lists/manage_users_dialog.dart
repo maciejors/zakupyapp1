@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:zakupyapp/core/models/shopping_list.dart';
+import 'package:zakupyapp/services/auth_manager.dart';
 import 'package:zakupyapp/services/database_manager.dart';
 import 'package:zakupyapp/utils/snackbars.dart';
 import 'package:zakupyapp/widgets/shared/confirmation_dialog.dart';
@@ -16,6 +17,7 @@ class ManageUsersDialog extends StatefulWidget {
 
 class _ManageUsersDialogState extends State<ManageUsersDialog> {
   final DatabaseManager _db = DatabaseManager.instance;
+  final AuthManager _auth = AuthManager.instance;
 
   // keeps track of actual list of users after deletions
   // because widget.shoppingList will not be updated and this is
@@ -79,7 +81,9 @@ class _ManageUsersDialogState extends State<ManageUsersDialog> {
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
-              onLongPress: () => handleDeleteMember(memberEmail),
+              onLongPress: _auth.getUserEmail()! == memberEmail
+                  ? null
+                  : () => handleDeleteMember(memberEmail),
             );
           }),
         ],

@@ -4,6 +4,7 @@ import 'package:zakupyapp/core/models/product.dart';
 import 'package:zakupyapp/services/auth_manager.dart';
 import 'package:zakupyapp/services/database_manager.dart';
 import 'package:zakupyapp/services/storage_manager.dart';
+import 'package:zakupyapp/utils/errors.dart';
 
 /// represents a product list which can be filtered etc
 class ShoppingListController {
@@ -33,6 +34,7 @@ class ShoppingListController {
   // callbacks
   void Function(List<Product>)? onProductsUpdated;
   void Function()? onDefaultShopsReveived;
+  void Function()? onPermissionDenied;
 
   // filters
   bool _showOnlyDeclaredByUser = false;
@@ -141,15 +143,18 @@ class ShoppingListController {
     availableShops = shopsInList.toList();
   }
 
-  /// Starts listening for products data. Make sure to set [onProductsUpdated]
+  /// Starts listening for products data. Make sure to set [onProductsUpdated],
   /// and [onDefaultShopsReceived] callbacks before calling this method.
-  void subscribe() {
+  Future<void> subscribe() async {
     // set default shops
-    _db.getDefaultShops(id).then((value) {
-      _refreshLists(value);
+    try {
+      List<String> defaultShops = await _db.getDefaultShops(id);
+      _refreshLists(defaultShops);
       // callback
       if (onDefaultShopsReveived != null) onDefaultShopsReveived!();
-    });
+    } on PermissionDeniedException {
+      if (onPermissionDenied != null) onPermissionDenied!();
+    }
     // setup product listener
     _dataStream = _db.subscribeToProducts(id, (newProducts) {
       newProducts.sort((p1, p2) => p2.dateAdded.compareTo(p1.dateAdded));

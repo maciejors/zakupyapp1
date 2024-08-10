@@ -23,7 +23,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final ShoppingListController shoppingListManager =
+  final ShoppingListController shoppingListController =
       ShoppingListController(SM.getShoppingListId());
   final Updater updater = Updater();
   final AuthManager auth = AuthManager.instance;
@@ -44,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void hideEditor() {
     isAddingProduct = false;
     editedProduct = null;
-    setItemsToDisplay(shoppingListManager.filteredProducts);
+    setItemsToDisplay(shoppingListController.filteredProducts);
   }
 
   /*
@@ -58,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         editedProduct = null;
         isAddingProduct = true;
-        setItemsToDisplay(shoppingListManager.filteredProducts);
+        setItemsToDisplay(shoppingListController.filteredProducts);
       });
     }
   }
@@ -68,12 +68,12 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         isAddingProduct = false;
         editedProduct = product;
-        setItemsToDisplay(shoppingListManager.filteredProducts);
+        setItemsToDisplay(shoppingListController.filteredProducts);
       });
   }
 
   Future<void> deleteProductFunc(Product product) async {
-    await shoppingListManager.removeProduct(product);
+    await shoppingListController.removeProduct(product);
     showSnackBar(
       context: context,
       content: const Text('Usunięto wybrany produkt'),
@@ -81,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> addBuyerFunc(Product product) async {
-    bool? actionResult = await shoppingListManager.toggleProductBuyer(product);
+    bool? actionResult = await shoppingListController.toggleProductBuyer(product);
     // no action was taken
     if (actionResult == null) {
       return;
@@ -104,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> confirmEditProductFunc(Product product) async {
     hideEditor();
-    await shoppingListManager.storeProduct(product);
+    await shoppingListController.storeProduct(product);
   }
 
   void cancelEditProductFunc() {
@@ -121,15 +121,15 @@ class _HomeScreenState extends State<HomeScreen> {
     // cancel editing when filters change
     hideEditor();
     // toggle filter
-    shoppingListManager.showOnlyDeclaredByUser =
-        !shoppingListManager.showOnlyDeclaredByUser;
+    shoppingListController.showOnlyDeclaredByUser =
+        !shoppingListController.showOnlyDeclaredByUser;
   }
 
   void setShopFilter(String filter) {
     // cancel editing when filters change
     hideEditor();
     // apply filter
-    shoppingListManager.filteredShop = filter;
+    shoppingListController.filteredShop = filter;
   }
 
   /*
@@ -155,11 +155,11 @@ class _HomeScreenState extends State<HomeScreen> {
         authorName: auth.getUserDisplayName()!,
         authorEmail: auth.getUserEmail()!,
         // set shop by default if filter active
-        shop: shoppingListManager.isShopFilterApplied
-            ? shoppingListManager.filteredShop
+        shop: shoppingListController.isShopFilterApplied
+            ? shoppingListController.filteredShop
             : null,
         // set buyer by default if filter active
-        buyer: shoppingListManager.showOnlyDeclaredByUser
+        buyer: shoppingListController.showOnlyDeclaredByUser
             ? auth.getUserDisplayName()
             : null,
         quantity: SM.getIsAutoQuantityEnabled() ? 1 : null,
@@ -228,13 +228,18 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() => isUserSignedIn = isSignedIn);
       // initialise the shopping list if a user is signed in
       if (isSignedIn) {
-        if (shoppingListManager.isInitialised) {
-          shoppingListManager.onProductsUpdated = onProductsUpdated;
-          shoppingListManager.onDefaultShopsReveived = () => setState(() {
+        if (shoppingListController.isInitialised) {
+          shoppingListController.onProductsUpdated = onProductsUpdated;
+          shoppingListController.onDefaultShopsReveived = () => setState(() {
                 // empty setState to refresh filters with contents of
                 // shoppingListManager.availableShops
               });
-          shoppingListManager.subscribe();
+          shoppingListController.onPermissionDenied = () => setState(() {
+            // reset shopping list ID on permission denied
+            // (means that the user was removed from his list)
+            SM.setShoppingListId('');
+          });
+          shoppingListController.subscribe();
         }
       }
     });
@@ -243,7 +248,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     auth.cancelAuthStateListener();
-    shoppingListManager.unsubscribe();
+    shoppingListController.unsubscribe();
     super.dispose();
   }
 
@@ -254,7 +259,7 @@ class _HomeScreenState extends State<HomeScreen> {
    */
 
   /// different body depending on [isFirstLoadDone] &
-  /// [shoppingListManager.isInitialised] values
+  /// [shoppingListController.isInitialised] values
   Widget getBody() {
     // if there is no data on whether a user is signed in, or if a user is
     // in the process of signing in, display a circular progress indicator
@@ -277,7 +282,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     // if shoppingListId is not specified, display an info on it
-    if (!shoppingListManager.isInitialised) {
+    if (!shoppingListController.isInitialised) {
       return const FullScreenInfo(
         child: const Text(
           'Nie wybrano żadnej listy zakupów. Możesz to zrobić klikając '
@@ -300,7 +305,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // otherwise, display the shopping list
     return Provider<ShoppingListController>(
-      create: (context) => shoppingListManager,
+      create: (context) => shoppingListController,
       child: CustomScrollView(
         slivers: [
           DiffUtilSliverList.fromKeyedWidgetList(
@@ -353,7 +358,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 IconButton(
                   icon: Icon(
                     Icons.shopping_cart_checkout,
-                    color: shoppingListManager.showOnlyDeclaredByUser
+                    color: shoppingListController.showOnlyDeclaredByUser
                         ? Colors.black
                         : Colors.deepOrange[900],
                   ),
@@ -362,12 +367,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 PopupMenuButton(
                   icon: Icon(
                     Icons.filter_alt,
-                    color: shoppingListManager.isShopFilterApplied
+                    color: shoppingListController.isShopFilterApplied
                         ? Colors.black
                         : Colors.deepOrange[900],
                   ),
                   itemBuilder: (BuildContext context) =>
-                      shoppingListManager.filterableShops
+                      shoppingListController.filterableShops
                           .map((e) => PopupMenuItem(
                                 child: Text(e),
                                 value: e,
@@ -386,7 +391,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               value: '~',
                             )),
                   onSelected: setShopFilter,
-                  initialValue: shoppingListManager.filteredShop,
+                  initialValue: shoppingListController.filteredShop,
                 ),
               ],
       ),
