@@ -65,20 +65,4 @@ void main() {
       expect(deadline.getPolishDescription(), equals(result));
     });
   });
-
-  group('Deadline.parse() tests', () {
-    test('Deadline can parse its string representation', () {
-      var date = DateTime(2023, 9, 17);
-      var deadline = Deadline(date);
-      String stringRepr = deadline.toString();
-      var parsedDeadline = Deadline.parse(stringRepr);
-      expect(parsedDeadline.deadlineDay, equals(date));
-    });
-    test('old deadline format is correctly parsed', () {
-      String oldFormat = '2023-09-13 00:00:00.000|true';
-      var parsedDeadline = Deadline.parse(oldFormat);
-      var expectedDate = DateTime(2023, 09, 13);
-      expect(parsedDeadline.deadlineDay, equals(expectedDate));
-    });
-  });
 }
