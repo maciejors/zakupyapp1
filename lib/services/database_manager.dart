@@ -309,12 +309,16 @@ class DatabaseManager {
 
   Future<String> createShoppingList(String name, String creatorEmail) async {
     final publicDocData = {
-      'members': [creatorEmail]
+      'members': [creatorEmail],
+      'lastUpdated': Timestamp.now(),
     };
     final privateDocData = {'name': name};
-    final shoppingListRef = await _shoppingListPublic.add(publicDocData);
-    final shoppingListId = shoppingListRef.id;
-    await _shoppingListPrivate.doc(shoppingListId).set(privateDocData);
+    // important: listeners listen to updates in the public doc, so it needs
+    // to be added AFTER the private doc
+    final shoppingListPrivateDocRef =
+        await _shoppingListPrivate.add(privateDocData);
+    final shoppingListId = shoppingListPrivateDocRef.id;
+    await _shoppingListPublic.doc(shoppingListId).set(publicDocData);
     return shoppingListId;
   }
 
