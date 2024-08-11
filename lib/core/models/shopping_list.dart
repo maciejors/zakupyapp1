@@ -19,4 +19,7 @@ class ShoppingList {
     if (other.runtimeType != ShoppingList) return false;
     return id == (other as ShoppingList).id;
   }
+
+  @override
+  int get hashCode => id.hashCode;
 }

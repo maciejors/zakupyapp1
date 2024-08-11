@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 import 'package:zakupyapp/core/models/product.dart';
 import 'package:zakupyapp/core/models/deadline.dart';
@@ -10,7 +11,7 @@ import 'package:zakupyapp/utils/errors.dart';
 
 /// A singleton responsible for interactions with the database
 class DatabaseManager {
-  static DatabaseManager _instance = DatabaseManager._();
+  static final DatabaseManager _instance = DatabaseManager._();
   static DatabaseManager get instance => _instance;
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -75,7 +76,9 @@ class DatabaseManager {
         quantityUnit: quantityUnit,
       );
     } catch (e) {
-      print('Failed to parse a product due to a following error:\n$e');
+      if (kDebugMode) {
+        print('Failed to parse a product due to a following error:\n$e');
+      }
       return null;
     }
   }
@@ -218,7 +221,7 @@ class DatabaseManager {
     // this is to overcome firestore's limit of 30 in the filtered array
     int totalShoppingLists = shoppingListsIds.length;
     List<DocumentSnapshot> privateDocs = [];
-    final pageSize = 30;
+    const pageSize = 30;
     for (var startIdx = 0;
         startIdx < totalShoppingLists;
         startIdx += pageSize) {
@@ -237,7 +240,9 @@ class DatabaseManager {
     for (var i = 0; i < totalShoppingLists; i++) {
       final publicDoc = publicDocs[i];
       final privateDoc = privateDocs[i];
-      print('getShoppingListsForUser: ${publicDoc.id} = ${privateDoc.id}');
+      if (kDebugMode) {
+        print('getShoppingListsForUser: ${publicDoc.id} = ${privateDoc.id}');
+      }
       shoppingLists.add(_getShoppingListFromDoc(publicDoc, privateDoc));
     }
     return shoppingLists;

@@ -20,7 +20,7 @@ class ProductCard extends StatelessWidget {
   final bool isEditing;
 
   const ProductCard({
-    Key? key,
+    super.key,
     required this.product,
     required this.editFunc,
     required this.deleteFunc,
@@ -28,7 +28,7 @@ class ProductCard extends StatelessWidget {
     required this.onConfirmEdit,
     required this.onCancelEdit,
     this.isEditing = false,
-  }) : super(key: key);
+  });
 
   Color? get cardColor {
     // undeclared
@@ -64,7 +64,7 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity, // otherwise cards shrink in width
       child: Card(
         color: cardColor,
@@ -73,7 +73,7 @@ class ProductCard extends StatelessWidget {
           onDoubleTap: isEditing ? null : addBuyerFunc,
           onLongPress: isEditing ? null : editFunc,
           child: AnimatedSize(
-            duration: Duration(milliseconds: 250),
+            duration: const Duration(milliseconds: 250),
             alignment: Alignment.topCenter,
             child: isEditing
                 ? Padding(
@@ -85,7 +85,7 @@ class ProductCard extends StatelessWidget {
                     ),
                   )
                 : AnimatedSize(
-                    duration: Duration(milliseconds: 250),
+                    duration: const Duration(milliseconds: 250),
                     alignment: Alignment.bottomCenter,
                     child: Padding(
                       padding: const EdgeInsets.all(16),

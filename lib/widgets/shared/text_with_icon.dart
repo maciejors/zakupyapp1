@@ -16,15 +16,14 @@ class SimpleTextWithIcon extends StatelessWidget {
   final double? size;
 
   const SimpleTextWithIcon(
-      {Key? key,
+      {super.key,
       required this.text,
       required this.iconData,
       required this.color,
       this.iconFirst = true,
       this.fontWeight,
       this.fontStyle,
-      this.size})
-      : super(key: key);
+      this.size});
 
   @override
   Widget build(BuildContext context) {

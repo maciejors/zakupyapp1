@@ -46,13 +46,15 @@ class _ManageUsersDialogState extends State<ManageUsersDialog> {
       widget.shoppingList.id,
       memberEmail,
     );
-    showSnackBar(
-      context: context,
-      content: Text(
-        'Usunięto użytkownika $memberEmail '
-        'z listy ${widget.shoppingList.name}',
-      ),
-    );
+    if (mounted) {
+      showSnackBar(
+        context: context,
+        content: Text(
+          'Usunięto użytkownika $memberEmail '
+              'z listy ${widget.shoppingList.name}',
+        ),
+      );
+    }
   }
 
   @override
@@ -78,7 +80,10 @@ class _ManageUsersDialogState extends State<ManageUsersDialog> {
           ),
           ...currentUsers.map((memberEmail) {
             return GestureDetector(
-              child: Container(
+              onLongPress: _auth.getUserEmail()! == memberEmail
+                  ? null
+                  : () => handleDeleteMember(memberEmail),
+              child: SizedBox(
                 width: double.infinity,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -88,14 +93,11 @@ class _ManageUsersDialogState extends State<ManageUsersDialog> {
                   ),
                 ),
               ),
-              onLongPress: _auth.getUserEmail()! == memberEmail
-                  ? null
-                  : () => handleDeleteMember(memberEmail),
             );
           }),
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: const Text(
+          const Padding(
+            padding: EdgeInsets.only(top: 8.0),
+            child: Text(
               'Aby usunąć wybranego użytkownika, przytrzymaj jego nazwę.',
             ),
           ),
@@ -104,8 +106,8 @@ class _ManageUsersDialogState extends State<ManageUsersDialog> {
       scrollable: true,
       actions: <Widget>[
         TextButton(
-          child: const Text('Zamknij'),
           onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Zamknij'),
         ),
       ],
     );

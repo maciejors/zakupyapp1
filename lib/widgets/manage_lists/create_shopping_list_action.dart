@@ -25,7 +25,7 @@ class _CreateShoppingListActionState extends State<CreateShoppingListAction> {
         confirmButtonChild: const Text('Stwórz'),
         hintText: 'Nazwa listy',
         validator: (name) {
-          if (name!.length == 0) {
+          if (name!.isEmpty) {
             return 'Nazwa listy jest za krótka';
           }
           if (name.length > 40) {
@@ -40,10 +40,12 @@ class _CreateShoppingListActionState extends State<CreateShoppingListAction> {
       return;
     }
     await _db.createShoppingList(newName, _auth.getUserEmail()!);
-    showSnackBar(
-      context: context,
-      content: const Text('Utworzono nową listę'),
-    );
+    if (mounted) {
+      showSnackBar(
+        context: context,
+        content: const Text('Utworzono nową listę'),
+      );
+    }
   }
 
   @override

@@ -22,12 +22,12 @@ class _ConfirmationDialogState extends State<ConfirmationDialog> {
       content: widget.content,
       actions: [
         TextButton(
-          child: const Text('Anuluj'),
           onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Anuluj'),
         ),
         TextButton(
-          child: const Text('Tak'),
           onPressed: () => Navigator.of(context).pop(true),
+          child: const Text('Tak'),
         ),
       ],
     );

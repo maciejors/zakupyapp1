@@ -144,32 +144,32 @@ class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
               children: [
                 OutlinedButton(
                   onPressed: () => updateQuantity(1 * _quantityTweakSign),
-                  child: Text('${_quantityTweakSignText}1'),
                   style: tweakButtonStyle,
+                  child: Text('${_quantityTweakSignText}1'),
                 ),
                 OutlinedButton(
                   onPressed: () => updateQuantity(10 * _quantityTweakSign),
-                  child: Text('${_quantityTweakSignText}10'),
                   style: tweakButtonStyle,
+                  child: Text('${_quantityTweakSignText}10'),
                 ),
                 OutlinedButton(
                   onPressed: () => updateQuantity(100 * _quantityTweakSign),
-                  child: Text('${_quantityTweakSignText}100'),
                   style: tweakButtonStyle,
+                  child: Text('${_quantityTweakSignText}100'),
                 ),
                 OutlinedButton(
                   onPressed: () => setState(() {
                     _quantityTweakSign = _quantityTweakSign * -1;
                   }),
-                  child: const Text('+/-'),
                   style: tweakButtonStyle,
+                  child: const Text('+/-'),
                 ),
                 OutlinedButton(
                   onPressed: () => setState(() {
                     _quantityInput = 0;
                   }),
-                  child: const Text('0'),
                   style: tweakButtonStyle,
+                  child: const Text('0'),
                 ),
               ],
             ),
@@ -179,7 +179,7 @@ class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
             // Unit selection
             const Text(
               'Jednostka:',
-              style: const TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: 18),
             ),
             Wrap(
               spacing: 5.0,
@@ -201,11 +201,12 @@ class _SelectQuantityDialogState extends State<SelectQuantityDialog> {
       ),
       actions: <Widget>[
         TextButton(
-            child: const Text('Anuluj'),
-            onPressed: () => Navigator.of(context).pop()),
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Anuluj'),
+        ),
         TextButton(
-          child: const Text('OK'),
           onPressed: onConfirm,
+          child: const Text('OK'),
         ),
       ],
     );

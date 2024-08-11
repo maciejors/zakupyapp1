@@ -25,13 +25,13 @@ class ProductCardContent extends StatelessWidget {
     Color color;
     Urgency urgency = product.deadline!.getUrgency();
     switch (urgency) {
-      case Urgency.too_late:
+      case Urgency.tooLate:
         color = Colors.grey;
         break;
       case Urgency.urgent:
         color = Colors.red;
         break;
-      case Urgency.not_urgent:
+      case Urgency.notUrgent:
         color = Colors.black;
         break;
     }

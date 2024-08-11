@@ -14,30 +14,30 @@ import 'package:zakupyapp/widgets/shared/dialogs/text_input_dialog.dart';
 import 'package:zakupyapp/widgets/shared/dialogs/update_dialog.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({super.key});
 
   @override
-  _SettingsScreenState createState() => _SettingsScreenState();
+  State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final AuthManager auth = AuthManager.instance;
 
-  Future<void> handleEditUsername(BuildContext ctx) async {
+  Future<void> handleEditUsername() async {
     if (!auth.isUserSignedIn) {
       // no point if not signed in
       return;
     }
     final currentUserName = auth.getUserDisplayName()!;
     String? newUserName = await showDialog(
-      context: ctx,
+      context: context,
       builder: (ctx) => TextInputDialog(
         title: const Text('Nazwa użytkownika'),
         confirmButtonChild: const Text('Zapisz'),
         initialValue: currentUserName,
         hintText: 'Wpisz nazwę...',
         validator: (String? userName) {
-          if (userName == null || userName.length == 0) {
+          if (userName == null || userName.isEmpty) {
             return 'Nazwa nie może być pusta';
           }
           if (userName.length > 40) {
@@ -53,15 +53,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
     await auth.setUserDisplayName(newUserName);
     setState(() => newUserName);
-    showSnackBar(
-      context: context,
-      content: const Text('Zapisano nazwę użytkownika'),
-    );
+    if (mounted) {
+      showSnackBar(
+        context: context,
+        content: const Text('Zapisano nazwę użytkownika'),
+      );
+    }
   }
 
-  Future<void> handleSignOut(BuildContext ctx) async {
+  Future<void> handleSignOut() async {
     await auth.signOut();
-    Navigator.of(ctx).pushReplacementNamed('/');
+    if (mounted) {
+      Navigator.of(context).pushReplacementNamed('/');
+    }
   }
 
   /// Clicking the version label in debug model will cause
@@ -71,19 +75,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
       return;
     }
     final latestRelease = await Updater().getLatestReleaseId();
-    await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) => DownloadUpdateDialog(newVersionId: latestRelease),
-    );
+    if (mounted) {
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => DownloadUpdateDialog(newVersionId: latestRelease),
+      );
+    }
   }
 
   /// Show a help dialog for the settings screen
   Future<void> showGeneralHelpDialog() async {
     await showDialog(
       context: context,
-      builder: (ctx) => DismissibleHelpDialog(
-        content: const Text(
+      builder: (ctx) => const DismissibleHelpDialog(
+        content: Text(
           'Kliknij i przytrzymaj wybrane ustawienie, '
           'aby dowiedzieć się o nim więcej.',
         ),
@@ -110,8 +116,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.only(top: 8),
         children: <Widget>[
-          const SettingsGroupTitle(title: const Text('Konto')),
+          const SettingsGroupTitle(title: Text('Konto')),
           SettingInfoWrapper(
+            infoContent: const Text('Twoja nazwa, wyświetlana pod dodawanymi i '
+                'edytowanymi przez Ciebie produktami.'),
             child: ListTile(
               title: const Text('Nazwa użytkownika'),
               subtitle: Text(auth.getUserDisplayName() ?? 'Nie zalogowano'),
@@ -120,13 +128,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 color: Colors.black,
               ),
               titleAlignment: ListTileTitleAlignment.center,
-              onTap: () => handleEditUsername(context),
+              onTap: handleEditUsername,
               enabled: auth.isUserSignedIn,
             ),
-            infoContent: const Text('Twoja nazwa, wyświetlana pod dodawanymi i '
-                'edytowanymi przez Ciebie produktami.'),
           ),
           SettingInfoWrapper(
+            infoContent:
+                const Text('Kliknięcie tej opcji spowoduje wylogowanie z '
+                    'konta i przekierowanie na stronę główną aplikacji.'),
             child: ListTile(
               title: const Text('Wyloguj'),
               subtitle: Text(auth.getUserEmail() ?? 'Nie zalogowano'),
@@ -135,19 +144,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 color: Colors.black,
               ),
               titleAlignment: ListTileTitleAlignment.center,
-              onTap: () => handleSignOut(context),
+              onTap: handleSignOut,
               enabled: auth.isUserSignedIn,
             ),
-            infoContent:
-                const Text('Kliknięcie tej opcji spowoduje wylogowanie z '
-                    'konta i przekierowanie na stronę główną aplikacji.'),
           ),
-          const SettingsGroupTitle(title: const Text('Lista zakupów')),
+          const SettingsGroupTitle(title: Text('Lista zakupów')),
           SettingInfoWrapper(
+            infoContent: const Text(
+                'Jeśli ta opcja jest włączona, to produkty, '
+                'które inni użytkownicy zamierzają kupić, nie będą się '
+                'wyświetlać na liście zakupów. W przeciwnym razie na liście '
+                'zakupów zawsze będą się wyświetlać wszystkie produkty.'),
             child: SwitchListTile(
               title: const Text(
                 'Ukrywaj produkty zadeklarowane przez innych',
-                style: const TextStyle(color: Colors.black),
+                style: TextStyle(color: Colors.black),
               ),
               secondary: const Icon(
                 Icons.shopping_cart_checkout,
@@ -158,13 +169,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 SM.setHideProductsOthersDeclared(newValue);
               }),
             ),
-            infoContent: const Text(
-                'Jeśli ta opcja jest włączona, to produkty, '
-                'które inni użytkownicy zamierzają kupić, nie będą się '
-                'wyświetlać na liście zakupów. W przeciwnym razie na liście '
-                'zakupów zawsze będą się wyświetlać wszystkie produkty.'),
           ),
           SettingInfoWrapper(
+            infoContent: const Text(
+                'Jeśli ta opcja jest włączona, to przy dodawaniu nowego '
+                'produktu ilość będzie domyślnie ustawiona jako "1 szt.". '
+                'W przeciwnym wypadku, ilość nie będzie w ogóle domyślnie '
+                'ustawiona.'),
             child: SwitchListTile(
               title: const Text(
                 'Ustawiaj domyślnie ilość przy dodawaniu produktu',
@@ -179,13 +190,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 SM.setIsAutoQuantityEnabled(newValue);
               }),
             ),
-            infoContent: const Text(
-                'Jeśli ta opcja jest włączona, to przy dodawaniu nowego '
-                'produktu ilość będzie domyślnie ustawiona jako "1 szt.". '
-                'W przeciwnym wypadku, ilość nie będzie w ogóle domyślnie '
-                'ustawiona.'),
           ),
-          const SettingsGroupTitle(title: const Text('O aplikacji')),
+          const SettingsGroupTitle(title: Text('O aplikacji')),
           ListTile(
             title: const Text('Wersja'),
             subtitle: Text(AppInfo.getVersion()),

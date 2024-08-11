@@ -16,10 +16,10 @@ import 'package:zakupyapp/widgets/shared/loading.dart';
 import 'package:zakupyapp/widgets/shared/dialogs/update_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final Updater updater = Updater();
   final AuthManager auth = AuthManager.instance;
 
-  bool? isUserSignedIn = null;
+  bool? isUserSignedIn;
 
   /// whether the process of logging in is going on
   bool isCurrentlySigningIn = false;
@@ -64,37 +64,41 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void editProductFunc(Product product) {
-    if (product.isEditable)
+    if (product.isEditable) {
       setState(() {
         isAddingProduct = false;
         editedProduct = product;
         setItemsToDisplay(shoppingListController.filteredProducts);
       });
+    }
   }
 
   Future<void> deleteProductFunc(Product product) async {
     await shoppingListController.removeProduct(product);
-    showSnackBar(
-      context: context,
-      content: const Text('Usunięto wybrany produkt'),
-    );
+    if (mounted) {
+      showSnackBar(
+        context: context,
+        content: const Text('Usunięto wybrany produkt'),
+      );
+    }
   }
 
   Future<void> addBuyerFunc(Product product) async {
-    bool? actionResult = await shoppingListController.toggleProductBuyer(product);
+    bool? actionResult =
+        await shoppingListController.toggleProductBuyer(product);
     // no action was taken
     if (actionResult == null) {
       return;
     }
     // buyer added
-    if (actionResult) {
+    if (actionResult && mounted) {
       showSnackBar(
         context: context,
         content: const Text('Dodano deklarację kupna'),
       );
     }
     // buyer removed
-    else {
+    else if (mounted) {
       showSnackBar(
         context: context,
         content: const Text('Usunięto deklarację kupna'),
@@ -235,10 +239,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 // shoppingListManager.availableShops
               });
           shoppingListController.onPermissionDenied = () => setState(() {
-            // reset shopping list ID on permission denied
-            // (means that the user was removed from his list)
-            SM.setShoppingListId('');
-          });
+                // reset shopping list ID on permission denied
+                // (means that the user was removed from his list)
+                SM.setShoppingListId('');
+              });
           shoppingListController.subscribe();
         }
       }
@@ -271,12 +275,12 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!isUserSignedIn!) {
       return Center(
         child: ElevatedButton(
-          child: const Text('Zaloguj się'),
           onPressed: () async {
             setState(() => isCurrentlySigningIn = true);
             await auth.signInWithGoogle();
             setState(() => isCurrentlySigningIn = false);
           },
+          child: const Text('Zaloguj się'),
         ),
       );
     }
@@ -284,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // if shoppingListId is not specified, display an info on it
     if (!shoppingListController.isInitialised) {
       return const FullScreenInfo(
-        child: const Text(
+        child: Text(
           'Nie wybrano żadnej listy zakupów. Możesz to zrobić klikając '
           'przycisk "Zmień listę" w wysuwanym menu.',
           textAlign: TextAlign.center,
@@ -309,32 +313,34 @@ class _HomeScreenState extends State<HomeScreen> {
       child: CustomScrollView(
         slivers: [
           DiffUtilSliverList.fromKeyedWidgetList(
+            insertAnimationBuilder: (context, animation, child) {
+              return FadeTransition(
+                opacity: animation,
+                child: SizeTransition(
+                  sizeFactor: animation,
+                  axisAlignment: 1,
+                  child: child,
+                ),
+              );
+            },
+            removeAnimationBuilder: (context, animation, child) {
+              return FadeTransition(
+                opacity: animation,
+                child: SizeTransition(
+                  sizeFactor: animation,
+                  axisAlignment: 1,
+                  child: child,
+                ),
+              );
+            },
             children: List.from(itemsToDisplay),
-            insertAnimationBuilder: (context, animation, child) =>
-                FadeTransition(
-              opacity: animation,
-              child: SizeTransition(
-                sizeFactor: animation,
-                axisAlignment: 1,
-                child: child,
-              ),
-            ),
-            removeAnimationBuilder: (context, animation, child) =>
-                FadeTransition(
-              opacity: animation,
-              child: SizeTransition(
-                sizeFactor: animation,
-                axisAlignment: 1,
-                child: child,
-              ),
-            ),
           ),
           if (itemsToDisplay.isEmpty)
             SliverToBoxAdapter(
-              child: Container(
+              child: SizedBox(
                 height: viewHeight,
                 child: const FullScreenInfo(
-                  child: const Text(
+                  child: Text(
                     'Brak przedmiotów do wyświetlenia',
                     textAlign: TextAlign.center,
                   ),
@@ -374,21 +380,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemBuilder: (BuildContext context) =>
                       shoppingListController.filterableShops
                           .map((e) => PopupMenuItem(
-                                child: Text(e),
                                 value: e,
+                                child: Text(e),
                               ))
                           .toList()
                         ..insert(
                             0,
                             const PopupMenuItem(
-                              child: const Text('Wszystkie'),
                               value: '',
+                              child: Text('Wszystkie'),
                             ))
                         ..insert(
                             1,
                             const PopupMenuItem(
-                              child: const Text('Nieokreślone'),
                               value: '~',
+                              child: Text('Nieokreślone'),
                             )),
                   onSelected: setShopFilter,
                   initialValue: shoppingListController.filteredShop,

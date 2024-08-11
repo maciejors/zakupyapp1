@@ -11,7 +11,7 @@ class Updater {
 
   /// Retrieves the latest release version ID from Family Store
   Future<String> getLatestReleaseId() async {
-    final response = await http.get(Uri.parse(Constants.FAMILY_STORE_ENDPOINT));
+    final response = await http.get(Uri.parse(Constants.familyStoreEndpoint));
     final responseData = jsonDecode(response.body) as Map<String, dynamic>;
     return responseData['version']! as String;
   }

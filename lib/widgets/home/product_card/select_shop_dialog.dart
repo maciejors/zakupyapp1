@@ -104,11 +104,12 @@ class _SelectShopDialogState extends State<SelectShopDialog> {
       ),
       actions: <Widget>[
         TextButton(
-            child: const Text('Anuluj'),
-            onPressed: () => Navigator.of(context).pop()),
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Anuluj'),
+        ),
         TextButton(
-          child: const Text('OK'),
           onPressed: onConfirm,
+          child: const Text('OK'),
         ),
       ],
     );

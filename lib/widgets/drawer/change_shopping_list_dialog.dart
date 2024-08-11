@@ -45,9 +45,9 @@ class _ChangeShoppingListDialogState extends State<ChangeShoppingListDialog> {
                 .toList(),
           );
         } else if (shoppingListsSnapshot.hasError) {
-          return AlertDialog(
-            title: const Text('Wystąpił błąd'),
-            content: const Text('Kod błędu: 1'),
+          return const AlertDialog(
+            title: Text('Wystąpił błąd'),
+            content: Text('Kod błędu: 1'),
           );
         } else {
           return const Loading();

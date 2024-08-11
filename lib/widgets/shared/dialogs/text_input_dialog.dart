@@ -39,16 +39,16 @@ class _TextInputDialogState extends State<TextInputDialog> {
       ),
       actions: [
         TextButton(
-          child: const Text('Anuluj'),
           onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Anuluj'),
         ),
         TextButton(
-          child: widget.confirmButtonChild,
           onPressed: () {
             if (_formKey.currentState!.validate()) {
               Navigator.of(context).pop(_input.text);
             }
           },
+          child: widget.confirmButtonChild,
         ),
       ],
     );

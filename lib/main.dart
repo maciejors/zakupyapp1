@@ -19,9 +19,9 @@ Future<void> main() async {
   runApp(
     MaterialApp(
       routes: {
-        '/': (context) => HomeScreen(),
-        '/settings': (context) => SettingsScreen(),
-        '/manage-lists': (context) => ManageListsScreen()
+        '/': (context) => const HomeScreen(),
+        '/settings': (context) => const SettingsScreen(),
+        '/manage-lists': (context) => const ManageListsScreen()
       },
       theme: ThemeData(
         primarySwatch: Colors.orange,

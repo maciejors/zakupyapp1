@@ -14,8 +14,8 @@ class ManageListsScreen extends StatelessWidget {
       drawer: const MainDrawer(isUserSignedIn: true),
       appBar: AppBar(
         title: const Text('Zarządzanie listami'),
-        actions: <Widget>[
-          const CreateShoppingListAction(),
+        actions: const <Widget>[
+          CreateShoppingListAction(),
         ],
       ),
       body: const ShoppingListBrowser(),

@@ -91,7 +91,7 @@ class _ProductEditorState extends State<ProductEditor> {
       context: context,
       initialDate: _selectedDay ?? DateTime.now(),
       firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(Duration(days: 365)),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
       cancelText: 'Anuluj',
       helpText: 'Wybierz datę',
     );
@@ -157,9 +157,9 @@ class _ProductEditorState extends State<ProductEditor> {
           TextFormField(
             initialValue: _productName,
             onChanged: (value) => _productName = value,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               isDense: true,
-              contentPadding: const EdgeInsets.only(bottom: 8),
+              contentPadding: EdgeInsets.only(bottom: 8),
               hintText: 'Nazwa produktu...',
             ),
             style: const TextStyle(fontSize: 18),
@@ -174,10 +174,9 @@ class _ProductEditorState extends State<ProductEditor> {
             onPress: _selectQuantity,
             onDisable: _clearQuantity,
             inactiveLabel: 'Dodaj ilość',
-            activeLabel: 'Ilość: ' +
-                (Product.formQuantityLabel(
+            activeLabel: 'Ilość: ${Product.formQuantityLabel(
                         _selectedQuantity, _selectedQuantityUnit) ??
-                    ''),
+                    ''}',
             icon: const Icon(Icons.numbers),
           ),
 
@@ -209,13 +208,13 @@ class _ProductEditorState extends State<ProductEditor> {
             children: <Widget>[
               TextButton(
                 onPressed: cancelEdit,
-                child: const Text('Anuluj'),
                 style: TextButton.styleFrom(foregroundColor: Colors.black),
+                child: const Text('Anuluj'),
               ),
               TextButton(
                 onPressed: confirmEdit,
-                child: const Text('Zapisz'),
                 style: TextButton.styleFrom(foregroundColor: Colors.black),
+                child: const Text('Zapisz'),
               ),
             ],
           ),

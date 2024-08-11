@@ -43,9 +43,9 @@ class _ShoppingListBrowserState extends State<ShoppingListBrowser> {
   Widget build(BuildContext context) {
     return shoppingLists == null
         ? const Loading()
-        : shoppingLists!.length == 0
+        : shoppingLists!.isEmpty
             ? const FullScreenInfo(
-                child: const Text(
+                child: Text(
                   'Nie jesteś członkiem żadnej listy zakupowej.',
                   textAlign: TextAlign.center,
                 ),

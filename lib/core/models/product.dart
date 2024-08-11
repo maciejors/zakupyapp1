@@ -84,4 +84,8 @@ class Product {
     if (other.runtimeType != Product) return false;
     return id == (other as Product).id;
   }
+
+  @override
+  int get hashCode => id.hashCode;
+
 }

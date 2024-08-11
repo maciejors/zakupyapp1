@@ -26,7 +26,7 @@ class ShoppingListController {
 
   final bool hideProductsOthersDeclared = SM.getHideProductsOthersDeclared();
 
-  StreamSubscription? _dataStream = null;
+  StreamSubscription? _dataStream;
 
   // constructor
   ShoppingListController(this.id);
@@ -40,7 +40,7 @@ class ShoppingListController {
   bool _showOnlyDeclaredByUser = false;
 
   bool get showOnlyDeclaredByUser => _showOnlyDeclaredByUser;
-  void set showOnlyDeclaredByUser(bool value) {
+  set showOnlyDeclaredByUser(bool value) {
     // set filter
     _showOnlyDeclaredByUser = value;
     if (onProductsUpdated != null) {
@@ -55,7 +55,7 @@ class ShoppingListController {
   /// * '' (empty string) - no filter,
   /// * '~' - show items with no shop specified.
   String get filteredShop => _filteredShop;
-  void set filteredShop(String value) {
+  set filteredShop(String value) {
     // set filter
     _filteredShop = value;
     if (onProductsUpdated != null) {

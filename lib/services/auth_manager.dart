@@ -7,14 +7,14 @@ import 'package:google_sign_in/google_sign_in.dart';
 /// A singleton responsible for interactions with the authentication service
 /// and modifying user data
 class AuthManager {
-  static AuthManager _instance = AuthManager._();
+  static final AuthManager _instance = AuthManager._();
   static AuthManager get instance => _instance;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final CollectionReference _emailToUidCollection =
       FirebaseFirestore.instance.collection('emailToUid');
 
-  StreamSubscription? _authStateStream = null;
+  StreamSubscription? _authStateStream;
 
   bool get isUserSignedIn => _auth.currentUser != null;
 

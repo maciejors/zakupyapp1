@@ -94,12 +94,12 @@ class _ManageDefaultShopsDialogState extends State<ManageDefaultShopsDialog> {
       scrollable: true,
       actions: <Widget>[
         TextButton(
-          child: const Text('Anuluj'),
           onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Anuluj'),
         ),
         TextButton(
-          child: const Text('Zapisz'),
           onPressed: () => Navigator.of(context).pop(provisionalShops),
+          child: const Text('Zapisz'),
         ),
       ],
     );

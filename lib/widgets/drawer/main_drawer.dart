@@ -9,7 +9,7 @@ import 'package:zakupyapp/services/storage_manager.dart';
 class MainDrawer extends StatelessWidget {
   final bool isUserSignedIn;
 
-  const MainDrawer({Key? key, this.isUserSignedIn = false}) : super(key: key);
+  const MainDrawer({super.key, this.isUserSignedIn = false});
 
   void switchScreen(BuildContext context, String routeName) {
     if (ModalRoute.of(context)!.settings.name == routeName) {
@@ -29,7 +29,9 @@ class MainDrawer extends StatelessWidget {
     }
     SM.setShoppingListId(newShoppingListId);
     // reload page to fetch a new shopping list
-    Navigator.pushReplacementNamed(context, '/');
+    if (context.mounted) {
+      Navigator.pushReplacementNamed(context, '/');
+    }
   }
 
   Future<void> showHelpDialog(BuildContext context) async {
@@ -40,7 +42,7 @@ class MainDrawer extends StatelessWidget {
   }
 
   Future<void> viewInFamilyStore() async {
-    Uri uri = Uri.parse(Constants.FAMILY_STORE_APP_URL);
+    Uri uri = Uri.parse(Constants.familyStoreAppUrl);
     await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
@@ -51,9 +53,9 @@ class MainDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
+            decoration: const BoxDecoration(color: Colors.orange),
             // logo at the top
             child: Image.asset('assets/images/logo.png'),
-            decoration: const BoxDecoration(color: Colors.orange),
           ),
           ListTile(
             // shopping list

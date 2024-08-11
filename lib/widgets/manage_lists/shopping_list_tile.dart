@@ -32,7 +32,7 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
         initialValue: widget.shoppingList.name,
         hintText: 'Nowa nazwa',
         validator: (name) {
-          if (name!.length == 0) {
+          if (name!.isEmpty) {
             return 'Nazwa listy jest za krótka';
           }
           if (name.length > 40) {
@@ -47,10 +47,12 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
       return;
     }
     await _db.renameShoppingList(widget.shoppingList.id, newName);
-    showSnackBar(
-      context: context,
-      content: const Text('Zapisano nową nazwę'),
-    );
+    if (mounted) {
+      showSnackBar(
+        context: context,
+        content: const Text('Zapisano nową nazwę'),
+      );
+    }
   }
 
   Future<void> handleManageDefaultShops() async {
@@ -67,10 +69,12 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
       widget.shoppingList.id,
       newDefaultShops,
     );
-    showSnackBar(
-      context: context,
-      content: const Text('Zaaktualizowano listę domyślnych sklepów'),
-    );
+    if (mounted) {
+      showSnackBar(
+        context: context,
+        content: const Text('Zaaktualizowano listę domyślnych sklepów'),
+      );
+    }
   }
 
   Future<void> handleManageUsers() async {
@@ -85,10 +89,10 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
       context: context,
       builder: (ctx) => TextInputDialog(
         title: Text('Dodaj użytkownika do listy ${widget.shoppingList.name}'),
-        confirmButtonChild: Text('Dodaj'),
+        confirmButtonChild: const Text('Dodaj'),
         hintText: 'Adres e-mail użytkownika',
         validator: (email) {
-          if (email == null || email.length == 0) {
+          if (email == null || email.isEmpty) {
             return 'Pole nie może być puste';
           }
           if (widget.shoppingList.members.contains(email)) {
@@ -103,12 +107,15 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
       return;
     }
     await _db.addUserToShoppingList(widget.shoppingList.id, newUserEmail);
-    showSnackBar(
-      context: context,
-      content: Text(
-        'Dodano użytkownika $newUserEmail do listy ${widget.shoppingList.name}',
-      ),
-    );
+    if (mounted) {
+      showSnackBar(
+        context: context,
+        content: Text(
+          'Dodano użytkownika $newUserEmail do listy '
+          '${widget.shoppingList.name}',
+        ),
+      );
+    }
   }
 
   Future<void> handleLeaveShoppingList() async {
@@ -133,10 +140,12 @@ class _ShoppingListTileState extends State<ShoppingListTile> {
     if (SM.getShoppingListId() == widget.shoppingList.id) {
       SM.setShoppingListId('');
     }
-    showSnackBar(
-      context: context,
-      content: Text('Opuszczono listę ${widget.shoppingList.name}'),
-    );
+    if (mounted) {
+      showSnackBar(
+        context: context,
+        content: Text('Opuszczono listę ${widget.shoppingList.name}'),
+      );
+    }
   }
 
   @override

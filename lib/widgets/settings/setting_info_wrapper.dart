@@ -14,11 +14,11 @@ class SettingInfoWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      child: child,
       onLongPress: () => showDialog(
         context: context,
         builder: (ctx) => DismissibleHelpDialog(content: infoContent),
       ),
+      child: child,
     );
   }
 }

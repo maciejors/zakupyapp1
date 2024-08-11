@@ -9,41 +9,44 @@ import 'package:zakupyapp/widgets/shared/snackbars.dart';
 class DownloadUpdateDialog extends StatelessWidget {
   final String newVersionId;
 
-  const DownloadUpdateDialog({Key? key, required this.newVersionId})
-      : super(key: key);
+  const DownloadUpdateDialog({super.key, required this.newVersionId});
 
   Future<void> _copyDownloadLinkToClipboard() async {
     await Clipboard.setData(
-        ClipboardData(text: Constants.FAMILY_STORE_APP_URL));
+        const ClipboardData(text: Constants.familyStoreAppUrl));
   }
 
   Future<void> downloadInBrowser(BuildContext context) async {
     Navigator.of(context).pop();
-    Uri uri = Uri.parse(Constants.FAMILY_STORE_APP_URL);
+    Uri uri = Uri.parse(Constants.familyStoreAppUrl);
     bool success = await launchUrl(
       uri,
       mode: LaunchMode.externalApplication,
     );
     if (!success) {
       await _copyDownloadLinkToClipboard();
-      showSnackBar(
-        context: context,
-        duration: const Duration(seconds: 8),
-        content: const Text('Nie udało się otworzyć strony aplikacji w '
-            'Family Store. Link do niej został skopiowany do schowka. '
-            'Aby ręcznie pobrać aktualizację, wklej go do przeglądarki'),
-      );
+      if (context.mounted) {
+        showSnackBar(
+          context: context,
+          duration: const Duration(seconds: 8),
+          content: const Text('Nie udało się otworzyć strony aplikacji w '
+              'Family Store. Link do niej został skopiowany do schowka. '
+              'Aby ręcznie pobrać aktualizację, wklej go do przeglądarki'),
+        );
+      }
     }
   }
 
   Future<void> copyDownloadLink(BuildContext context) async {
     await _copyDownloadLinkToClipboard();
-    showSnackBar(
-      context: context,
-      duration: Duration(seconds: 1),
-      content: const Text('Link skopiowany do schowka'),
-    );
-    Navigator.of(context).pop();
+    if (context.mounted) {
+      showSnackBar(
+        context: context,
+        duration: const Duration(seconds: 1),
+        content: const Text('Link skopiowany do schowka'),
+      );
+      Navigator.of(context).pop();
+    }
   }
 
   @override
@@ -55,7 +58,7 @@ class DownloadUpdateDialog extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text('Twoja wersja: ${AppInfo.getVersion()}'),
-          Text('Najnowsza wersja: ${newVersionId}'),
+          Text('Najnowsza wersja: $newVersionId'),
         ],
       ),
       actions: <Widget>[
