@@ -69,15 +69,19 @@ class _ManageUsersDialogState extends State<ManageUsersDialog> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text('Poniżej wypisane są adresy email użytkowników listy '
-              '${widget.shoppingList.name}. Aby usunąć wybranego użytkownika, '
-              'przytrzymaj jego nazwę. Lista użytkowników:'),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Text(
+              'Poniżej wypisane są adresy email użytkowników listy '
+              '${widget.shoppingList.name}:',
+            ),
+          ),
           ...currentUsers.map((memberEmail) {
             return GestureDetector(
               child: Container(
                 width: double.infinity,
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Text(
                     memberEmail,
                     style: const TextStyle(fontWeight: FontWeight.bold),
@@ -89,6 +93,12 @@ class _ManageUsersDialogState extends State<ManageUsersDialog> {
                   : () => handleDeleteMember(memberEmail),
             );
           }),
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: const Text(
+              'Aby usunąć wybranego użytkownika, przytrzymaj jego nazwę.',
+            ),
+          ),
         ],
       ),
       scrollable: true,
