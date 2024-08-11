@@ -4,7 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:zakupyapp/constants.dart';
 import 'package:zakupyapp/utils/app_info.dart';
-import 'package:zakupyapp/utils/snackbars.dart';
+import 'package:zakupyapp/widgets/shared/snackbars.dart';
 
 class DownloadUpdateDialog extends StatelessWidget {
   final String newVersionId;

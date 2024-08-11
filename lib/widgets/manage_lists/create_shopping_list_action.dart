@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:zakupyapp/services/database_manager.dart';
 import 'package:zakupyapp/services/auth_manager.dart';
-import 'package:zakupyapp/utils/snackbars.dart';
-import 'package:zakupyapp/widgets/shared/text_input_dialog.dart';
+import 'package:zakupyapp/widgets/shared/snackbars.dart';
+import 'package:zakupyapp/widgets/shared/dialogs/text_input_dialog.dart';
 
 class CreateShoppingListAction extends StatefulWidget {
   const CreateShoppingListAction({super.key});

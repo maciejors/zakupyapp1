@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:zakupyapp/core/models/product.dart';
 import 'package:zakupyapp/widgets/home/product_card/product_card_content.dart';
 import 'package:zakupyapp/widgets/home/product_card/product_editor.dart';
-import 'package:zakupyapp/widgets/shared/confirmation_dialog.dart';
+import 'package:zakupyapp/widgets/shared/dialogs/confirmation_dialog.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;

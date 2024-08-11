@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zakupyapp/widgets/shared/dismissible_help_dialog.dart';
+import 'package:zakupyapp/widgets/shared/dialogs/dismissible_help_dialog.dart';
 
 class HelpDialog extends StatelessWidget {
   const HelpDialog({super.key});

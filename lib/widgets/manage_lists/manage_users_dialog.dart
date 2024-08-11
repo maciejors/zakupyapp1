@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:zakupyapp/core/models/shopping_list.dart';
 import 'package:zakupyapp/services/auth_manager.dart';
 import 'package:zakupyapp/services/database_manager.dart';
-import 'package:zakupyapp/utils/snackbars.dart';
-import 'package:zakupyapp/widgets/shared/confirmation_dialog.dart';
+import 'package:zakupyapp/widgets/shared/snackbars.dart';
+import 'package:zakupyapp/widgets/shared/dialogs/confirmation_dialog.dart';
 
 class ManageUsersDialog extends StatefulWidget {
   final ShoppingList shoppingList;

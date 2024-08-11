@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zakupyapp/widgets/shared/dismissible_help_dialog.dart';
+import 'package:zakupyapp/widgets/shared/dialogs/dismissible_help_dialog.dart';
 
 /// A wrapper for SwitchListTile in settings, which makes it so that if a
 /// user holds the tile, it will display a dialog with more information

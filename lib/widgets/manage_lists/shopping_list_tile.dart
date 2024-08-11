@@ -4,11 +4,11 @@ import 'package:zakupyapp/core/models/shopping_list.dart';
 import 'package:zakupyapp/services/auth_manager.dart';
 import 'package:zakupyapp/services/database_manager.dart';
 import 'package:zakupyapp/services/storage_manager.dart';
-import 'package:zakupyapp/utils/snackbars.dart';
+import 'package:zakupyapp/widgets/shared/snackbars.dart';
 import 'package:zakupyapp/widgets/manage_lists/manage_default_shops_dialog.dart';
 import 'package:zakupyapp/widgets/manage_lists/manage_users_dialog.dart';
-import 'package:zakupyapp/widgets/shared/confirmation_dialog.dart';
-import 'package:zakupyapp/widgets/shared/text_input_dialog.dart';
+import 'package:zakupyapp/widgets/shared/dialogs/confirmation_dialog.dart';
+import 'package:zakupyapp/widgets/shared/dialogs/text_input_dialog.dart';
 
 class ShoppingListTile extends StatefulWidget {
   final ShoppingList shoppingList;
