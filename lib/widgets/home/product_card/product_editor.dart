@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:zakupyapp/core/models/deadline.dart';
 import 'package:zakupyapp/core/models/product.dart';
-import 'package:zakupyapp/core/shopping_list_manager.dart';
+import 'package:zakupyapp/core/shopping_list_controller.dart';
 import 'package:zakupyapp/widgets/home/product_card/product_detail_editor_chip.dart';
 import 'package:zakupyapp/widgets/home/product_card/select_quantity_dialog.dart';
 import 'package:zakupyapp/widgets/home/product_card/select_shop_dialog.dart';
-
-import '../../../storage/storage_manager.dart';
+import 'package:zakupyapp/services/auth_manager.dart';
 
 class ProductEditor extends StatefulWidget {
   final Product product;
@@ -26,8 +26,10 @@ class ProductEditor extends StatefulWidget {
 }
 
 class _ProductEditorState extends State<ProductEditor> {
+  final AuthManager _auth = AuthManager.instance;
+
   final _formKey = GlobalKey<FormState>();
-  late final ShoppingListManager _provider;
+  late final ShoppingListController _provider;
 
   final _productNameFocusNode = FocusNode(canRequestFocus: false);
 
@@ -89,7 +91,7 @@ class _ProductEditorState extends State<ProductEditor> {
       context: context,
       initialDate: _selectedDay ?? DateTime.now(),
       firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(Duration(days: 365)),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
       cancelText: 'Anuluj',
       helpText: 'Wybierz datę',
     );
@@ -110,9 +112,13 @@ class _ProductEditorState extends State<ProductEditor> {
         id: widget.product.id,
         name: _productName.trim(),
         dateAdded: widget.product.dateAdded,
-        whoAdded: widget.product.whoAdded,
+        authorName: widget.product.authorName,
+        authorEmail: widget.product.authorEmail,
         dateLastEdited: widget.product.isVirtual ? null : DateTime.now(),
-        whoLastEdited: widget.product.isVirtual ? null : SM.getUsername(),
+        lastEditorName:
+            widget.product.isVirtual ? null : _auth.getUserDisplayName(),
+        lastEditorEmail:
+            widget.product.isVirtual ? null : _auth.getUserEmail(),
         shop: _selectedShop == '' ? null : _selectedShop,
         deadline: _selectedDeadline,
         buyer: widget.product.buyer,
@@ -131,7 +137,7 @@ class _ProductEditorState extends State<ProductEditor> {
   void initState() {
     super.initState();
     // provider for shop and quantity units lists
-    _provider = Provider.of<ShoppingListManager>(context, listen: false);
+    _provider = Provider.of<ShoppingListController>(context, listen: false);
     // default values for editor
     _productName = widget.product.name;
     _selectedShop = widget.product.shop ?? '';
@@ -151,12 +157,12 @@ class _ProductEditorState extends State<ProductEditor> {
           TextFormField(
             initialValue: _productName,
             onChanged: (value) => _productName = value,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               isDense: true,
               contentPadding: EdgeInsets.only(bottom: 8),
               hintText: 'Nazwa produktu...',
             ),
-            style: TextStyle(fontSize: 18),
+            style: const TextStyle(fontSize: 18),
             validator: productNameValidator,
             autofocus: widget.product.name == '',
             focusNode: _productNameFocusNode,
@@ -168,11 +174,10 @@ class _ProductEditorState extends State<ProductEditor> {
             onPress: _selectQuantity,
             onDisable: _clearQuantity,
             inactiveLabel: 'Dodaj ilość',
-            activeLabel: 'Ilość: ' +
-                (Product.formQuantityLabel(
+            activeLabel: 'Ilość: ${Product.formQuantityLabel(
                         _selectedQuantity, _selectedQuantityUnit) ??
-                    ''),
-            icon: Icon(Icons.numbers),
+                    ''}',
+            icon: const Icon(Icons.numbers),
           ),
 
           // Shop picker
@@ -182,7 +187,7 @@ class _ProductEditorState extends State<ProductEditor> {
             onDisable: _clearShop,
             inactiveLabel: 'Dodaj sklep',
             activeLabel: 'Sklep: $_selectedShop',
-            icon: Icon(Icons.shopping_cart),
+            icon: const Icon(Icons.shopping_cart),
           ),
 
           // Deadline picker
@@ -193,7 +198,7 @@ class _ProductEditorState extends State<ProductEditor> {
             inactiveLabel: 'Dodaj deadline',
             activeLabel:
                 'Potrzebne na: ${_selectedDeadline?.getPolishDescription()}',
-            icon: Icon(Icons.access_time),
+            icon: const Icon(Icons.access_time),
           ),
 
           // Save/cancel buttons
@@ -203,13 +208,13 @@ class _ProductEditorState extends State<ProductEditor> {
             children: <Widget>[
               TextButton(
                 onPressed: cancelEdit,
-                child: Text('Anuluj'),
                 style: TextButton.styleFrom(foregroundColor: Colors.black),
+                child: const Text('Anuluj'),
               ),
               TextButton(
                 onPressed: confirmEdit,
-                child: Text('Zapisz'),
                 style: TextButton.styleFrom(foregroundColor: Colors.black),
+                child: const Text('Zapisz'),
               ),
             ],
           ),

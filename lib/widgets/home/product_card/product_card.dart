@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:zakupyapp/core/models/product.dart';
 import 'package:zakupyapp/widgets/home/product_card/product_card_content.dart';
 import 'package:zakupyapp/widgets/home/product_card/product_editor.dart';
+import 'package:zakupyapp/widgets/shared/dialogs/confirmation_dialog.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -19,7 +20,7 @@ class ProductCard extends StatelessWidget {
   final bool isEditing;
 
   const ProductCard({
-    Key? key,
+    super.key,
     required this.product,
     required this.editFunc,
     required this.deleteFunc,
@@ -27,7 +28,7 @@ class ProductCard extends StatelessWidget {
     required this.onConfirmEdit,
     required this.onCancelEdit,
     this.isEditing = false,
-  }) : super(key: key);
+  });
 
   Color? get cardColor {
     // undeclared
@@ -46,45 +47,33 @@ class ProductCard extends StatelessWidget {
     return Colors.orange[50];
   }
 
-  Future<void> showDeleteDialog(BuildContext context) async {
-    await showDialog(
+  Future<void> handleDelete(BuildContext context) async {
+    bool? confirmation = await showDialog(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Usuń produkt'),
-          content: Text('Czy na pewno chcesz usunąć: ${product.name}?'),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Anuluj'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text('Tak'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                deleteFunc(product);
-              },
-            ),
-          ],
-        );
-      },
+      builder: (context) => ConfirmationDialog(
+        title: const Text('Usuń produkt'),
+        content: Text('Czy na pewno chcesz usunąć: ${product.name}?'),
+      ),
     );
+    // handle cancel
+    if (confirmation == null || !confirmation) {
+      return;
+    }
+    deleteFunc(product);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity, // otherwise cards shrink in width
       child: Card(
         color: cardColor,
         child: InkWell(
-          onTap: isEditing ? null : () => showDeleteDialog(context),
+          onTap: isEditing ? null : () => handleDelete(context),
           onDoubleTap: isEditing ? null : addBuyerFunc,
           onLongPress: isEditing ? null : editFunc,
           child: AnimatedSize(
-            duration: Duration(milliseconds: 250),
+            duration: const Duration(milliseconds: 250),
             alignment: Alignment.topCenter,
             child: isEditing
                 ? Padding(
@@ -96,7 +85,7 @@ class ProductCard extends StatelessWidget {
                     ),
                   )
                 : AnimatedSize(
-                    duration: Duration(milliseconds: 250),
+                    duration: const Duration(milliseconds: 250),
                     alignment: Alignment.bottomCenter,
                     child: Padding(
                       padding: const EdgeInsets.all(16),

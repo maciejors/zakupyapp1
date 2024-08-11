@@ -1,5 +1,5 @@
 /// Deadline's urgency
-enum Urgency { too_late, urgent, not_urgent }
+enum Urgency { tooLate, urgent, notUrgent }
 
 /// A handy way to manage product's deadline
 class Deadline {
@@ -7,8 +7,7 @@ class Deadline {
   DateTime deadlineDay = DateTime.now();
 
   Deadline(DateTime dateTime) {
-    this.deadlineDay = DateTime(dateTime.year, dateTime.month,
-        dateTime.day);
+    deadlineDay = DateTime(dateTime.year, dateTime.month, dateTime.day);
   }
 
   /// Parses a Deadline object from a String.
@@ -18,6 +17,8 @@ class Deadline {
   ///
   /// Old format will also work:<br>
   /// `"${DateTime.toString()}|$bool"`<br>
+  @Deprecated('Since migration to Firestore, this is no longer used and '
+      'is left just in case')
   static Deadline parse(String s) {
     // split to support old deadline format
     var splitted = s.split('|');
@@ -26,17 +27,17 @@ class Deadline {
 
   /// Returns deadline's urgency (in relation to `DateTime.now()`).
   ///
-  /// [Urgency.too_late] - deadline has passed,
+  /// [Urgency.tooLate] - deadline has passed,
   /// [Urgency.urgent] - deadline is today or tomorrow,
-  /// [Urgency.not_urgent] - otherwise
+  /// [Urgency.notUrgent] - otherwise
   Urgency getUrgency() {
     DateTime nowExact = DateTime.now();
     DateTime today = DateTime(
         nowExact.year, nowExact.month, nowExact.day); // now but ignoring hour
     int dayDiff = deadlineDay.difference(today).inDays;
-    Urgency result = Urgency.not_urgent;
-    if (nowExact.isAfter(deadlineDay.add(Duration(days: 1)))) {
-      result = Urgency.too_late;
+    Urgency result = Urgency.notUrgent;
+    if (nowExact.isAfter(deadlineDay.add(const Duration(days: 1)))) {
+      result = Urgency.tooLate;
     } else if (dayDiff <= 1) {
       result = Urgency.urgent;
     }
@@ -83,6 +84,10 @@ class Deadline {
   }
 
   @override
+  @Deprecated('Since migration to Firestore, this is no longer used and '
+      'is left just in case')
+  /// Since migration to Firestore, this is no longer used and is left
+  /// just in case
   String toString() {
     return deadlineDay.toString();
   }

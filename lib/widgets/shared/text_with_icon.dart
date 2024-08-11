@@ -16,26 +16,26 @@ class SimpleTextWithIcon extends StatelessWidget {
   final double? size;
 
   const SimpleTextWithIcon(
-      {Key? key,
+      {super.key,
       required this.text,
       required this.iconData,
       required this.color,
       this.iconFirst = true,
       this.fontWeight,
       this.fontStyle,
-      this.size})
-      : super(key: key);
+      this.size});
 
   @override
   Widget build(BuildContext context) {
     double commonSize = size ?? 14;
     List<InlineSpan> children = [
       WidgetSpan(
-          child: Icon(
-        iconData,
-        size: commonSize * 1.3,
-        color: color,
-      )),
+        child: Icon(
+          iconData,
+          size: commonSize * 1.3,
+          color: color,
+        ),
+      ),
       TextSpan(text: ' $text')
     ];
     if (!iconFirst) {

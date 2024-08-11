@@ -77,7 +77,7 @@ class _SelectShopDialogState extends State<SelectShopDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       scrollable: true,
-      title: Text('Wybierz sklep'),
+      title: const Text('Wybierz sklep'),
       content: Form(
         key: _formKey,
         child: Column(
@@ -94,12 +94,8 @@ class _SelectShopDialogState extends State<SelectShopDialog> {
               visible: _selectedShop == '~',
               child: TextFormField(
                 autofocus: true,
-                decoration: InputDecoration(
-                  hintText: 'Nazwa sklepu',
-                ),
-                onChanged: (value) {
-                  _customShopInput = value;
-                },
+                decoration: const InputDecoration(hintText: 'Nazwa sklepu'),
+                onChanged: (value) => _customShopInput = value,
                 validator: shopNameValidator,
               ),
             ),
@@ -108,11 +104,12 @@ class _SelectShopDialogState extends State<SelectShopDialog> {
       ),
       actions: <Widget>[
         TextButton(
-            child: Text('Anuluj'),
-            onPressed: () => Navigator.of(context).pop()),
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Anuluj'),
+        ),
         TextButton(
-          child: Text('OK'),
           onPressed: onConfirm,
+          child: const Text('OK'),
         ),
       ],
     );

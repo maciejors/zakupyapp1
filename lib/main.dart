@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 
-import 'package:zakupyapp/storage/storage_manager.dart';
+import 'firebase_options.dart';
+import 'package:zakupyapp/widgets/manage_lists/manage_lists.dart';
+import 'package:zakupyapp/services/storage_manager.dart';
 import 'package:zakupyapp/utils/app_info.dart';
-import 'package:zakupyapp/screens/home.dart';
-import 'package:zakupyapp/screens/settings.dart';
+import 'package:zakupyapp/widgets/home/home.dart';
+import 'package:zakupyapp/widgets/settings/settings.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,8 +19,9 @@ Future<void> main() async {
   runApp(
     MaterialApp(
       routes: {
-        '/': (context) => HomeScreen(),
-        '/settings': (context) => SettingsScreen(),
+        '/': (context) => const HomeScreen(),
+        '/settings': (context) => const SettingsScreen(),
+        '/manage-lists': (context) => const ManageListsScreen()
       },
       theme: ThemeData(
         primarySwatch: Colors.orange,

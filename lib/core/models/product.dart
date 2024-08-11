@@ -1,18 +1,21 @@
 import 'package:zakupyapp/core/models/deadline.dart';
-
-import 'package:zakupyapp/storage/storage_manager.dart';
+import 'package:zakupyapp/services/auth_manager.dart';
 
 /// Represents a product from a shopping list
 class Product {
+  static final AuthManager _auth = AuthManager.instance;
+
   // Whether the product actually exists or is just a dummy with default values
   final bool isVirtual;
 
   final String id;
   final String name;
 
-  final String whoAdded;
+  final String authorName;
+  final String authorEmail;
   final DateTime dateAdded;
-  final String? whoLastEdited;
+  final String? lastEditorName;
+  final String? lastEditorEmail;
   final DateTime? dateLastEdited;
 
   final String? shop;
@@ -29,9 +32,11 @@ class Product {
     required this.id,
     required this.name,
     required this.dateAdded,
-    required this.whoAdded,
+    required this.authorName,
+    required this.authorEmail,
     this.dateLastEdited,
-    this.whoLastEdited,
+    this.lastEditorName,
+    this.lastEditorEmail,
     this.shop,
     this.deadline,
     this.buyer,
@@ -44,34 +49,7 @@ class Product {
     return !isDeclaredByOthers;
   }
 
-  bool get isDeclaredByUser => buyer == SM.getUsername();
-
-  /// Map does not contain ID of the product
-  Map<String, String> toMap() {
-    var result = {
-      'name': name,
-      'dateAdded': dateAdded.toString(),
-      'whoAdded': whoAdded,
-    };
-    if (shop != null) {
-      result['shop'] = shop!;
-    }
-    if (deadline != null) {
-      result['deadline'] = deadline.toString();
-    }
-    if (buyer != null) {
-      result['buyer'] = buyer!;
-    }
-    if (quantity != null) {
-      result['quantity'] = quantity.toString();
-      result['quantityUnit'] = quantityUnit!;
-    }
-    if (dateLastEdited != null) {
-      result['dateLastEdited'] = dateLastEdited.toString();
-      result['whoLastEdited'] = whoLastEdited!;
-    }
-    return result;
-  }
+  bool get isDeclaredByUser => buyer == _auth.getUserDisplayName();
 
   static String generateProductId() {
     DateTime now = DateTime.now();
@@ -106,4 +84,8 @@ class Product {
     if (other.runtimeType != Product) return false;
     return id == (other as Product).id;
   }
+
+  @override
+  int get hashCode => id.hashCode;
+
 }

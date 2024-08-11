@@ -1,10 +1,16 @@
-import 'package:zakupyapp/core/models/product.dart';
-import 'package:zakupyapp/storage/database_manager.dart';
+import 'dart:async';
 
-import 'package:zakupyapp/storage/storage_manager.dart';
+import 'package:zakupyapp/core/models/product.dart';
+import 'package:zakupyapp/services/auth_manager.dart';
+import 'package:zakupyapp/services/database_manager.dart';
+import 'package:zakupyapp/services/storage_manager.dart';
+import 'package:zakupyapp/utils/errors.dart';
 
 /// represents a product list which can be filtered etc
-class ShoppingListManager {
+class ShoppingListController {
+  final DatabaseManager _db = DatabaseManager.instance;
+  final AuthManager _auth = AuthManager.instance;
+
   List<Product> _allProducts = [];
   List<Product> get filteredProducts => _filterProducts(_allProducts);
   bool isDataReady = false;
@@ -16,23 +22,25 @@ class ShoppingListManager {
   List<String> filterableShops = [];
   List<String> availableQuantityUnits = [];
   final String id;
-  final String _username = SM.getUsername();
-  DatabaseManager _db = DatabaseManager.instance;
+  String get _username => _auth.getUserDisplayName() ?? '';
 
   final bool hideProductsOthersDeclared = SM.getHideProductsOthersDeclared();
 
+  StreamSubscription? _dataStream;
+
   // constructor
-  ShoppingListManager(this.id);
+  ShoppingListController(this.id);
 
   // callbacks
   void Function(List<Product>)? onProductsUpdated;
   void Function()? onDefaultShopsReveived;
+  void Function()? onPermissionDenied;
 
   // filters
   bool _showOnlyDeclaredByUser = false;
 
   bool get showOnlyDeclaredByUser => _showOnlyDeclaredByUser;
-  void set showOnlyDeclaredByUser(bool value) {
+  set showOnlyDeclaredByUser(bool value) {
     // set filter
     _showOnlyDeclaredByUser = value;
     if (onProductsUpdated != null) {
@@ -47,7 +55,7 @@ class ShoppingListManager {
   /// * '' (empty string) - no filter,
   /// * '~' - show items with no shop specified.
   String get filteredShop => _filteredShop;
-  void set filteredShop(String value) {
+  set filteredShop(String value) {
     // set filter
     _filteredShop = value;
     if (onProductsUpdated != null) {
@@ -64,11 +72,11 @@ class ShoppingListManager {
   }
 
   Future<void> storeProduct(Product product) async {
-    await _db.storeProductFromClass(product);
+    await _db.storeProductFromClass(id, product);
   }
 
   Future<void> removeProduct(Product product) async {
-    await _db.removeProduct(product.id);
+    await _db.removeProduct(id, product.id);
   }
 
   /// Returns [true] if the buyer was added, [false] if the buyer was removed
@@ -77,12 +85,12 @@ class ShoppingListManager {
   Future<bool?> toggleProductBuyer(Product product) async {
     // not delared yet
     if (product.buyer == null) {
-      await _db.setProductBuyer(product.id, _username);
+      await _db.setProductBuyer(id, product.id, _username);
       return true;
     }
     // declared by the user
     else if (product.buyer == _username) {
-      await _db.setProductBuyer(product.id, null);
+      await _db.setProductBuyer(id, product.id, null);
       return false;
     }
     // declared by someone else
@@ -135,18 +143,20 @@ class ShoppingListManager {
     availableShops = shopsInList.toList();
   }
 
-  /// Starts listening for products data. Make sure to set [onProductsUpdated]
+  /// Starts listening for products data. Make sure to set [onProductsUpdated],
   /// and [onDefaultShopsReceived] callbacks before calling this method.
-  void subscribe() {
-    _db.setShoppingList(id);
+  Future<void> subscribe() async {
     // set default shops
-    _db.getDefaultShops().then((value) {
-      _refreshLists(value);
+    try {
+      List<String> defaultShops = await _db.getDefaultShops(id);
+      _refreshLists(defaultShops);
       // callback
       if (onDefaultShopsReveived != null) onDefaultShopsReveived!();
-    });
+    } on PermissionDeniedException {
+      if (onPermissionDenied != null) onPermissionDenied!();
+    }
     // setup product listener
-    _db.setupListener((newProducts) {
+    _dataStream = _db.subscribeToProducts(id, (newProducts) {
       newProducts.sort((p1, p2) => p2.dateAdded.compareTo(p1.dateAdded));
 
       isDataReady = true;
@@ -160,6 +170,6 @@ class ShoppingListManager {
   }
 
   Future<void> unsubscribe() async {
-    await _db.cancelListener();
+    await _dataStream?.cancel();
   }
 }

@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:zakupyapp/widgets/shared/dialogs/dismissible_help_dialog.dart';
 
 class HelpDialog extends StatelessWidget {
   const HelpDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
-    String sep = '\n\n';
-    return AlertDialog(
-      title: Text('Pomoc'),
-      scrollable: true,
+    return const DismissibleHelpDialog(
       content: Text.rich(
         TextSpan(
           style: TextStyle(
@@ -20,31 +18,22 @@ class HelpDialog extends StatelessWidget {
               text: 'usunąć produkt',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            TextSpan(text: ', kliknij w niego raz.$sep'),
+            TextSpan(text: ', kliknij w niego raz.\n\n'),
             TextSpan(text: 'Aby '),
             TextSpan(
               text: 'edytować dodany przez siebie produkt',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            TextSpan(text: ', kliknij w niego i przytrzymaj.$sep'),
+            TextSpan(text: ', kliknij w niego i przytrzymaj.\n\n'),
             TextSpan(text: 'Aby '),
             TextSpan(
               text: 'dodać lub usunąć deklarację zamiaru kupna danego produktu',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            TextSpan(text: ', kliknij w niego podwójnie.$sep'),
-            TextSpan(text: 'Aby '),
             TextSpan(
-              text: 'filtrować produkty po sklepie, ',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              text: ', kliknij w niego podwójnie. Dzięki temu inni użytkownicy '
+                  'będą wiedzieć, że planujesz kupić ten produkt.\n\n',
             ),
-            TextSpan(text: 'kliknij '),
-            WidgetSpan(
-                child: Icon(
-              Icons.filter_alt,
-              size: 17,
-            )),
-            TextSpan(text: '.$sep'),
             TextSpan(text: 'Aby '),
             TextSpan(
               text: 'wyświetlić tylko produkty które chcesz kupić, ',
@@ -52,21 +41,21 @@ class HelpDialog extends StatelessWidget {
             ),
             TextSpan(text: 'kliknij '),
             WidgetSpan(
-                child: Icon(
-              Icons.shopping_cart_checkout,
-              size: 17,
-            )),
-            TextSpan(text: ' na górze ekranu.'),
+              child: Icon(Icons.shopping_cart_checkout, size: 17),
+            ),
+            TextSpan(text: ' na górze ekranu.\n\n'),
+            TextSpan(text: 'Aby '),
+            TextSpan(
+              text: 'filtrować produkty po sklepie, ',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            TextSpan(text: 'kliknij '),
+            WidgetSpan(
+              child: Icon(Icons.filter_alt, size: 17),
+            ),
           ],
         ),
       ),
-      actions: <Widget>[
-        TextButton(
-            child: Text('OK'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            }),
-      ],
     );
   }
 }
