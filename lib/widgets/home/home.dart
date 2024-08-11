@@ -397,10 +397,10 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: getBody(),
       floatingActionButton: Visibility(
-        visible: isFirstLoadDone && !isAddingProduct,
+        visible: isFirstLoadDone && !isAddingProduct && editedProduct == null,
         child: FloatingActionButton(
           onPressed: addProductFunc,
-          child: Icon(Icons.add_shopping_cart),
+          child: const Icon(Icons.add_shopping_cart),
         ),
       ),
     );
