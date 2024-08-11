@@ -28,7 +28,7 @@ class SM {
 
   /// Whether a default quantity is automatically set when adding a product
   static bool getIsAutoQuantityEnabled() {
-    return _storage.getBool('isAutoQuantityEnabled') ?? false;
+    return _storage.getBool('isAutoQuantityEnabled') ?? true;
   }
 
   static void setIsAutoQuantityEnabled(bool isAutoQuantityEnabled) {
