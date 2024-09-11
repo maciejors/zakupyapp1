@@ -23,7 +23,7 @@ class _ManageDefaultShopsDialogState extends State<ManageDefaultShopsDialog> {
   void onShopAdded() {
     if (_newShopFormKey.currentState!.validate()) {
       setState(() {
-        provisionalShops.add(_newShopInput.text);
+        provisionalShops.add(_newShopInput.text.trim());
         _newShopInput.text = '';
       });
     }
