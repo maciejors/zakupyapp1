@@ -123,12 +123,17 @@ class ShoppingListController {
   /// Refreshes available shops and quantity units lists based on the product
   /// data.
   void _refreshLists(List<String> defaultShops) {
-    Set<String> shopsInList = {};
+    // shops that appear in the filter dialog,
+    // i.e. those which are present on the shopping list
+    Set<String> filterableShopsSet = {};
+    // available shops are default shops + filterable shops
+    Set<String> availableShopsSet = defaultShops.toSet();
+
     availableQuantityUnits = ['szt.', 'kg', 'dag', 'L'];
     for (var product in _allProducts) {
       // add any new shops to the list of available shops
       if (product.shop != null) {
-        shopsInList.add(product.shop!);
+        filterableShopsSet.add(product.shop!);
       }
       // add any new quantity units to the list of available qus
       if (product.quantityUnit != null &&
@@ -136,11 +141,9 @@ class ShoppingListController {
         availableQuantityUnits.add(product.quantityUnit!);
       }
     }
-    // filterable shops only requires shops present in the shopping list
-    filterableShops = shopsInList.toList();
-    // add all default shops to availableShops
-    shopsInList.addAll(defaultShops);
-    availableShops = shopsInList.toList();
+    filterableShops = filterableShopsSet.toList();
+    availableShopsSet.addAll(filterableShopsSet);
+    availableShops = availableShopsSet.toList();
   }
 
   /// Starts listening for products data. Make sure to set [onProductsUpdated],
