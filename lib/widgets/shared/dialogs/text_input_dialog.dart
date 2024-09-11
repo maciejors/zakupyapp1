@@ -45,7 +45,7 @@ class _TextInputDialogState extends State<TextInputDialog> {
         TextButton(
           onPressed: () {
             if (_formKey.currentState!.validate()) {
-              Navigator.of(context).pop(_input.text);
+              Navigator.of(context).pop(_input.text.trim());
             }
           },
           child: widget.confirmButtonChild,
