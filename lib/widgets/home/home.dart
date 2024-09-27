@@ -25,6 +25,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final ShoppingListController shoppingListController =
       ShoppingListController(SM.getShoppingListId());
+  String screenTitle = SM.getCachedShoppingListName() ?? 'Lista zakupów';
   final Updater updater = Updater();
   final AuthManager auth = AuthManager.instance;
 
@@ -233,6 +234,11 @@ class _HomeScreenState extends State<HomeScreen> {
       // initialise the shopping list if a user is signed in
       if (isSignedIn) {
         if (shoppingListController.isInitialised) {
+          // refresh screen title
+          shoppingListController.getName().then((name) => setState(() {
+            screenTitle = name;
+            SM.setCachedShoppingListName(name);
+          }));
           shoppingListController.onProductsUpdated = onProductsUpdated;
           shoppingListController.onDefaultShopsReveived = () => setState(() {
                 // empty setState to refresh filters with contents of
@@ -242,6 +248,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 // reset shopping list ID on permission denied
                 // (means that the user was removed from his list)
                 SM.setShoppingListId('');
+                SM.setCachedShoppingListName(null);
               });
           shoppingListController.subscribe();
         }
@@ -357,7 +364,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       drawer: MainDrawer(isUserSignedIn: auth.isUserSignedIn),
       appBar: AppBar(
-        title: const Text('Lista zakupów'),
+        title: Text(screenTitle),
         actions: !isFirstLoadDone
             ? []
             : <Widget>[
