@@ -209,6 +209,12 @@ class DatabaseManager {
     return dataStream;
   }
 
+  Future<String> getShoppingListName(String shoppingListId) async {
+    DocumentSnapshot privateDoc = await _shoppingListPrivate
+        .doc(shoppingListId).get();
+    return privateDoc.get('name');
+  }
+
   /// Fetch private docs for the shopping lists and
   /// merge with the public docs
   Future<List<ShoppingList>> _getShoppingListsFullData(
@@ -283,7 +289,7 @@ class DatabaseManager {
   /// Updates the "lastUpdated" field in the public document of the
   /// specified shopping list. This should be called after any update to
   /// the private document of a shopping list that should trigger a listener
-  Future<void> touchShoppingListPublicDoc(String shoppingListId) async {
+  Future<void> _touchShoppingListPublicDoc(String shoppingListId) async {
     await _shoppingListPublic.doc(shoppingListId).update({
       'lastUpdated': Timestamp.now(),
     });
@@ -300,7 +306,7 @@ class DatabaseManager {
     await _shoppingListPublic.doc(shoppingListId).update({
       'members': FieldValue.arrayUnion([userEmail]),
     });
-    await touchShoppingListPublicDoc(shoppingListId);
+    await _touchShoppingListPublicDoc(shoppingListId);
   }
 
   /// Removes a member from the shopping list
@@ -309,7 +315,7 @@ class DatabaseManager {
     await _shoppingListPublic.doc(shoppingListId).update({
       'members': FieldValue.arrayRemove([userEmail]),
     });
-    await touchShoppingListPublicDoc(shoppingListId);
+    await _touchShoppingListPublicDoc(shoppingListId);
   }
 
   Future<String> createShoppingList(String name, String creatorEmail) async {
@@ -329,7 +335,7 @@ class DatabaseManager {
 
   Future<void> renameShoppingList(String shoppingListId, String newName) async {
     await _shoppingListPrivate.doc(shoppingListId).update({'name': newName});
-    await touchShoppingListPublicDoc(shoppingListId);
+    await _touchShoppingListPublicDoc(shoppingListId);
   }
 
   Future<void> updateShoppingListDefaultShops(
@@ -338,6 +344,6 @@ class DatabaseManager {
     await shoppingListPrivateDoc.update({
       'defaultShops': newDefaultShops,
     });
-    await touchShoppingListPublicDoc(shoppingListId);
+    await _touchShoppingListPublicDoc(shoppingListId);
   }
 }

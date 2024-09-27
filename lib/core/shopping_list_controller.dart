@@ -71,6 +71,11 @@ class ShoppingListController {
     return filteredShop != '';
   }
 
+  /// Retrieve shopping list name
+  Future<String> getName() async {
+    return await _db.getShoppingListName(id);
+  }
+
   Future<void> storeProduct(Product product) async {
     await _db.storeProductFromClass(id, product);
   }

@@ -18,6 +18,18 @@ class SM {
     _storage.setString('shoppingListId', shoppingListId.trim());
   }
 
+  static String? getCachedShoppingListName() {
+    return _storage.getString('shoppingListName');
+  }
+
+  static void setCachedShoppingListName(String? shoppingListName) {
+    if (shoppingListName == null) {
+      _storage.remove('shoppingListName');
+    } else {
+      _storage.setString('shoppingListName', shoppingListName);
+    }
+  }
+
   static bool getHideProductsOthersDeclared() {
     return _storage.getBool('hideProductsOthersDeclared') ?? false;
   }
