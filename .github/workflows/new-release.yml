@@ -1,0 +1,51 @@
+# Credit: https://dev.to/ronynn/automating-android-apk-builds-with-github-actions-the-sane-way-1h95
+name: New release
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Decode keystore and put it into a file
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/keystore.jks
+
+      - name: Create key.properties
+        run: |
+          cd android
+          echo "storeFile=keystore.jks" >> key.properties
+          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> key.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> key.properties
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'microsoft'
+          java-version: '17'
+
+      - name: Setup Gradle cache
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'
+          cache: true
+
+      - name: Build release APK
+        run: flutter build apk --target-platform android-arm64 --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk-release
+          path: build/app/outputs/flutter-apk/app-arm64-*-release.apk
