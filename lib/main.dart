@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:zakupyapp/services/auth_manager.dart';
 
 import 'firebase_options.dart';
 import 'package:zakupyapp/widgets/manage_lists/manage_lists.dart';
@@ -15,6 +16,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await AuthManager.instance.initialise();
 
   runApp(
     MaterialApp(
