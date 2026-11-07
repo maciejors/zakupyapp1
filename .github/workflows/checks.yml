@@ -1,0 +1,48 @@
+name: Checks
+
+on:
+  pull_request:
+    branches: [ master, dev ]
+
+jobs:
+  check:
+    name: Run Flutter & Gradle checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Create dummy key.properties
+        run: |
+          cd android
+          echo "storeFile=dummy" >> key.properties
+          echo "storePassword=" >> key.properties
+          echo "keyAlias=" >> key.properties
+          echo "keyPassword=" >> key.properties
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'microsoft'
+          java-version: '17'
+
+      - name: Setup Gradle cache
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'
+          cache: true
+
+      - name: Install Flutter dependencies
+        run: flutter pub get
+
+      - name: Run Flutter tests
+        run: flutter test
+
+      - name: Run gradle checks
+        run: |
+          cd android
+          ./gradlew check
