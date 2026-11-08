@@ -13,22 +13,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Create dummy key.properties
-        run: |
-          cd android
-          echo "storeFile=dummy" >> key.properties
-          echo "storePassword=" >> key.properties
-          echo "keyAlias=" >> key.properties
-          echo "keyPassword=" >> key.properties
-
       - name: Setup Java
         uses: actions/setup-java@v5
         with:
           distribution: 'microsoft'
-          java-version: '17'
-
-      - name: Setup Gradle cache
-        uses: gradle/actions/setup-gradle@v5
+          java-version: '25'
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -40,8 +29,14 @@ jobs:
       - name: Install Flutter dependencies
         run: flutter pub get
 
+      - name: Run static code analysis
+        run: flutter analyze
+
       - name: Run Flutter tests
         run: flutter test
+
+      - name: Build release apk without signing
+        run: flutter build apk --release --no-pub
 
       - name: Run gradle checks
         run: |

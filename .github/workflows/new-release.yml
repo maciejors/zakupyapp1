@@ -4,6 +4,8 @@ name: New release
 on:
   push:
     branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
   build:
@@ -30,10 +32,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: 'microsoft'
-          java-version: '17'
-
-      - name: Setup Gradle cache
-        uses: gradle/actions/setup-gradle@v5
+          java-version: '25'
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
