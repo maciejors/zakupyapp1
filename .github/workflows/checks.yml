@@ -6,7 +6,7 @@ on:
 
 jobs:
   check:
-    name: Run Flutter & Gradle checks
+    name: Run Flutter checks
     runs-on: ubuntu-latest
 
     steps:
