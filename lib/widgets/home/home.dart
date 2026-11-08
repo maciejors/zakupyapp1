@@ -325,7 +325,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 opacity: animation,
                 child: SizeTransition(
                   sizeFactor: animation,
-                  axisAlignment: 1,
+                  alignment: Alignment(0.0, 1.0),
                   child: child,
                 ),
               );
@@ -335,7 +335,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 opacity: animation,
                 child: SizeTransition(
                   sizeFactor: animation,
-                  axisAlignment: 1,
+                  alignment: Alignment(0.0, 1.0),
                   child: child,
                 ),
               );

@@ -1,0 +1,39 @@
+name: Checks
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  check:
+    name: Run Flutter checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'microsoft'
+          java-version: '25'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version-file: pubspec.yaml
+          cache: true
+
+      - name: Install Flutter dependencies
+        run: flutter pub get
+
+      - name: Run static code analysis
+        run: flutter analyze
+
+      - name: Run Flutter tests
+        run: flutter test
+
+      - name: Build debug apk
+        run: flutter build apk --debug --no-pub

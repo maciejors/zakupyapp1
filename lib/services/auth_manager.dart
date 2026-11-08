@@ -12,7 +12,7 @@ class AuthManager {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final CollectionReference _emailToUidCollection =
-      FirebaseFirestore.instance.collection('emailToUid');
+  FirebaseFirestore.instance.collection('emailToUid');
 
   StreamSubscription? _authStateStream;
 
@@ -20,6 +20,10 @@ class AuthManager {
 
   // a private constructor
   AuthManager._();
+
+  Future<void> initialise() async {
+    await GoogleSignIn.instance.initialize();
+  }
 
   String? getUserDisplayName() {
     return _auth.currentUser?.displayName;
@@ -57,17 +61,19 @@ class AuthManager {
   }
 
   Future<void> signInWithGoogle() async {
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    // trigger the v7 authentication flow (CredentialManager sheet on Android)
+    final GoogleSignInAccount? googleUser = await GoogleSignIn.instance.authenticate();
 
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication? googleAuth =
-        await googleUser?.authentication;
+    if (googleUser == null) {
+      return; // User cancelled
+    }
 
-    // Create a new credential
+    // obtain authentication details synchronously from the user object
+    final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+
+    // create Firebase credential (only idToken is needed for identity authentication)
     final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
+      idToken: googleAuth.idToken,
     );
     final userCredential = await _auth.signInWithCredential(credential);
 

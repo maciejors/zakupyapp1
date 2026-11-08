@@ -134,7 +134,7 @@ class ShoppingListController {
     // available shops are default shops + filterable shops
     Set<String> availableShopsSet = defaultShops.toSet();
 
-    availableQuantityUnits = ['szt.', 'kg', 'dag', 'L'];
+    availableQuantityUnits = ['szt.', 'g', 'dag', 'kg', 'ml', 'L'];
     for (var product in _allProducts) {
       // add any new shops to the list of available shops
       if (product.shop != null) {
