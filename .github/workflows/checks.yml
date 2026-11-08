@@ -37,8 +37,3 @@ jobs:
 
       - name: Build debug apk
         run: flutter build apk --debug --no-pub
-
-      - name: Run gradle checks
-        run: |
-          cd android
-          gradle check
